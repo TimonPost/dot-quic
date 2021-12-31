@@ -3,7 +3,7 @@
     <PropertyGroup>
         <CargoPackage>quinn_ffi</CargoPackage>
         <RootPath>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), VideoStreamer.sln))</RootPath>
-        <CargoWorkspacePath>$(RootPath)\rust</CargoWorkspacePath>
+        <CargoWorkspacePath>$(RootPath)\quinn_ffi</CargoWorkspacePath>
     </PropertyGroup>
 
     <Import Project="native.targets" />
