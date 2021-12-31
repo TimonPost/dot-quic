@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Quick.Runner": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

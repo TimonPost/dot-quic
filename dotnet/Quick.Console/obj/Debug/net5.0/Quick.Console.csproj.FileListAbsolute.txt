@@ -1,0 +1,16 @@
+E:\programming\VideoStreamer\Quick.Console\bin\Debug\net5.0\Quick.Console.exe
+E:\programming\VideoStreamer\Quick.Console\bin\Debug\net5.0\Quick.Console.deps.json
+E:\programming\VideoStreamer\Quick.Console\bin\Debug\net5.0\Quick.Console.runtimeconfig.json
+E:\programming\VideoStreamer\Quick.Console\bin\Debug\net5.0\Quick.Console.runtimeconfig.dev.json
+E:\programming\VideoStreamer\Quick.Console\bin\Debug\net5.0\Quick.Console.dll
+E:\programming\VideoStreamer\Quick.Console\bin\Debug\net5.0\ref\Quick.Console.dll
+E:\programming\VideoStreamer\Quick.Console\bin\Debug\net5.0\Quick.Console.pdb
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\Quick.Console.csproj.AssemblyReference.cache
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\Quick.Console.GeneratedMSBuildEditorConfig.editorconfig
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\Quick.Console.AssemblyInfoInputs.cache
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\Quick.Console.AssemblyInfo.cs
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\Quick.Console.csproj.CoreCompileInputs.cache
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\Quick.Console.dll
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\ref\Quick.Console.dll
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\Quick.Console.pdb
+E:\programming\VideoStreamer\Quick.Console\obj\Debug\net5.0\Quick.Console.genruntimeconfig.cache

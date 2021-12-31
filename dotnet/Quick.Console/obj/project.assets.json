@@ -1,0 +1,115 @@
+{
+  "version": 3,
+  "targets": {
+    "net5.0": {
+      "Quick.Implementation/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "Quick.Native": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Quick.Implementation.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Quick.Implementation.dll": {}
+        }
+      },
+      "Quick.Native/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "compile": {
+          "bin/placeholder/Quick.Native.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Quick.Native.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Quick.Implementation/1.0.0": {
+      "type": "project",
+      "path": "../Quick.Implementation/Quick.Implementation.csproj",
+      "msbuildProject": "../Quick.Implementation/Quick.Implementation.csproj"
+    },
+    "Quick.Native/1.0.0": {
+      "type": "project",
+      "path": "../Quick.Native/Quick.Native.csproj",
+      "msbuildProject": "../Quick.Native/Quick.Native.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net5.0": [
+      "Quick.Implementation >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Timon\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Console\\Quick.Runner.csproj",
+      "projectName": "Quick.Runner",
+      "projectPath": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Console\\Quick.Runner.csproj",
+      "packagesPath": "C:\\Users\\Timon\\.nuget\\packages\\",
+      "outputPath": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Console\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\Timon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net5.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "http://teamcity.monogame.net/guestAuth/app/nuget/feed/_Root/default/v3/index.json": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "projectReferences": {
+            "E:\\programming\\quinn-ffi\\dotnet\\Quick.Implementation\\Quick.Implementation.csproj": {
+              "projectPath": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Implementation\\Quick.Implementation.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net5.0": {
+        "targetAlias": "net5.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[5.0.13, 5.0.13]"
+          }
+        ],
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

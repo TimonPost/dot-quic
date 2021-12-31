@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <CargoPackage>quinn_ffi</CargoPackage>
+        <RootPath>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), VideoStreamer.sln))</RootPath>
+        <CargoWorkspacePath>$(RootPath)\rust</CargoWorkspacePath>
+    </PropertyGroup>
+
+    <Import Project="native.targets" />
+</Project>

@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "dgSpecHash": "xuYANpVhHidW5iYQXDm77cFdEveexdAdxe42WMIHAvPspiLr7lj5fjgCOsN0gt6ZQ1SEvxRb0huPBKMSJAH49w==",
+  "success": true,
+  "projectFilePath": "E:\\programming\\quinn-ffi\\dotnet\\VideoStreamer\\VideoStreamer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Timon\\.nuget\\packages\\ffmediatoolkit\\4.1.2\\ffmediatoolkit.4.1.2.nupkg.sha512",
+    "C:\\Users\\Timon\\.nuget\\packages\\ffmpeg.autogen\\4.4.1\\ffmpeg.autogen.4.4.1.nupkg.sha512",
+    "C:\\Users\\Timon\\.nuget\\packages\\mediatoolkit\\1.1.0.1\\mediatoolkit.1.1.0.1.nupkg.sha512",
+    "C:\\Users\\Timon\\.nuget\\packages\\quicnet\\1.0.0\\quicnet.1.0.0.nupkg.sha512",
+    "C:\\Users\\Timon\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.13\\microsoft.netcore.app.host.win-x64.5.0.13.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'MediaToolkit 1.1.0.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net5.0'. This package may not be fully compatible with your project.",
+      "libraryId": "MediaToolkit",
+      "targetGraphs": [
+        "net5.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'QuicNet 1.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net5.0'. This package may not be fully compatible with your project.",
+      "libraryId": "QuicNet",
+      "targetGraphs": [
+        "net5.0"
+      ]
+    }
+  ]
+}
