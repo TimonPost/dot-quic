@@ -17,7 +17,7 @@ namespace Quic.Native
         const string NativeLib = "./Native/quinn_ffi.dll";
 
         [DllImport(NativeLib, EntryPoint = nameof(create_endpoint), ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
-        public static extern QuinnResult create_endpoint(ServerConfigHandle serverConfig, out int endpointId, out EndpointHandle endpointHandle);
+        public static extern QuinnResult create_endpoint(ServerConfigHandle serverConfig, out byte endpointId, out EndpointHandle endpointHandle);
 
         [DllImport(NativeLib, EntryPoint = nameof(default_server_config), ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         public static extern QuinnResult default_server_config(out ServerConfigHandle serverConfig);

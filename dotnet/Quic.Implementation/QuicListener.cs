@@ -22,7 +22,7 @@ namespace Quic.Implementation
         public QuicListener(IPEndPoint ipEndpoint)
         {
             _serverConfig = new ServerConfig();
-            var result = QuinnApi.create_endpoint(_serverConfig.Handle, out int id, out EndpointHandle handle);
+            var result = QuinnApi.create_endpoint(_serverConfig.Handle, out byte id, out EndpointHandle handle);
             
             if (result.Erroneous())
                 throw new Exception(LastQuinnError.Retrieve().Reason);
@@ -43,6 +43,7 @@ namespace Quic.Implementation
             {
                 Console.WriteLine("c#; On Transmit: endpoint: {0} dest: {1}, length: {2}", e.Id,
                     e.TransmitPacket.Destination, e.TransmitPacket.Contents.Length);
+                QuicSocket.Send(e.TransmitPacket.Contents, e.TransmitPacket.Destination);
             }
         }
 

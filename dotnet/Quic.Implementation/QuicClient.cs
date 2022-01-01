@@ -3,9 +3,9 @@ using System.Net;
 
 namespace Quic.Implementation
 {
-    public class QuickClient
+    public class QuicClient
     {
-        public QuickClient(IPEndPoint clientIp)
+        public QuicClient(IPEndPoint clientIp)
         {
             throw new NotImplementedException();
         }

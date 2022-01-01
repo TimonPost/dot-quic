@@ -20,9 +20,9 @@ namespace Quic.Implementation
             return buffer;
         }
 
-        public void Send(byte[] buffer)
+        public void Send(byte[] buffer, IPEndPoint destination)
         {
-            _socket.Client.Send(buffer);
+            _socket.Send(buffer, buffer.Length, destination);
         }
     }
 }

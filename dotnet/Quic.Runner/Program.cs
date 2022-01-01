@@ -18,8 +18,12 @@ namespace Quic.Runner
 
             QuicConnection connection = await server.AcceptIncomingAsync();
 
+            while (true)
+            {
+                server.Poll();
+                server.Recieve();
+            }
 
-            server.Poll();
 
             //var clientIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
 

@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <CargoPackage>quinn_ffi</CargoPackage>
-        <RootPath>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), VideoStreamer.sln))</RootPath>
+        <RootPath>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), QuicCsharp.sln))</RootPath>
         <CargoWorkspacePath>$(RootPath)\quinn-ffi</CargoWorkspacePath>
     </PropertyGroup>
 
