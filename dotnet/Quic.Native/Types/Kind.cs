@@ -1,4 +1,4 @@
-﻿namespace Quick.Native.Types
+﻿namespace Quic.Native.Types
 {
     public enum Kind : uint
     {

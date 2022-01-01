@@ -1,7 +1,6 @@
-﻿using Quick.Native;
-using Quick.Native.Handles;
+﻿using Quic.Native.Handles;
 
-namespace Quick.Implementation
+namespace Quic.Implementation
 {
     public class Endpoint
     {

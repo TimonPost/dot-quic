@@ -15,4 +15,9 @@
 
   <Import Project="../quic.targets" />
 
+  <ItemGroup>
+    <ProjectReference Include="..\Quic.Implementation\Quic.Implementation.csproj" />
+    <ProjectReference Include="..\Quic.Native\Quic.Native.csproj" />
+  </ItemGroup>
+
 </Project>

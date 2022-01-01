@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Quick.Native;
-using Quick.Native.Events;
-using Quick.Native.Handles;
+using Quic.Native;
+using Quic.Native.Events;
+using Quic.Native.Handles;
 
-namespace Quick.Implementation
+namespace Quic.Implementation
 {
     public class QuicConnection
     {
@@ -34,55 +34,46 @@ namespace Quick.Implementation
         private void OnStreamWritable(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
-            throw new System.NotImplementedException();
         }
 
         private void OnStreamStopped(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
-            throw new System.NotImplementedException();
         }
 
         private void OnStreamReadable(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
-            throw new System.NotImplementedException();
         }
 
         private void OnStreamOpened(object? sender, StreamEventArgs e)
         {
             if (IsThisConnection(e.ConnectionId)) return;
-            throw new System.NotImplementedException();
         }
 
         private void OnStreamFinished(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
-            throw new System.NotImplementedException();
         }
 
         private void StreamAvailable(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
-            throw new System.NotImplementedException();
         }
 
         private void DatagramReceived(object? sender, ConnectionIdEventArgs e)
         {
             if (!IsThisConnection(e.Id)) return;
-            throw new System.NotImplementedException();
         }
 
         private void OnConnectionLost(object? sender, ConnectionIdEventArgs e)
         {
             if (!IsThisConnection(e.Id)) return;
-            throw new System.NotImplementedException();
         }
 
         private void OnConnectionInitialized(object? sender, ConnectionIdEventArgs e)
         {
             if (!IsThisConnection(e.Id)) return;
-            throw new System.NotImplementedException();
         }
 
         public QuicStream OpenBiDirectionalStream()

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
-using Quick.Native.Types;
+using Quic.Native.Types;
 
-namespace Quick.Native.ApiWrappers
+namespace Quic.Native.ApiWrappers
 {
     public static class LastQuinnError
     {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Quick.Native.Types
+namespace Quic.Native.Types
 {
     [StructLayout(LayoutKind.Sequential)]
     public readonly struct QuinnError

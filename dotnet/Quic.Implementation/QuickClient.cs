@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Quick.Implementation
+namespace Quic.Implementation
 {
     public class QuickClient
     {

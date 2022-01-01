@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Quick.Native;
-using Quick.Native.ApiWrappers;
-using Quick.Native.Events;
-using Quick.Native.Handles;
+using Quic.Native;
+using Quic.Native.ApiWrappers;
+using Quic.Native.Events;
+using Quic.Native.Handles;
 
-namespace Quick.Implementation
+namespace Quic.Implementation
 {
     public class QuicListener : Endpoint
     {

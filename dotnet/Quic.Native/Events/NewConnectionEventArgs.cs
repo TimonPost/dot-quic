@@ -1,7 +1,7 @@
 ﻿using System;
-using Quick.Native.Handles;
+using Quic.Native.Handles;
 
-namespace Quick.Native.Events
+namespace Quic.Native.Events
 {
     public class NewConnectionEventArgs : EventArgs
     {

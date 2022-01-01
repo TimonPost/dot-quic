@@ -1,11 +1,49 @@
 {
   "version": 3,
   "targets": {
-    "net5.0": {}
+    "net5.0": {
+      "Quic.Implementation/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "Quic.Native": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Quic.Implementation.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Quic.Implementation.dll": {}
+        }
+      },
+      "Quic.Native/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "compile": {
+          "bin/placeholder/Quic.Native.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Quic.Native.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Quic.Implementation/1.0.0": {
+      "type": "project",
+      "path": "../Quic.Implementation/Quic.Implementation.csproj",
+      "msbuildProject": "../Quic.Implementation/Quic.Implementation.csproj"
+    },
+    "Quic.Native/1.0.0": {
+      "type": "project",
+      "path": "../Quic.Native/Quic.Native.csproj",
+      "msbuildProject": "../Quic.Native/Quic.Native.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net5.0": []
+    "net5.0": [
+      "Quic.Implementation >= 1.0.0",
+      "Quic.Native >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Timon\\.nuget\\packages\\": {}
@@ -34,7 +72,14 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "E:\\programming\\quinn-ffi\\dotnet\\Quic.Implementation\\Quic.Implementation.csproj": {
+              "projectPath": "E:\\programming\\quinn-ffi\\dotnet\\Quic.Implementation\\Quic.Implementation.csproj"
+            },
+            "E:\\programming\\quinn-ffi\\dotnet\\Quic.Native\\Quic.Native.csproj": {
+              "projectPath": "E:\\programming\\quinn-ffi\\dotnet\\Quic.Native\\Quic.Native.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Quick.Native.Types
+namespace Quic.Native.Types
 {
     public readonly struct TransmitPacket
     {

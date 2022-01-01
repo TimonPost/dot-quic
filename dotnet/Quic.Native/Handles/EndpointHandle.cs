@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Quick.Native.Handles
+namespace Quic.Native.Handles
 {
     public class EndpointHandle : SafeHandle
     {

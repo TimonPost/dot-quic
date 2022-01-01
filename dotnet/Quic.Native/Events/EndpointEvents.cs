@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Quick.Native.Handles;
-using Quick.Native.Types;
+using Quic.Native.Handles;
+using Quic.Native.Types;
 
-namespace Quick.Native.Events
+namespace Quic.Native.Events
 {
     public static class EndpointEvents
     {

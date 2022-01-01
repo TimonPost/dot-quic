@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Quick.Native
+namespace Quic.Native
 {
     public class ServerConfigHandle : SafeHandle
     {

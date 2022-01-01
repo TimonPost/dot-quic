@@ -1,9 +1,7 @@
-﻿using System;
-using System.Net;
-using System.Net.Sockets;
+﻿using System.Net;
 using System.Runtime.InteropServices;
 
-namespace Quick.Native
+namespace Quic.Native
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct SockaddrInV4

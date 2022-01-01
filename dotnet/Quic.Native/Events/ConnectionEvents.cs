@@ -1,7 +1,6 @@
 ﻿using System;
-using Quick.Native.Handles;
 
-namespace Quick.Native.Events
+namespace Quic.Native.Events
 {
     public static class ConnectionEvents
     { 

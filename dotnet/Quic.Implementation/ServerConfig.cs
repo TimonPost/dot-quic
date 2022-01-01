@@ -1,8 +1,8 @@
 ﻿using System;
-using Quick.Native;
-using Quick.Native.ApiWrappers;
+using Quic.Native;
+using Quic.Native.ApiWrappers;
 
-namespace Quick.Implementation
+namespace Quic.Implementation
 {
     public class ServerConfig
     {

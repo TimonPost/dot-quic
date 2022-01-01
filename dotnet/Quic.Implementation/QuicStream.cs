@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Quick.Implementation
+namespace Quic.Implementation
 {
     public class QuicStream : Stream
     {

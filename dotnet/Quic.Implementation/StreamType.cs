@@ -1,4 +1,4 @@
-﻿namespace Quick.Implementation
+﻿namespace Quic.Implementation
 {
     public enum StreamType
     {

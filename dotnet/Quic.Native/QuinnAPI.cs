@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Quick.Native.Events;
-using Quick.Native.Handles;
-using Quick.Native.Types;
+using Quic.Native.Events;
+using Quic.Native.Handles;
+using Quic.Native.Types;
 
-namespace Quick.Native
+namespace Quic.Native
 {
     public static class QuinnApi
     {

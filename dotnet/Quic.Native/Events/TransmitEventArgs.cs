@@ -1,7 +1,7 @@
 ﻿using System;
-using Quick.Native.Types;
+using Quic.Native.Types;
 
-namespace Quick.Native.Events
+namespace Quic.Native.Events
 {
     public class TransmitEventArgs : EventArgs
     {

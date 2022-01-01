@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
-using FFmpeg.AutoGen;
 using MediaToolkit;
 using MediaToolkit.Model;
 using MediaToolkit.Options;
@@ -12,7 +10,7 @@ using QuicNet;
 using QuicNet.Connections;
 using QuicNet.Infrastructure.Frames;
 
-namespace VideoStreamer
+namespace Quic.Sandbox
 {
     class Program
     {

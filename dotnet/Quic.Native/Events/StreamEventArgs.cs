@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Quick.Native.Events
+namespace Quic.Native.Events
 {
     public class StreamEventArgs : EventArgs
     {

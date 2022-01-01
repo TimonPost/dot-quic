@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace Quick.Implementation
+namespace Quic.Implementation
 {
     public class QuickSocket
     {

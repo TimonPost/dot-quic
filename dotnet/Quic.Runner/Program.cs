@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Quic.Implementation;
+using Quic.Native;
+using System;
 using System.Net;
 using System.Threading.Tasks;
-using Quick.Implementation;
-using Quick.Native;
 
-namespace Quick.Runner
+namespace Quic.Runner
 {
     class Program
     {
