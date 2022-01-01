@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PJjkeNsoF37FJcKnHEoVhs4Y/Bt1X6hrU8OgYPFXVWGU9T+IqHohuETnnHKsEwDJadWTH0y6hgzg2tZJP37EXA==",
+  "dgSpecHash": "TKuCB2vNVuAmAlw2g0iZ4winh4YwfU4gkQCbh21xhIxAFqoMgVae7sZPLbMhtnUdcjCFusuYMuFe1M97lOzjWw==",
   "success": true,
-  "projectFilePath": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Native\\Quick.Native.csproj",
+  "projectFilePath": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Native\\Quic.Native.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

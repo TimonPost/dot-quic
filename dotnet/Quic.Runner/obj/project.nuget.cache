@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "xltcm/03MrWxe1ClWNMEYm86r87e5TeWpiA3NAOsutPUytFi4icATIeLhJ/wCAKDm77Wes1wR4RzzwjtLXFYQQ==",
+  "success": true,
+  "projectFilePath": "E:\\programming\\quinn-ffi\\dotnet\\Quic.Runner\\Quic.Runner.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Timon\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.13\\microsoft.netcore.app.host.win-x64.5.0.13.nupkg.sha512"
+  ],
+  "logs": []
+}

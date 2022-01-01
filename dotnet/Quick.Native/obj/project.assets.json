@@ -13,9 +13,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Native\\Quick.Native.csproj",
-      "projectName": "Quick.Native",
-      "projectPath": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Native\\Quick.Native.csproj",
+      "projectUniqueName": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Native\\Quic.Native.csproj",
+      "projectName": "Quic.Native",
+      "projectPath": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Native\\Quic.Native.csproj",
       "packagesPath": "C:\\Users\\Timon\\.nuget\\packages\\",
       "outputPath": "E:\\programming\\quinn-ffi\\dotnet\\Quick.Native\\obj\\",
       "projectStyle": "PackageReference",

@@ -1,0 +1,15 @@
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\bin\Debug\net5.0\Quic.Implementation.deps.json
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\bin\Debug\net5.0\Quic.Implementation.dll
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\bin\Debug\net5.0\ref\Quic.Implementation.dll
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\bin\Debug\net5.0\Quic.Implementation.pdb
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\bin\Debug\net5.0\Quic.Native.dll
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\bin\Debug\net5.0\Quic.Native.pdb
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\Quic.Implementation.csproj.AssemblyReference.cache
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\Quic.Implementation.GeneratedMSBuildEditorConfig.editorconfig
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\Quic.Implementation.AssemblyInfoInputs.cache
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\Quic.Implementation.AssemblyInfo.cs
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\Quic.Implementation.csproj.CoreCompileInputs.cache
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\Quic.Implementation.csproj.CopyComplete
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\Quic.Implementation.dll
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\ref\Quic.Implementation.dll
+E:\programming\quinn-ffi\dotnet\Quic.Implementation\obj\Debug\net5.0\Quic.Implementation.pdb
