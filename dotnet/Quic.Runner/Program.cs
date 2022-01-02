@@ -2,6 +2,7 @@
 using Quic.Native;
 using System;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Quic.Runner
@@ -22,8 +23,19 @@ namespace Quic.Runner
             {
                 server.Poll();
                 server.Recieve();
-            }
 
+                foreach (var stream in connection.BiDirectionalQuicStreams)
+                {
+                    var buffer = new byte[1024];
+
+                    if (stream.Value.CanRead)
+                    {
+                        stream.Value.Read(buffer);
+
+                        Console.WriteLine("Received {0}", Encoding.UTF8.GetString(buffer));
+                    }
+                }
+            }
 
             //var clientIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
 

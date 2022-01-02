@@ -107,17 +107,27 @@ namespace Quic.Native
             CallingConvention = CallingConvention.Cdecl)]
         public static extern void poll_endpoint(EndpointHandle connectionHandle);
 
+        [DllImport(NativeLib, EntryPoint = nameof(read_stream), ExactSpelling = true,
+            CallingConvention = CallingConvention.Cdecl)]
+        public static extern QuinnResult read_stream(ConnectionHandle handle, long streamId, IntPtr bufferPtr, UIntPtr bufferLength, out int actualLength);
+
+        [DllImport(NativeLib, EntryPoint = nameof(accept_stream), ExactSpelling = true,
+            CallingConvention = CallingConvention.Cdecl)]
+        public static extern QuinnResult accept_stream(ConnectionHandle handle, byte streamDirection, out long streamId);
+
 
         public delegate void OnNewConnection(IntPtr handle, int connectionId);
         public delegate void OnConnected(int connectionId);
         public delegate void OnConnectionLost(int connectionId);
-        public delegate void OnStreamReadable(int connectionId, long streamId);
-        public delegate void OnStreamWritable(int connectionId, long streamId);
-        public delegate void OnStreamFinished(int connectionId, long streamId);
-        public delegate void OnStreamStopped(int connectionId, long streamId);
+        public delegate void OnStreamReadable(int connectionId, long streamId, byte direction);
+        public delegate void OnStreamWritable(int connectionId, long streamId, byte direction);
+        public delegate void OnStreamFinished(int connectionId, long streamId, byte direction);
+        public delegate void OnStreamStopped(int connectionId, long streamId, byte direction);
         public delegate void OnStreamAvailable(int connectionId, byte streamType);
         public delegate void OnStreamOpened(int connectionId, byte streamType);
         public delegate void OnDatagramReceived(int connectionId);
         public delegate void OnTransmit(byte endpointId, IntPtr buffer, IntPtr bufferLength, SockaddrInV4 address);
+
+      
     }
 }

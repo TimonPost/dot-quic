@@ -1,4 +1,5 @@
 ﻿using System;
+using Quic.Native.Types;
 
 namespace Quic.Native.Events
 {
@@ -23,8 +24,8 @@ namespace Quic.Native.Events
         public static event EventHandler<ConnectionIdEventArgs> ConnectionInitialized;
         public static event EventHandler<ConnectionIdEventArgs> ConnectionLost;
 
-        public static event EventHandler<StreamEventArgs> StreamOpened;
-        public static event EventHandler<StreamEventArgs> StreamAvailable;
+        public static event EventHandler<StreamTypeEventArgs> StreamOpened;
+        public static event EventHandler<StreamTypeEventArgs> StreamAvailable;
         public static event EventHandler<StreamEventArgs> StreamWritable;
         public static event EventHandler<StreamEventArgs> StreamReadable;
         public static event EventHandler<StreamEventArgs> StreamFinished;
@@ -47,37 +48,37 @@ namespace Quic.Native.Events
         private static void OnStreamOpened(int connectionId, byte streamType)
         {
             Console.WriteLine("C#; OnStreamOpened; Connection ID: {0} Stream Type: {1}", connectionId, streamType);
-            StreamOpened?.Invoke(null, new StreamEventArgs(connectionId, streamType));
+            StreamOpened?.Invoke(null, new StreamTypeEventArgs(connectionId, (StreamType)streamType));
         }
 
         private static void OnStreamAvailable(int connectionId, byte streamType)
         {
             Console.WriteLine("C#; OnStreamOpened; Connection ID: {0} Stream Type: {1}", connectionId, streamType);
-            StreamAvailable?.Invoke(null, new StreamEventArgs(connectionId, streamType));
+            StreamAvailable?.Invoke(null, new StreamTypeEventArgs(connectionId, (StreamType)streamType));
         }
         
-        private static void OnStreamWritable(int connectionId, long streamId)
+        private static void OnStreamWritable(int connectionId, long streamId, byte streamType)
         {
             Console.WriteLine("C#; OnStreamWritable; Connection ID: {0} Stream: {1}", connectionId, streamId);
-            StreamWritable?.Invoke(null, new StreamEventArgs(connectionId, streamId));
+            StreamWritable?.Invoke(null, new StreamEventArgs(connectionId, streamId, (StreamType)streamType));
         }
 
-        private static void OnStreamReadable(int connectionId, long streamId)
+        private static void OnStreamReadable(int connectionId, long streamId, byte streamType)
         {
             Console.WriteLine("C#; OnStreamReadable; Connection ID: {0} Stream: {1}", connectionId, streamId);
-            StreamReadable?.Invoke(null, new StreamEventArgs(connectionId, streamId));
+            StreamReadable?.Invoke(null, new StreamEventArgs(connectionId, streamId, (StreamType)streamType));
         }
 
-        private static void OnStreamStopped(int connectionId, long streamId)
+        private static void OnStreamStopped(int connectionId, long streamId, byte streamType)
         {
             Console.WriteLine("C#; OnStreamStopped; Connection ID: {0} Stream: {1}", connectionId, streamId);
-            StreamStopped?.Invoke(null, new StreamEventArgs(connectionId, streamId));
+            StreamStopped?.Invoke(null, new StreamEventArgs(connectionId, streamId, (StreamType)streamType));
         }
 
-        private static void OnStreamFinished(int connectionId, long streamId)
+        private static void OnStreamFinished(int connectionId, long streamId, byte streamType)
         {
             Console.WriteLine("C#; OnStreamFinished; Connection ID: {0} Stream: {1}", connectionId, streamId);
-            StreamFinished?.Invoke(null, new StreamEventArgs(connectionId, streamId));
+            StreamFinished?.Invoke(null, new StreamEventArgs(connectionId, streamId, (StreamType)streamType));
         }
 
         private static void OnDatagramReceived(int connectionId)

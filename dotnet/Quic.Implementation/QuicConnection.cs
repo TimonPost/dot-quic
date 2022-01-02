@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Quic.Native;
+using Quic.Native.ApiWrappers;
 using Quic.Native.Events;
 using Quic.Native.Handles;
+using Quic.Native.Types;
 
 namespace Quic.Implementation
 {
     public class QuicConnection
     {
-        public List<QuicStream> UniDirectionalQuicStreams;
-        public List<QuicStream> BiDirectionalQuicStreams;
+        public Dictionary<long, QuicStream> UniDirectionalQuicStreams;
+        public Dictionary<long, QuicStream> BiDirectionalQuicStreams;
         private readonly ConnectionHandle _connectionHandle;
 
         public int ConnectionId { get; set; }
@@ -17,6 +20,9 @@ namespace Quic.Implementation
         {
             _connectionHandle = connectionHandle;
             ConnectionId = connectionId;
+
+            UniDirectionalQuicStreams = new Dictionary<long, QuicStream>();
+            BiDirectionalQuicStreams = new Dictionary<long, QuicStream>();
 
             ConnectionEvents.ConnectionInitialized += OnConnectionInitialized;
             ConnectionEvents.ConnectionLost += OnConnectionLost;
@@ -44,11 +50,48 @@ namespace Quic.Implementation
         private void OnStreamReadable(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
+
+            switch (e.StreamType)
+            {
+                case StreamType.UniDirectional:
+                    UniDirectionalQuicStreams[e.StreamId].SetReadable();
+                    break;
+                case StreamType.BiDirectional:
+                    BiDirectionalQuicStreams[e.StreamId].SetReadable();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        private void OnStreamOpened(object? sender, StreamEventArgs e)
+        private void OnStreamOpened(object? sender, StreamTypeEventArgs e)
         {
-            if (IsThisConnection(e.ConnectionId)) return;
+            if (!IsThisConnection(e.ConnectionId)) return;
+            
+            var result = QuinnApi.accept_stream(_connectionHandle, (byte)e.StreamType, out long streamId);
+
+            if (result.Erroneous())
+            {
+                throw new Exception($"Could not accept stream: {LastQuinnError.Retrieve().Reason}");
+            }
+            else
+            {
+                switch (e.StreamType)
+                {
+                    case StreamType.UniDirectional:
+                    {
+                        var newStream = new QuicStream(_connectionHandle, e.StreamType, streamId, true, false);
+                        UniDirectionalQuicStreams.Add(streamId, newStream);
+                        break;
+                    }
+                    case StreamType.BiDirectional:
+                    {
+                        var newStream = new QuicStream(_connectionHandle, e.StreamType, streamId, true, true);
+                        BiDirectionalQuicStreams.Add(streamId, newStream);
+                        break;
+                    }
+                }
+            }
         }
 
         private void OnStreamFinished(object? sender, StreamEventArgs e)
@@ -56,7 +99,7 @@ namespace Quic.Implementation
             if (!IsThisConnection(e.ConnectionId)) return;
         }
 
-        private void StreamAvailable(object? sender, StreamEventArgs e)
+        private void StreamAvailable(object? sender, StreamTypeEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
         }
@@ -76,19 +119,19 @@ namespace Quic.Implementation
             if (!IsThisConnection(e.Id)) return;
         }
 
-        public QuicStream OpenBiDirectionalStream()
-        {
-            var stream = new QuicStream(StreamType.BiDirectional, 0);
-            BiDirectionalQuicStreams.Add(stream);
-            return stream;
-        }
-
-        public QuicStream OpenUniDirectionalStream()
-        {
-            var stream = new QuicStream(StreamType.UniDirectional, 0);
-            UniDirectionalQuicStreams.Add(stream);
-            return stream;
-        }
+        // public QuicStream OpenBiDirectionalStream()
+        // {
+        //     var stream = new QuicStream(_connectionHandle, StreamType.BiDirectional, 0, true, true);
+        //     BiDirectionalQuicStreams.Add(stream);
+        //     return stream;
+        // }
+        //
+        // public QuicStream OpenUniDirectionalStream()
+        // {
+        //     var stream = new QuicStream(_connectionHandle, StreamType.UniDirectional, 0, false, true);
+        //     UniDirectionalQuicStreams.Add(stream);
+        //     return stream;
+        // }
 
         public void Poll()
         {

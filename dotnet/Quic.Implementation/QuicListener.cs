@@ -15,7 +15,7 @@ namespace Quic.Implementation
         private readonly ServerConfig _serverConfig;
         private readonly Dictionary<int, ConnectionHandle> _connections;
 
-        private SemaphoreSlim _signal = new SemaphoreSlim(0, 1);
+        private ManualResetEvent AwaitingConnection = new ManualResetEvent(false);
         private int _lastConnection = 0;
 
 
@@ -51,7 +51,7 @@ namespace Quic.Implementation
         {
             _connections[e.Id] = e.ConnectionHandle;
             _lastConnection = e.Id;
-            _signal.Release();
+            AwaitingConnection.Set();
         }
         
         public void Recieve()
@@ -67,9 +67,9 @@ namespace Quic.Implementation
             Console.WriteLine("Listening...");
 
             Recieve();
-            await _signal.WaitAsync();
-            _signal.Dispose();
-            _signal = new SemaphoreSlim(0, 1);
+            await AwaitingConnection.AsTask();
+            AwaitingConnection.Dispose();
+            AwaitingConnection.Reset();
             return new QuicConnection(_connections[_lastConnection], _lastConnection);
         }
 
