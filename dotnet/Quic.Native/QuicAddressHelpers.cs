@@ -32,8 +32,8 @@ namespace Quic.Native
 
         private static void SetPort(ref SockaddrInV4 socketAddrInet, int originalPort)
         {
-            ushort convertedPort = (ushort)IPAddress.HostToNetworkOrder((short)originalPort);
-            socketAddrInet.port = convertedPort;
+            ushort convertedPort = (ushort)IPAddress.HostToNetworkOrder((ushort)originalPort);
+            socketAddrInet.port = (ushort)originalPort;
         }
     }
 }
