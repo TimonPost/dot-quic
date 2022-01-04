@@ -52,9 +52,7 @@ namespace Quic.Implementation
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error receiving");
-                Thread.Sleep(200);
-                StartReceiving();
+                throw e;
             }
         }
 
@@ -92,7 +90,6 @@ namespace Quic.Implementation
         {
             Console.WriteLine("Listening...");
             await AwaitingConnection.AsTask();
-            AwaitingConnection.Dispose();
             AwaitingConnection.Reset();
             return new QuicConnection(_connections[_lastConnection], _lastConnection);
         }

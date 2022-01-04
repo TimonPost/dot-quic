@@ -12,10 +12,12 @@ namespace Quic.Runner
     class Program
     {
         static IPEndPoint serverIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5000);
-        static QuicListener server = new QuicListener(serverIp);
+       
 
         static async Task Main(string[] args)
         {
+            QuicListener server = new QuicListener(serverIp);
+
             QuinnApi.Initialize();
             
             QuicConnection connection = await server.AcceptIncomingAsync();
