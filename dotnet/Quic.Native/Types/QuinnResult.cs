@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
+using Quic.Native.ApiWrappers;
 
 namespace Quic.Native.Types
 {
@@ -20,6 +22,12 @@ namespace Quic.Native.Types
         public bool IsBufferTooSmall()
         {
             return ResultKind == Kind.IsBufferToSmall;
+        }
+
+        public void Unwrap()
+        {
+            if (Erroneous())
+                throw new Exception(LastQuinnError.Retrieve().Reason);
         }
     }
 }

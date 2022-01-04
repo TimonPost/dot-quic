@@ -13,7 +13,7 @@ namespace Quic.Native.Handles
         public ConnectionHandle(IntPtr handle)
             : this()
         {
-            this.SetHandle(handle);
+            SetHandle(handle);
         }
 
         public override bool IsInvalid => handle == IntPtr.Zero;

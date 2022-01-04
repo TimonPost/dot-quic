@@ -18,7 +18,7 @@ namespace Quic.Native.Handles
 
             var h = handle;
             handle = IntPtr.Zero;
-            
+
             return true;
         }
     }

@@ -9,8 +9,8 @@ namespace Quic.Native.Events
     {
         public static void Initialize()
         {
-            QuinnApi.set_on_new_connection(OnNewConnection);
-            QuinnApi.set_on_transmit(OnTransmit);
+            QuinnApi.set_on_new_connection(OnNewConnection).Unwrap();
+            QuinnApi.set_on_transmit(OnTransmit).Unwrap();
         }
 
         public static event EventHandler<TransmitEventArgs> TransmitReady;
@@ -24,10 +24,11 @@ namespace Quic.Native.Events
 
         private static void OnTransmit(byte endpointId, IntPtr buffer, IntPtr bufferlenght, SockaddrInV4 address)
         {
-            byte[] managedArray = new byte[(int)bufferlenght];
+            var managedArray = new byte[(int)bufferlenght];
             Marshal.Copy(buffer, managedArray, 0, (int)bufferlenght);
 
-            TransmitReady?.Invoke(null, new TransmitEventArgs(new TransmitPacket(address.ToIpEndpoint(), managedArray), (byte)endpointId));
+            TransmitReady?.Invoke(null,
+                new TransmitEventArgs(new TransmitPacket(address.ToIpEndpoint(), managedArray), endpointId));
         }
     }
 }

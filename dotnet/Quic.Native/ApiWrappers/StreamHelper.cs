@@ -1,35 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Quic.Native.Handles;
 
 namespace Quic.Native.ApiWrappers
 {
     public class StreamHelper
     {
-        public static int ReadFromStream(ConnectionHandle handle, long streamId, byte[] buffer)
+        public static uint WriteToStream(ConnectionHandle handle, long streamId, byte[] buffer)
         {
-            Span<byte> bufferSpan = new Span<byte>(buffer);
-        
+            var bufferSpan = new ReadOnlySpan<byte>(buffer);
+
             unsafe
-            { 
+            {
                 fixed (byte* bufferPtr = bufferSpan)
                 {
-                    var result = QuinnApi.read_stream(
+                    QuinnApi.write_stream(
                         handle,
                         streamId,
                         (IntPtr)bufferPtr,
-                        (UIntPtr)buffer.Length,
+                        (uint)buffer.Length,
+                        out var bytesWritten
+                    ).Unwrap();
+
+                    return bytesWritten;
+                }
+            }
+        }
+
+        public static uint ReadFromStream(ConnectionHandle handle, long streamId, byte[] buffer)
+        {
+            var bufferSpan = new Span<byte>(buffer);
+
+            unsafe
+            {
+                fixed (byte* bufferPtr = bufferSpan)
+                {
+                    QuinnApi.read_stream(
+                        handle,
+                        streamId,
+                        (IntPtr)bufferPtr,
+                        (uint)buffer.Length,
                         out var actualMessageLen
-                    );
-        
-                    if (result.Erroneous())
-                    {
-                         //throw new Exception(LastQuinnError.Retrieve().Reason);
-                         Console.WriteLine("No data in the stream");
-                    }
+                    ).Unwrap();
 
                     return actualMessageLen;
                 }

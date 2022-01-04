@@ -13,56 +13,43 @@ namespace Quic.Implementation
 {
     public class QuicListener : Endpoint
     {
-        private readonly ServerConfig _serverConfig;
         private readonly Dictionary<int, ConnectionHandle> _connections;
+        private IPEndPoint _lastAddress;
+        private int _lastIncommingConnection;
 
-        private ManualResetEvent AwaitingConnection = new ManualResetEvent(false);
-        private int _lastConnection = 0;
+        private readonly ManualResetEvent AwaitingConnection = new(false);
 
 
         public QuicListener(IPEndPoint ipEndpoint)
         {
-            _serverConfig = new ServerConfig();
-            var result = QuinnApi.create_endpoint(_serverConfig.Handle, out byte id, out EndpointHandle handle);
-            
-            if (result.Erroneous())
-                throw new Exception(LastQuinnError.Retrieve().Reason);
+            var serverConfig = new ServerConfig();
+            QuinnApi.create_endpoint(serverConfig.Handle, out var id, out var handle).Unwrap();
 
-            base.Id = id;
-            base.Handle = handle;
+            Id = id;
+            Handle = handle;
+            QuicSocket = new UdpClient(ipEndpoint);
 
             _connections = new Dictionary<int, ConnectionHandle>();
 
-            QuicSocket = new QuickSocket(ipEndpoint);
             EndpointEvents.NewConnection += OnNewConnection;
             EndpointEvents.TransmitReady += OnTransmitReady;
 
             StartReceiving();
         }
 
-        private byte[] buffer;
-
         private void StartReceiving()
         {
             Console.WriteLine("Receiving...");
-
-            try
-            {
-                QuicSocket.Socket.BeginReceive(OnReceiveCallback, null);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            QuicSocket.BeginReceive(OnReceiveCallback, null);
         }
 
 
         private void OnReceiveCallback(IAsyncResult ar)
         {
             ar.AsyncWaitHandle.WaitOne();
-            var receivedBytes = QuicSocket.Socket.EndReceive(ar, ref QuicSocket.LastAddress);
+            var receivedBytes = QuicSocket.EndReceive(ar, ref _lastAddress);
             Console.WriteLine("Processing Incoming...");
-            EndpointApi.HandleDatagram(Handle, receivedBytes, QuicSocket.LastAddress);
+            EndpointApi.HandleDatagram(Handle, receivedBytes, _lastAddress);
 
             StartReceiving();
         }
@@ -70,38 +57,30 @@ namespace Quic.Implementation
         private void OnTransmitReady(object sender, TransmitEventArgs e)
         {
             if (Id == e.Id)
-            {
-                QuicSocket.Send(e.TransmitPacket.Contents, e.TransmitPacket.Destination);
-            }
-            else
-            {
-
-            }
+                QuicSocket.Send(e.TransmitPacket.Contents, e.TransmitPacket.Contents.Length,
+                    e.TransmitPacket.Destination);
         }
 
         private void OnNewConnection(object sender, NewConnectionEventArgs e)
         {
             _connections[e.Id] = e.ConnectionHandle;
-            _lastConnection = e.Id;
+            _lastIncommingConnection = e.Id;
             AwaitingConnection.Set();
         }
-        
+
         public async Task<QuicConnection> AcceptIncomingAsync()
         {
             Console.WriteLine("Listening...");
             await AwaitingConnection.AsTask();
             AwaitingConnection.Reset();
-            return new QuicConnection(_connections[_lastConnection], _lastConnection);
+            return new QuicConnection(_connections[_lastIncommingConnection], _lastIncommingConnection);
         }
 
         public void PollEvents()
         {
-            foreach (var connection in _connections)
-            {
-                QuinnApi.poll_connection(connection.Value);
-            }
+            foreach (var connection in _connections) QuinnApi.poll_connection(connection.Value).Unwrap();
 
-            QuinnApi.poll_endpoint(Handle);
+            QuinnApi.poll_endpoint(Handle).Unwrap();
         }
     }
 }

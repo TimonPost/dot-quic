@@ -3,6 +3,6 @@
     public enum StreamType : byte
     {
         BiDirectional,
-        UniDirectional,
+        UniDirectional
     }
 }

@@ -12,18 +12,18 @@ using QuicNet.Infrastructure.Frames;
 
 namespace Quic.Sandbox
 {
-    class Program
+    internal class Program
     {
-        static MediaFile file = new MediaFile("C:\\Users\\Timon\\Downloads\\test\\video1.mp4");
-        static MediaFile outputFile = new MediaFile("test.jpg");
+        private static readonly MediaFile file = new("C:\\Users\\Timon\\Downloads\\test\\video1.mp4");
+        private static readonly MediaFile outputFile = new("test.jpg");
 
         private static QuicConnection ClientConnection;
         private static QuicConnection ServerConnection;
 
-        static QuicConnection ListenServer()
+        private static QuicConnection ListenServer()
         {
             Console.WriteLine("Listening...");
-            QuicListener server = new QuicListener(11000);
+            var server = new QuicListener(11000);
             server.Start();
 
             var awaitClient = server.AcceptQuicClient();
@@ -32,17 +32,17 @@ namespace Quic.Sandbox
             return awaitClient;
         }
 
-        static  QuicConnection StartClient()
+        private static QuicConnection StartClient()
         {
             var client = new QuicClient();
-            var makeConnection  = client.Connect("127.0.0.1", 11000);
+            var makeConnection = client.Connect("127.0.0.1", 11000);
             Console.WriteLine("Connected to server");
             return makeConnection;
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            Thread serverThread = new Thread(() =>
+            var serverThread = new Thread(() =>
             {
                 ClientConnection = ListenServer();
 
@@ -52,7 +52,7 @@ namespace Quic.Sandbox
 
                 using (var engine = new Engine("C:\\Users\\Timon\\Downloads\\test\\ffmpeg.exe"))
                 {
-                    int counter = 0;
+                    var counter = 0;
                     while (true)
                     {
                         Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -64,7 +64,7 @@ namespace Quic.Sandbox
 
                         var bytes = File.ReadAllBytes(outputFile.Filename);
                         stream.Send(bytes);
-                        
+
                         counter++;
                     }
                 }
@@ -73,7 +73,7 @@ namespace Quic.Sandbox
 
             serverThread.Start();
 
-            Thread clientThread = new Thread(() =>
+            var clientThread = new Thread(() =>
             {
                 ServerConnection = StartClient();
 

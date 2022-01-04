@@ -1,12 +1,13 @@
-﻿using Quic.Native.Handles;
+﻿using System.Net.Sockets;
+using Quic.Native.Handles;
 
 namespace Quic.Implementation
 {
-    public class Endpoint
+    public abstract class Endpoint
     {
         public EndpointHandle Handle { get; protected set; }
         public int Id { get; protected set; }
-        
-        public QuickSocket QuicSocket { get; protected set; }
+
+        public UdpClient QuicSocket { get; protected set; }
     }
 }

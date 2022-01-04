@@ -1,44 +1,44 @@
-﻿using Quic.Implementation;
-using Quic.Native;
-using System;
+﻿using System;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Quic.Native.Events;
+using Quic.Implementation;
+using Quic.Native;
 
 namespace Quic.Runner
 {
-    class Program
+    internal class Program
     {
-        static IPEndPoint serverIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5000);
-       
+        private static readonly IPEndPoint serverIp = new(IPAddress.Parse("127.0.0.1"), 5000);
 
-        static async Task Main(string[] args)
+
+        private static async Task Main(string[] args)
         {
-            QuicListener server = new QuicListener(serverIp);
+            var server = new QuicListener(serverIp);
 
             QuinnApi.Initialize();
-            
-            QuicConnection connection = await server.AcceptIncomingAsync();
+
+            var connection = await server.AcceptIncomingAsync();
             connection.DataReceived += OnDataReceive;
+
+            var stream = connection.OpenBiDirectionalStream();
 
             while (true)
             {
                 server.PollEvents();
+
                 Thread.Sleep(30);
+
+                stream.Write(new byte[] { 0, 1, 2, 3 });
             }
 
             //var clientIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
 
 
-            // QuicStream stream = connection.OpenBiDirectionalStream();
             // QuicStream stream1 = connection.OpenUniDirectionalStream();
-            //
-            // var client = new QuickClient(clientIp);
-            // client.Connect(serverIp);
 
-            
+
             Console.ReadKey();
         }
 
@@ -51,6 +51,10 @@ namespace Quic.Runner
                 e.Stream.Read(buffer);
 
                 Console.WriteLine("Received {0}", Encoding.UTF8.GetString(buffer));
+
+                Thread.Sleep(2000);
+
+                e.Stream.Write(new ReadOnlySpan<byte>(new byte[] { 1, 2, 3 }));
             }
         }
     }

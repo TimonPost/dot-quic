@@ -4,20 +4,20 @@ using Quic.Native.Types;
 namespace Quic.Native.Events
 {
     public static class ConnectionEvents
-    { 
+    {
         public static void Initialize()
         {
-            QuinnApi.set_on_connected(OnConnected);
-            QuinnApi.set_on_connection_lost(OnConnectionLost);
+            QuinnApi.set_on_connected(OnConnected).Unwrap();
+            QuinnApi.set_on_connection_lost(OnConnectionLost).Unwrap();
 
-            QuinnApi.set_on_datagram_received(OnDatagramReceived);
-      
-            QuinnApi.set_on_stream_opened(OnStreamOpened);
-            QuinnApi.set_on_stream_available(OnStreamAvailable);
-            QuinnApi.set_on_stream_writable(OnStreamWritable);
-            QuinnApi.set_on_stream_readable(OnStreamReadable);
-            QuinnApi.set_on_stream_stopped(OnStreamStopped);
-            QuinnApi.set_on_stream_finished(OnStreamFinished);
+            QuinnApi.set_on_datagram_received(OnDatagramReceived).Unwrap();
+
+            QuinnApi.set_on_stream_opened(OnStreamOpened).Unwrap();
+            QuinnApi.set_on_stream_available(OnStreamAvailable).Unwrap();
+            QuinnApi.set_on_stream_writable(OnStreamWritable).Unwrap();
+            QuinnApi.set_on_stream_readable(OnStreamReadable).Unwrap();
+            QuinnApi.set_on_stream_stopped(OnStreamStopped).Unwrap();
+            QuinnApi.set_on_stream_finished(OnStreamFinished).Unwrap();
         }
 
 
@@ -32,7 +32,7 @@ namespace Quic.Native.Events
         public static event EventHandler<StreamEventArgs> StreamStopped;
         public static event EventHandler<ConnectionIdEventArgs> DatagramReceived;
 
-      
+
         public static void OnConnected(int connectionId)
         {
             ConnectionInitialized?.Invoke(null, new ConnectionIdEventArgs(connectionId));
@@ -52,7 +52,7 @@ namespace Quic.Native.Events
         {
             StreamAvailable?.Invoke(null, new StreamTypeEventArgs(connectionId, (StreamType)streamType));
         }
-        
+
         private static void OnStreamWritable(int connectionId, long streamId, byte streamType)
         {
             StreamWritable?.Invoke(null, new StreamEventArgs(connectionId, streamId, (StreamType)streamType));

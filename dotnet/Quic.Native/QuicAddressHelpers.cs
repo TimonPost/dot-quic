@@ -9,22 +9,20 @@ namespace Quic.Native
         internal ushort port;
         internal unsafe fixed byte addr[4];
     }
-    
+
     internal static class QuicAddressHelpers
     {
         internal static unsafe IPEndPoint ToIpEndpoint(this SockaddrInV4 inetAddress)
         {
-            return new IPEndPoint(new IPAddress(MemoryMarshal.CreateReadOnlySpan<byte>(ref inetAddress.addr[0], 4)), (ushort)inetAddress.port);
-            
+            return new IPEndPoint(new IPAddress(MemoryMarshal.CreateReadOnlySpan(ref inetAddress.addr[0], 4)),
+                inetAddress.port);
         }
 
         internal static unsafe SockaddrInV4 ToNative(this IPEndPoint endpoint)
         {
             SockaddrInV4 socketAddress = default;
             if (!endpoint.Address.Equals(IPAddress.Any) && !endpoint.Address.Equals(IPAddress.IPv6Any))
-            {
-                endpoint.Address.TryWriteBytes(MemoryMarshal.CreateSpan<byte>(ref socketAddress.addr[0], 4), out _);
-            }
+                endpoint.Address.TryWriteBytes(MemoryMarshal.CreateSpan(ref socketAddress.addr[0], 4), out _);
 
             SetPort(ref socketAddress, endpoint.Port);
             return socketAddress;
@@ -32,7 +30,7 @@ namespace Quic.Native
 
         private static void SetPort(ref SockaddrInV4 socketAddrInet, int originalPort)
         {
-            ushort convertedPort = (ushort)IPAddress.HostToNetworkOrder((ushort)originalPort);
+            var convertedPort = (ushort)IPAddress.HostToNetworkOrder((ushort)originalPort);
             socketAddrInet.port = (ushort)originalPort;
         }
     }
