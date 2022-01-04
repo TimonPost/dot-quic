@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Quic.Native;
@@ -35,15 +36,46 @@ namespace Quic.Implementation
             QuicSocket = new QuickSocket(ipEndpoint);
             EndpointEvents.NewConnection += OnNewConnection;
             EndpointEvents.TransmitReady += OnTransmitReady;
+
+            StartReceiving();
+        }
+
+        private byte[] buffer;
+
+        private void StartReceiving()
+        {
+            Console.WriteLine("Receiving...");
+
+            try
+            {
+                QuicSocket.Socket.BeginReceive(OnReceiveCallback, null);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+
+        private void OnReceiveCallback(IAsyncResult ar)
+        {
+            ar.AsyncWaitHandle.WaitOne();
+            var receivedBytes = QuicSocket.Socket.EndReceive(ar, ref QuicSocket.LastAddress);
+            Console.WriteLine("Processing Incoming...");
+            EndpointApi.HandleDatagram(Handle, receivedBytes, QuicSocket.LastAddress);
+
+            StartReceiving();
         }
 
         private void OnTransmitReady(object sender, TransmitEventArgs e)
         {
             if (Id == e.Id)
             {
-                Console.WriteLine("c#; On Transmit: endpoint: {0} dest: {1}, length: {2}", e.Id,
-                    e.TransmitPacket.Destination, e.TransmitPacket.Contents.Length);
                 QuicSocket.Send(e.TransmitPacket.Contents, e.TransmitPacket.Destination);
+            }
+            else
+            {
+
             }
         }
 
@@ -54,26 +86,15 @@ namespace Quic.Implementation
             AwaitingConnection.Set();
         }
         
-        public void Recieve()
-        {
-            Console.WriteLine("Receiving...");
-            var buffer = QuicSocket.Receive(out var address);
-            Console.WriteLine("Processing Incoming...");
-            EndpointApi.HandleDatagram(Handle, buffer, address);
-        }
-
         public async Task<QuicConnection> AcceptIncomingAsync()
         {
             Console.WriteLine("Listening...");
-
-            Recieve();
             await AwaitingConnection.AsTask();
-            AwaitingConnection.Dispose();
             AwaitingConnection.Reset();
             return new QuicConnection(_connections[_lastConnection], _lastConnection);
         }
 
-        public void Poll()
+        public void PollEvents()
         {
             foreach (var connection in _connections)
             {

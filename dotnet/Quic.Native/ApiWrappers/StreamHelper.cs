@@ -27,7 +27,8 @@ namespace Quic.Native.ApiWrappers
         
                     if (result.Erroneous())
                     {
-                        return 0;
+                         //throw new Exception(LastQuinnError.Retrieve().Reason);
+                         Console.WriteLine("No data in the stream");
                     }
 
                     return actualMessageLen;

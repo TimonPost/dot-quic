@@ -8,6 +8,11 @@ using Quic.Native.Types;
 
 namespace Quic.Implementation
 {
+    public class DataReceivedEventArgs : EventArgs
+    {
+        public QuicStream Stream { get; set; }
+    }
+
     public class QuicConnection
     {
         public Dictionary<long, QuicStream> UniDirectionalQuicStreams;
@@ -15,6 +20,8 @@ namespace Quic.Implementation
         private readonly ConnectionHandle _connectionHandle;
 
         public int ConnectionId { get; set; }
+
+        public event EventHandler<DataReceivedEventArgs> DataReceived;
 
         public QuicConnection(ConnectionHandle connectionHandle, int connectionId)
         {
@@ -51,17 +58,22 @@ namespace Quic.Implementation
         {
             if (!IsThisConnection(e.ConnectionId)) return;
 
+            QuicStream stream;
             switch (e.StreamType)
             {
                 case StreamType.UniDirectional:
-                    UniDirectionalQuicStreams[e.StreamId].SetReadable();
+                    stream = UniDirectionalQuicStreams[e.StreamId];
+                    stream.SetReadable();
                     break;
                 case StreamType.BiDirectional:
-                    BiDirectionalQuicStreams[e.StreamId].SetReadable();
+                    stream = BiDirectionalQuicStreams[e.StreamId];
+                    stream.SetReadable();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
+            };
+            
+            DataReceived?.Invoke(this, new DataReceivedEventArgs() { Stream = stream });
         }
 
         private void OnStreamOpened(object? sender, StreamTypeEventArgs e)

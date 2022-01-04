@@ -14,7 +14,7 @@ namespace Quic.Native
     {
         internal static unsafe IPEndPoint ToIpEndpoint(this SockaddrInV4 inetAddress)
         {
-            return new IPEndPoint(new IPAddress(MemoryMarshal.CreateReadOnlySpan<byte>(ref inetAddress.addr[0], 4)), (ushort)IPAddress.NetworkToHostOrder((short)inetAddress.port));
+            return new IPEndPoint(new IPAddress(MemoryMarshal.CreateReadOnlySpan<byte>(ref inetAddress.addr[0], 4)), (ushort)inetAddress.port);
             
         }
 
@@ -32,8 +32,8 @@ namespace Quic.Native
 
         private static void SetPort(ref SockaddrInV4 socketAddrInet, int originalPort)
         {
-            ushort convertedPort = (ushort)IPAddress.HostToNetworkOrder((short)originalPort);
-            socketAddrInet.port = convertedPort;
+            ushort convertedPort = (ushort)IPAddress.HostToNetworkOrder((ushort)originalPort);
+            socketAddrInet.port = (ushort)originalPort;
         }
     }
 }

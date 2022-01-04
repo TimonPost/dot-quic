@@ -18,7 +18,6 @@ namespace Quic.Native.Events
 
         private static void OnNewConnection(IntPtr handle, int connectionId)
         {
-            Console.WriteLine("C#; OnNewConnection; Connection ID: {0}", connectionId);
             NewConnection?.Invoke(null, new NewConnectionEventArgs(new ConnectionHandle(handle), connectionId));
         }
 
