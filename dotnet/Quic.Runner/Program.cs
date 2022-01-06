@@ -22,7 +22,9 @@ namespace Quic.Runner
             var connection = await server.AcceptIncomingAsync();
             connection.DataReceived += OnDataReceive;
 
-            var stream = connection.OpenBiDirectionalStream();
+            // Thread.Sleep(500);
+            //
+            // var stream = connection.OpenBiDirectionalStream();
 
             while (true)
             {
@@ -30,7 +32,7 @@ namespace Quic.Runner
 
                 Thread.Sleep(30);
 
-                stream.Write(new byte[] { 0, 1, 2, 3 });
+                //stream.Write(new byte[] { 0, 1, 2, 3 });
             }
 
             //var clientIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
@@ -42,19 +44,31 @@ namespace Quic.Runner
             Console.ReadKey();
         }
 
+        private static int _count = 0;
+
         private static void OnDataReceive(object? sender, DataReceivedEventArgs e)
         {
-            var buffer = new byte[1024];
+            var buffer = new byte[10];
 
             if (e.Stream.CanRead)
             {
-                e.Stream.Read(buffer);
+                var read = e.Stream.Read(buffer);
 
-                Console.WriteLine("Received {0}", Encoding.UTF8.GetString(buffer));
+                Console.WriteLine("{0}", Encoding.UTF8.GetString(buffer[..read]));
+                var response = new ReadOnlySpan<byte>(Encoding.UTF8.GetBytes($"Ack {_count}"));
+                e.Stream.Position = 0;
+                e.Stream.Write(response);
 
-                Thread.Sleep(2000);
+                try
+                {
+                    Console.WriteLine("written: {0}", Encoding.UTF8.GetString(response));
+                }
+                catch(Exception ex)
+                {
 
-                e.Stream.Write(new ReadOnlySpan<byte>(new byte[] { 1, 2, 3 }));
+                }
+
+                _count++;
             }
         }
     }

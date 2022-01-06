@@ -30,6 +30,8 @@ namespace Quic.Native
 
         public delegate void OnTransmit(byte endpointId, IntPtr buffer, IntPtr bufferLength, SockaddrInV4 address);
 
+        public delegate void OnConnectionPollable(int connectionId);
+
         private const string NativeLib = "./Native/quinn_ffi.dll";
 
         public static void Initialize()
@@ -108,6 +110,10 @@ namespace Quic.Native
             CallingConvention = CallingConvention.Cdecl)]
         public static extern QuinnResult set_on_transmit(OnTransmit onTransmit);
 
+        [DllImport(NativeLib, EntryPoint = nameof(set_on_pollable_connection), ExactSpelling = true,
+            CallingConvention = CallingConvention.Cdecl)]
+        public static extern QuinnResult set_on_pollable_connection(OnConnectionPollable onTransmit);
+
         #endregion
 
         #region Endpoint
@@ -116,9 +122,9 @@ namespace Quic.Native
             CallingConvention = CallingConvention.Cdecl)]
         public static extern QuinnResult poll_endpoint(EndpointHandle connectionHandle);
 
-        [DllImport(NativeLib, EntryPoint = nameof(create_endpoint), ExactSpelling = true,
+        [DllImport(NativeLib, EntryPoint = nameof(create_server_endpoint), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
-        public static extern QuinnResult create_endpoint(ServerConfigHandle serverConfig, out byte endpointId,
+        public static extern QuinnResult create_server_endpoint(ServerConfigHandle serverConfig, out byte endpointId,
             out EndpointHandle endpointHandle);
 
         #endregion

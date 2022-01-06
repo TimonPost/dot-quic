@@ -26,13 +26,11 @@ namespace Quic.Native.ApiWrappers
             }
         }
 
-        public static uint ReadFromStream(ConnectionHandle handle, long streamId, byte[] buffer)
+        public static uint ReadFromStream(ConnectionHandle handle, long streamId, Span<byte> buffer)
         {
-            var bufferSpan = new Span<byte>(buffer);
-
             unsafe
             {
-                fixed (byte* bufferPtr = bufferSpan)
+                fixed (byte* bufferPtr = buffer)
                 {
                     QuinnApi.read_stream(
                         handle,

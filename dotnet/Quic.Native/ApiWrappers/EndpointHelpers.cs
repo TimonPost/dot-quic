@@ -12,7 +12,7 @@ namespace Quic.Native.ApiWrappers
             {
                 fixed (byte* valuePtr = data)
                 {
-                    QuinnApi.handle_datagram(handle, (IntPtr)valuePtr, (UIntPtr)data.Length, endpoint.ToNative());
+                    QuinnApi.handle_datagram(handle, (IntPtr)valuePtr, (UIntPtr)data.Length, endpoint.ToNative()).Unwrap();
                 }
             }
         }

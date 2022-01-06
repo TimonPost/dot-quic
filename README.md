@@ -31,8 +31,8 @@ QuicStream biStream = connection.OpenBiDirectionalStream();
 QuicStream uniStream = connection.OpenUniDirectionalStream();
 
 # Send Data
-biStream.Send(data))
-server.Send(streamId, data))
+biStream.Send(data)
+server.Send(streamId, data)
 
 
 # Listen for incomming connections.
@@ -58,6 +58,7 @@ QuicStream biStream = client.OpenBiDirectionalStream();
 QuicStream uniStream = client.OpenUniDirectionalStream();
 
 # Send Data
+biStream.Send(data)
 client.Send(streamId, data))
 
 # Poll for events
@@ -77,3 +78,16 @@ while (true)
 - Async API's
 - Client logic
 - Configuration of both server and clients. 
+
+
+
+Notes
+
+- Implement stram finialisation
+- Implement connection termination
+
+
+Cleanup:
+- ConnectionHandle
+
+

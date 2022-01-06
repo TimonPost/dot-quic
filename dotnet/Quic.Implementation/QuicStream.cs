@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Quic.Native.ApiWrappers;
 using Quic.Native.Handles;
 using Quic.Native.Types;
@@ -13,12 +14,11 @@ namespace Quic.Implementation
         private readonly long _streamId;
         private readonly StreamType _streamType;
         private readonly bool _writable;
-
-        private bool _canRead;
+        
         private readonly ConnectionHandle _handle;
 
-        private readonly ManualResetEvent ReadManualResetEvent;
-        private readonly ManualResetEvent WriteManualResetEvent;
+        private readonly ManualResetEvent _readManualResetEvent;
+        private readonly ManualResetEvent _writeManualResetEvent;
 
         public QuicStream(ConnectionHandle handle, StreamType streamType, long streamId, bool readable, bool writable)
         {
@@ -28,14 +28,14 @@ namespace Quic.Implementation
             _writable = writable;
             _handle = handle;
 
-            ReadManualResetEvent = new ManualResetEvent(false);
-            WriteManualResetEvent = new ManualResetEvent(false);
+            _readManualResetEvent = new ManualResetEvent(false);
+            _writeManualResetEvent = new ManualResetEvent(false);
         }
 
-        public override bool CanRead => ReadManualResetEvent.WaitOne(10);
+        public override bool CanRead => _readManualResetEvent.WaitOne(10);
 
-        public override bool CanSeek { get; }
-        public override bool CanWrite { get; }
+        public override bool CanSeek => false;
+        public override bool CanWrite => _writable;
         public override long Length { get; }
         public override long Position { get; set; }
 
@@ -46,19 +46,31 @@ namespace Quic.Implementation
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (!_readable)
-                throw new Exception(
-                    $"Trying to read a {_streamType} stream that can not be read from this remote endpoint.");
+            ReadAccessCheck();
 
-            ReadManualResetEvent.WaitOne();
+            _readManualResetEvent.WaitOne();
+            var read = Read(buffer);
+            _readManualResetEvent.Reset();
+            return read;
+        }
 
+        public override int Read(Span<byte> buffer)
+        {
             var bytesRead = StreamHelper.ReadFromStream(_handle, _streamId, buffer);
-
-            ReadManualResetEvent.Reset();
 
             return (int)bytesRead;
         }
 
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = new CancellationToken())
+        {
+            ReadAccessCheck();
+
+            await _readManualResetEvent.AsTask();
+            var read = await new Task<int>(() => Read(buffer.Span));
+            _readManualResetEvent.Reset();
+            return await ValueTask.FromResult(read);
+        }
+        
         public override long Seek(long offset, SeekOrigin origin)
         {
             throw new NotImplementedException();
@@ -72,24 +84,28 @@ namespace Quic.Implementation
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (!_writable) return;
-
-            //ReadManualResetEvent.WaitOne();
-
-            StreamHelper.WriteToStream(_handle, _streamId, buffer);
-
-            //ReadManualResetEvent.Reset();
+            
+            
+            StreamHelper.WriteToStream(_handle, _streamId, buffer[..count]);
         }
 
         public void SetReadable()
         {
             if (_readable)
-                ReadManualResetEvent.Set();
+                _readManualResetEvent.Set();
         }
 
         public void SetWritable()
         {
             if (_readable)
-                WriteManualResetEvent.Set();
+                _writeManualResetEvent.Set();
+        }
+
+        private void ReadAccessCheck()
+        {
+            if (!_readable)
+                throw new Exception(
+                    $"Trying to read a {_streamType} stream that can not be read from this remote endpoint.");
         }
     }
 }

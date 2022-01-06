@@ -7,14 +7,30 @@ namespace Quic.Native.Events
 {
     public static class EndpointEvents
     {
+        private static readonly QuinnApi.OnNewConnection _onNewConnection = OnNewConnection;
+        private static readonly QuinnApi.OnTransmit _onTransmit = OnTransmit;
+        private static readonly QuinnApi.OnConnectionPollable _onConnectionPollable = OnConnectionPollable;
+
         public static void Initialize()
         {
-            QuinnApi.set_on_new_connection(OnNewConnection).Unwrap();
-            QuinnApi.set_on_transmit(OnTransmit).Unwrap();
+            // Delegates should never bee cleaned. 
+            GC.KeepAlive(_onNewConnection);
+            GC.KeepAlive(_onTransmit);
+            GC.KeepAlive(_onConnectionPollable);
+
+            QuinnApi.set_on_new_connection(_onNewConnection).Unwrap();
+            QuinnApi.set_on_transmit(_onTransmit).Unwrap();
+            QuinnApi.set_on_pollable_connection(_onConnectionPollable).Unwrap();
         }
 
         public static event EventHandler<TransmitEventArgs> TransmitReady;
         public static event EventHandler<NewConnectionEventArgs> NewConnection;
+        public static event EventHandler<ConnectionIdEventArgs> ConnectionPollable;
+
+        private static void OnConnectionPollable(int connectionId)
+        {
+            ConnectionPollable?.Invoke(null, new ConnectionIdEventArgs(connectionId));
+        }
 
         private static void OnNewConnection(IntPtr handle, int connectionId)
         {
