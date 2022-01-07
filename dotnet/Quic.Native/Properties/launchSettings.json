@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Quic.Native": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

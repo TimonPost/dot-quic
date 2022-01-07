@@ -7,27 +7,27 @@ namespace Quic.Native.Types
     [StructLayout(LayoutKind.Sequential)]
     public readonly ref struct QuinnResult
     {
-        private readonly Kind ResultKind;
+        private readonly ResultKind ResultKind;
 
         public bool Erroneous()
         {
-            return ResultKind == Kind.Error;
+            return ResultKind == ResultKind.Error;
         }
 
         public bool Successful()
         {
-            return ResultKind == Kind.Ok;
+            return ResultKind == ResultKind.Ok;
         }
 
         public bool IsBufferTooSmall()
         {
-            return ResultKind == Kind.IsBufferToSmall;
+            return ResultKind == ResultKind.IsBufferToSmall;
         }
 
         public void Unwrap()
         {
             if (Erroneous())
-                throw new Exception(LastQuinnError.Retrieve().Reason);
+                throw new Exception(QuinnFFIHelpers.LastError().Reason);
         }
     }
 }

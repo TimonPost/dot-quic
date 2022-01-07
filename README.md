@@ -10,9 +10,9 @@ C# does not yet have a native, uptodate, QUIC implementation. MsQuic its API wil
 
 1) Rust is save, language like C# and is statically typed that guarantees memory safety with zero cost abstractions, without involving a garbage collector. 
 2) MsQuic is written with unsafe C code.
-3) MsQuic will be integrated in .NET 7.0 so its a waste of time to create a library with this as backing protocol. 
+3) MsQuic will be integrated in .NET 7.0 so its wasted effort trying to build just that. 
 4) Quinn is a very up to date protocol that is constantly being aligned with the latest drafts.
-5) Wirting QUIC in pure C# will be a lot of work.
+5) Wirting QUIC in pure C# will be a lot of work, therefore levering an existing implementation could be a good solution for now.
 
 
 ## Motivation
@@ -23,25 +23,32 @@ The motivation of this library is to align its API to the future implementation 
 
 Server Example:
 ```csharp
+# Create server
 IPEndPoint serverIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5000);
 QuicListener server = new QuicListener(serverIp);
+
+# Listen for incoming connections.
+QuicConnection connection = await server.AcceptIncomingAsync();
+connection.DataReceived += OnDataReceive;
 
 # Create server => client streams 
 QuicStream biStream = connection.OpenBiDirectionalStream();
 QuicStream uniStream = connection.OpenUniDirectionalStream();
 
 # Send Data
-biStream.Send(data)
-server.Send(streamId, data)
+biStream.Send(data);
 
+# Receive Data
+var buffer = new byte[10];
+uniStream.Read(buffer);
 
-# Listen for incomming connections.
-QuicConnection connection = await server.AcceptIncomingAsync();
-connection.DataReceived += OnDataReceive;
-
-# Poll for events
-while (true)
-    server.PollEvents();
+void OnDataReceive(object? sender, DataReceivedEventArgs e) 
+{
+    var buffer = new byte[10];
+    e.Stream.Read(buffer);
+    
+   if (e.Stream.IsBiStream) e.Stream.Send(buffer);  
+}
 ```
 
 Client Example:
@@ -49,7 +56,7 @@ Client Example:
 ```csharp
 IPEndPoint connectionIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5001);
 QuicClient client = new QuicClient(connectionIp);
-connection.DataReceived += OnDataReceive;
+client.DataReceived += OnDataReceive;
 
 client.Connect(serverIp);
 
@@ -58,13 +65,19 @@ QuicStream biStream = client.OpenBiDirectionalStream();
 QuicStream uniStream = client.OpenUniDirectionalStream();
 
 # Send Data
-biStream.Send(data)
-client.Send(streamId, data))
+biStream.Send(data);
 
-# Poll for events
-while (true)
-    client.PollEvents();
+# Receive Data
+var buffer = new byte[10];
+uniStream.Read(buffer);
 
+void OnDataReceive(object? sender, DataReceivedEventArgs e) 
+{
+    var buffer = new byte[10];
+    e.Stream.Read(buffer);
+
+    if (e.Stream.IsBiStream) e.Stream.Send(buffer);
+}
 ```
 
 ## Features

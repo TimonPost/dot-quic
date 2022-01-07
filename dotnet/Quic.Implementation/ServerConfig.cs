@@ -8,13 +8,21 @@ namespace Quic.Implementation
     {
         public ServerConfig()
         {
-            var result = QuinnApi.default_server_config(out var handle);
+            QuinnApi.DefaultServerConfig(out var handle).Unwrap();
             Handle = handle;
-
-            if (result.Erroneous())
-                throw new Exception(LastQuinnError.Retrieve().Reason);
         }
 
         public ServerConfigHandle Handle { get; }
+    }
+
+    public class ClientConfig
+    {
+        public ClientConfig()
+        {
+            QuinnApi.DefaultClientConfig(out var handle).Unwrap();
+            Handle = handle;
+        }
+
+        public ClientConfigHandle Handle { get; }
     }
 }

@@ -5,15 +5,15 @@ namespace Quic.Native.Events
 {
     public static class ConnectionEvents
     {
-        private static readonly QuinnApi.OnConnected _onConnected = OnConnected;
-        private static readonly QuinnApi.OnConnectionLost _onConnectionLost = OnConnectionLost;
-        private static readonly QuinnApi.OnDatagramReceived _onDatagramReceived= OnDatagramReceived;
-        private static readonly QuinnApi.OnStreamOpened _onStreamOpened= OnStreamOpened;
-        private static readonly QuinnApi.OnStreamAvailable _onStreamAvailable= OnStreamAvailable;
-        private static readonly QuinnApi.OnStreamWritable _onStreamWritable = OnStreamWritable;
-        private static readonly QuinnApi.OnStreamReadable _onStreamReadable = OnStreamReadable;
-        private static readonly QuinnApi.OnStreamStopped _onStreamStopped= OnStreamStopped;
-        private static readonly QuinnApi.OnStreamFinished _onStreamFinished = OnStreamFinished;
+        private static readonly OnConnected _onConnected = OnConnected;
+        private static readonly OnConnectionLost _onConnectionLost = OnConnectionLost;
+        private static readonly OnDatagramReceived _onDatagramReceived= OnDatagramReceived;
+        private static readonly OnStreamOpened _onStreamOpened= OnStreamOpened;
+        private static readonly OnStreamAvailable _onStreamAvailable= OnStreamAvailable;
+        private static readonly OnStreamWritable _onStreamWritable = OnStreamWritable;
+        private static readonly OnStreamReadable _onStreamReadable = OnStreamReadable;
+        private static readonly OnStreamStopped _onStreamStopped= OnStreamStopped;
+        private static readonly OnStreamFinished _onStreamFinished = OnStreamFinished;
 
         public static void Initialize()
         {
@@ -28,17 +28,17 @@ namespace Quic.Native.Events
             GC.KeepAlive(_onStreamStopped);
             GC.KeepAlive(_onStreamFinished);
 
-            QuinnApi.set_on_connected(_onConnected).Unwrap();
-            QuinnApi.set_on_connection_lost(_onConnectionLost).Unwrap();
+            QuinnApi.SetOnConnected(_onConnected).Unwrap();
+            QuinnApi.SetOnConnectionLost(_onConnectionLost).Unwrap();
 
-            QuinnApi.set_on_datagram_received(_onDatagramReceived).Unwrap();
+            QuinnApi.SetOnDatagramReceived(_onDatagramReceived).Unwrap();
 
-            QuinnApi.set_on_stream_opened(_onStreamOpened).Unwrap();
-            QuinnApi.set_on_stream_available(_onStreamAvailable).Unwrap();
-            QuinnApi.set_on_stream_writable(_onStreamWritable).Unwrap();
-            QuinnApi.set_on_stream_readable(_onStreamReadable).Unwrap();
-            QuinnApi.set_on_stream_stopped(_onStreamStopped).Unwrap();
-            QuinnApi.set_on_stream_finished(_onStreamFinished).Unwrap();
+            QuinnApi.SetOnStreamOpened(_onStreamOpened).Unwrap();
+            QuinnApi.SetOnStreamAvailable(_onStreamAvailable).Unwrap();
+            QuinnApi.SetOnStreamWritable(_onStreamWritable).Unwrap();
+            QuinnApi.SetOnStreamReadable(_onStreamReadable).Unwrap();
+            QuinnApi.SetOnStreamStopped(_onStreamStopped).Unwrap();
+            QuinnApi.SetOnStreamFinished(_onStreamFinished).Unwrap();
         }
         
         /// Is triggered when a connection is fully initialized and ready to be used.

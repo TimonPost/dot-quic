@@ -8,11 +8,15 @@ using Quic.Native.Types;
 
 namespace Quic.Implementation
 {
+    /// <summary>
+    /// An initiated QUIC stream that is either unidirectional or bidirectional.
+    /// Make sure to respect the directionality otherwise the stream read or write might fail.
+    /// </summary>
     public class QuicStream : Stream
     {
         private readonly bool _readable;
         private readonly long _streamId;
-        private readonly StreamType _streamType;
+        
         private readonly bool _writable;
         
         private readonly ConnectionHandle _handle;
@@ -20,9 +24,11 @@ namespace Quic.Implementation
         private readonly ManualResetEvent _readManualResetEvent;
         private readonly ManualResetEvent _writeManualResetEvent;
 
+        public StreamType StreamType { get; }
+
         public QuicStream(ConnectionHandle handle, StreamType streamType, long streamId, bool readable, bool writable)
         {
-            _streamType = streamType;
+            StreamType = streamType;
             _streamId = streamId;
             _readable = readable;
             _writable = writable;
@@ -38,6 +44,8 @@ namespace Quic.Implementation
         public override bool CanWrite => _writable;
         public override long Length { get; }
         public override long Position { get; set; }
+        public bool IsBiStream => StreamType == StreamType.BiDirectional;
+        public bool IsUniStream => StreamType == StreamType.UniDirectional;
 
         public override void Flush()
         {
@@ -56,7 +64,7 @@ namespace Quic.Implementation
 
         public override int Read(Span<byte> buffer)
         {
-            var bytesRead = StreamHelper.ReadFromStream(_handle, _streamId, buffer);
+            var bytesRead = QuinnFFIHelpers.ReadFromStream(_handle, _streamId, buffer);
 
             return (int)bytesRead;
         }
@@ -84,11 +92,13 @@ namespace Quic.Implementation
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (!_writable) return;
-            
-            
-            StreamHelper.WriteToStream(_handle, _streamId, buffer[..count]);
+            Position = 0;
+            QuinnFFIHelpers.WriteToStream(_handle, _streamId, buffer[..count]);
         }
 
+        /// <summary>
+        /// Allows the `Read` or `ReadAsync` to continue with its work. 
+        /// </summary>
         public void SetReadable()
         {
             if (_readable)
@@ -105,7 +115,7 @@ namespace Quic.Implementation
         {
             if (!_readable)
                 throw new Exception(
-                    $"Trying to read a {_streamType} stream that can not be read from this remote endpoint.");
+                    $"Trying to read a {StreamType} stream that can not be read from this remote endpoint.");
         }
     }
 }

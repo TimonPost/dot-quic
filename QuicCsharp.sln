@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31829.152
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quic.Sandbox", "dotnet\Quic.Sandbox\Quic.Sandbox.csproj", "{9260FD03-11EB-4935-9FEC-60F599AE43EE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quic.Runner", "dotnet\Quic.Runner\Quic.Runner.csproj", "{2BB86437-DC00-4247-89F7-FB2283CB85C6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quic.Native", "dotnet\Quic.Native\Quic.Native.csproj", "{3FD4EC1D-BC54-4FB8-8954-2BEBD52DA36B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quic.Implementation", "dotnet\Quic.Implementation\Quic.Implementation.csproj", "{59B06817-8000-414A-BD14-1C7664055F4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quic.Tests", "Quic.Tests\Quic.Tests.csproj", "{353CBB0E-150F-41D8-A2EC-8730D8150753}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quic.Sandbox.Client", "dotnet\Quic.Sandbox.Client\Quic.Sandbox.Client.csproj", "{D3C3765B-F932-4ACF-949F-BD4C6337369A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quic.Runner", "dotnet\Quic.Runner\Quic.Runner.csproj", "{3E0474CE-28B2-4A80-BA7F-70C785B1EEBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9260FD03-11EB-4935-9FEC-60F599AE43EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9260FD03-11EB-4935-9FEC-60F599AE43EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9260FD03-11EB-4935-9FEC-60F599AE43EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9260FD03-11EB-4935-9FEC-60F599AE43EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2BB86437-DC00-4247-89F7-FB2283CB85C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BB86437-DC00-4247-89F7-FB2283CB85C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BB86437-DC00-4247-89F7-FB2283CB85C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BB86437-DC00-4247-89F7-FB2283CB85C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3FD4EC1D-BC54-4FB8-8954-2BEBD52DA36B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3FD4EC1D-BC54-4FB8-8954-2BEBD52DA36B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FD4EC1D-BC54-4FB8-8954-2BEBD52DA36B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,10 +25,14 @@ Global
 		{59B06817-8000-414A-BD14-1C7664055F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59B06817-8000-414A-BD14-1C7664055F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59B06817-8000-414A-BD14-1C7664055F4A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{353CBB0E-150F-41D8-A2EC-8730D8150753}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{353CBB0E-150F-41D8-A2EC-8730D8150753}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{353CBB0E-150F-41D8-A2EC-8730D8150753}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{353CBB0E-150F-41D8-A2EC-8730D8150753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3C3765B-F932-4ACF-949F-BD4C6337369A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3C3765B-F932-4ACF-949F-BD4C6337369A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3C3765B-F932-4ACF-949F-BD4C6337369A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3C3765B-F932-4ACF-949F-BD4C6337369A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E0474CE-28B2-4A80-BA7F-70C785B1EEBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E0474CE-28B2-4A80-BA7F-70C785B1EEBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E0474CE-28B2-4A80-BA7F-70C785B1EEBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E0474CE-28B2-4A80-BA7F-70C785B1EEBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

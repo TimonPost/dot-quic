@@ -10,15 +10,15 @@ namespace Quic.Native
         internal unsafe fixed byte addr[4];
     }
 
-    internal static class QuicAddressHelpers
+    public static class QuicAddressHelpers
     {
-        internal static unsafe IPEndPoint ToIpEndpoint(this SockaddrInV4 inetAddress)
+        public static unsafe IPEndPoint ToIpEndpoint(this SockaddrInV4 inetAddress)
         {
             return new IPEndPoint(new IPAddress(MemoryMarshal.CreateReadOnlySpan(ref inetAddress.addr[0], 4)),
                 inetAddress.port);
         }
 
-        internal static unsafe SockaddrInV4 ToNative(this IPEndPoint endpoint)
+        public static unsafe SockaddrInV4 ToNative(this IPEndPoint endpoint)
         {
             SockaddrInV4 socketAddress = default;
             if (!endpoint.Address.Equals(IPAddress.Any) && !endpoint.Address.Equals(IPAddress.IPv6Any))

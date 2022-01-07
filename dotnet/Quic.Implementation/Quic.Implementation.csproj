@@ -4,10 +4,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+	<Import Project="../quic.targets" />
+
   <ItemGroup>
     <ProjectReference Include="..\Quic.Native\Quic.Native.csproj" />
   </ItemGroup>
 
-  <Import Project="../quic.targets" />
 
 </Project>

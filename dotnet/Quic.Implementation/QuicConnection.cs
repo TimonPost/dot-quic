@@ -7,6 +7,9 @@ using Quic.Native.Types;
 
 namespace Quic.Implementation
 {
+    /// <summary>
+    /// Carries the stream form which data can be read. 
+    /// </summary>
     public class DataReceivedEventArgs : EventArgs
     {
         /// <summary>
@@ -16,22 +19,22 @@ namespace Quic.Implementation
     }
 
     /// <summary>
-    /// QUIC connection is connected to a remote QUIC endpoint.
+    /// A QUIC protocol connection to some remote QUIC endpoint.
     /// </summary>
     public class QuicConnection
     {
         private readonly ConnectionHandle _connectionHandle;
-        public Dictionary<long, QuicStream> BiDirectionalQuicStreams;
-        public Dictionary<long, QuicStream> UniDirectionalQuicStreams;
-        private bool _connected = false;
+        private readonly Dictionary<long, QuicStream> _biDirectionalQuicStreams;
+        private readonly Dictionary<long, QuicStream> _uniDirectionalQuicStreams;
+        private bool _connected;
 
         public QuicConnection(ConnectionHandle connectionHandle, int connectionId)
         {
             _connectionHandle = connectionHandle;
             ConnectionId = connectionId;
 
-            UniDirectionalQuicStreams = new Dictionary<long, QuicStream>();
-            BiDirectionalQuicStreams = new Dictionary<long, QuicStream>();
+            _uniDirectionalQuicStreams = new Dictionary<long, QuicStream>();
+            _biDirectionalQuicStreams = new Dictionary<long, QuicStream>();
 
             ConnectionEvents.ConnectionInitialized += OnConnectionInitialized;
             ConnectionEvents.ConnectionLost += OnConnectionLost;
@@ -43,7 +46,7 @@ namespace Quic.Implementation
             ConnectionEvents.StreamStopped += OnStreamStopped;
             ConnectionEvents.StreamWritable += OnStreamWritable;
 
-            QuinnApi.poll_connection(_connectionHandle);
+            QuinnApi.PollConnection(_connectionHandle);
         }
 
         /// <summary>
@@ -56,14 +59,14 @@ namespace Quic.Implementation
         /// </summary>
         /// <param name="streamId"></param>
         /// <returns>bool</returns>
-        public bool IsUniStream(long streamId) => UniDirectionalQuicStreams.ContainsKey(streamId);
+        public bool IsUniStream(long streamId) => _uniDirectionalQuicStreams.ContainsKey(streamId);
 
         /// <summary>
         /// Returns whether the given stream is an bidirectional stream.
         /// </summary>
         /// <param name="streamId"></param>
         /// <returns>bool</returns>
-        public bool IsBiStream(long streamId) => BiDirectionalQuicStreams.ContainsKey(streamId);
+        public bool IsBiStream(long streamId) => _biDirectionalQuicStreams.ContainsKey(streamId);
 
         /// <summary>
         /// Returns whether this connection is connected to the remote endpoint.
@@ -89,10 +92,10 @@ namespace Quic.Implementation
             if (!IsConnected)
                 throw new Exception("Connection is not yet fully initialized.");
 
-            QuinnApi.open_stream(_connectionHandle, StreamType.BiDirectional, out var streamId).Unwrap();
+            QuinnApi.OpenStream(_connectionHandle, StreamType.BiDirectional, out var streamId).Unwrap();
 
             var stream = new QuicStream(_connectionHandle, StreamType.BiDirectional, streamId, true, true);
-            BiDirectionalQuicStreams.Add(streamId, stream);
+            _biDirectionalQuicStreams.Add(streamId, stream);
             return stream;
         }
 
@@ -108,10 +111,10 @@ namespace Quic.Implementation
             if (!IsConnected)
                 throw new Exception("Connection is not yet fully initialized.");
 
-            QuinnApi.open_stream(_connectionHandle, StreamType.UniDirectional, out var streamId).Unwrap();
+            QuinnApi.OpenStream(_connectionHandle, StreamType.UniDirectional, out var streamId).Unwrap();
 
             var stream = new QuicStream(_connectionHandle, StreamType.UniDirectional, streamId, false, true);
-            UniDirectionalQuicStreams.Add(streamId, stream);
+            _uniDirectionalQuicStreams.Add(streamId, stream);
             return stream;
         }
 
@@ -125,7 +128,7 @@ namespace Quic.Implementation
         /// <returns>QuicStream</returns>
         public QuicStream GetBiStream(long streamId)
         {
-            if (!BiDirectionalQuicStreams.TryGetValue(streamId, out var stream))
+            if (!_biDirectionalQuicStreams.TryGetValue(streamId, out var stream))
                 throw new Exception($"Bidirectional stream with ID: {streamId} does not exist");
 
             return stream;
@@ -140,7 +143,7 @@ namespace Quic.Implementation
         /// <returns>QuicStream</returns>
         public QuicStream GetUniStream(long streamId)
         {
-            if (!UniDirectionalQuicStreams.TryGetValue(streamId, out var stream))
+            if (!_uniDirectionalQuicStreams.TryGetValue(streamId, out var stream))
                 throw new Exception($"Unidirectional stream with ID: {streamId} does not exist");
 
             return stream;
@@ -154,11 +157,11 @@ namespace Quic.Implementation
             switch (e.StreamType)
             {
                 case StreamType.UniDirectional:
-                    stream = UniDirectionalQuicStreams[e.StreamId];
+                    stream = _uniDirectionalQuicStreams[e.StreamId];
                     stream.SetWritable();
                     break;
                 case StreamType.BiDirectional:
-                    stream = BiDirectionalQuicStreams[e.StreamId];
+                    stream = _biDirectionalQuicStreams[e.StreamId];
                     stream.SetWritable();
                     break;
                 default:
@@ -180,11 +183,11 @@ namespace Quic.Implementation
             switch (e.StreamType)
             {
                 case StreamType.UniDirectional:
-                    stream = UniDirectionalQuicStreams[e.StreamId];
+                    stream = _uniDirectionalQuicStreams[e.StreamId];
                     stream.SetReadable();
                     break;
                 case StreamType.BiDirectional:
-                    stream = BiDirectionalQuicStreams[e.StreamId];
+                    stream = _biDirectionalQuicStreams[e.StreamId];
                     stream.SetReadable();
                     break;
                 default:
@@ -198,20 +201,20 @@ namespace Quic.Implementation
         {
             if (!IsThisConnection(e.ConnectionId)) return;
 
-            QuinnApi.accept_stream(_connectionHandle, (byte)e.StreamType, out var streamId).Unwrap();
+            QuinnApi.AcceptStream(_connectionHandle, (byte)e.StreamType, out var streamId).Unwrap();
 
             switch (e.StreamType)
             {
                 case StreamType.UniDirectional:
                     {
                         var newStream = new QuicStream(_connectionHandle, e.StreamType, streamId, true, false);
-                        UniDirectionalQuicStreams.Add(streamId, newStream);
+                        _uniDirectionalQuicStreams.Add(streamId, newStream);
                         break;
                     }
                 case StreamType.BiDirectional:
                     {
                         var newStream = new QuicStream(_connectionHandle, e.StreamType, streamId, true, true);
-                        BiDirectionalQuicStreams.Add(streamId, newStream);
+                        _biDirectionalQuicStreams.Add(streamId, newStream);
                         newStream.SetReadable();
                         DataReceived?.Invoke(null, new DataReceivedEventArgs() {Stream = newStream});
                         break;
@@ -224,9 +227,9 @@ namespace Quic.Implementation
             if (!IsThisConnection(e.ConnectionId)) return;
 
             if (IsUniStream(e.StreamId))
-                UniDirectionalQuicStreams.Remove(e.StreamId);
+                _uniDirectionalQuicStreams.Remove(e.StreamId);
             else if (IsBiStream(e.StreamId))
-                BiDirectionalQuicStreams.Remove(e.StreamId);
+                _biDirectionalQuicStreams.Remove(e.StreamId);
         }
 
 
