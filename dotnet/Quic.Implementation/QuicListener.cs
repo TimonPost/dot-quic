@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Quic.Native;
 using Quic.Native.ApiWrappers;
 using Quic.Native.Events;
@@ -15,12 +17,10 @@ namespace Quic.Implementation
     public class QuicListener : Endpoint
     {
         private readonly Dictionary<int, ConnectionHandle> _connections;
-        
-        private int _lastIncomingConnection;
-
-        private readonly ManualResetEvent _awaitingConnection = new(false);
 
         private readonly ConnectionDriver _connectionDriver;
+        private readonly ConnectionListener _connectionListener;
+        private CancellationToken _connectionListenerCancellationToken;
 
         public QuicListener(IPEndPoint ipEndpoint)
         {
@@ -33,7 +33,9 @@ namespace Quic.Implementation
 
             _connections = new Dictionary<int, ConnectionHandle>();
             _connectionDriver = new ConnectionDriver(id => _connections[id]);
-            
+            _connectionListenerCancellationToken = new CancellationToken();
+            _connectionListener = new ConnectionListener(_connectionListenerCancellationToken, Id);
+
             EndpointEvents.NewConnection += OnNewConnection;
             EndpointEvents.TransmitReady += OnTransmitReady;
 
@@ -48,12 +50,10 @@ namespace Quic.Implementation
         /// This function should not be called more then once at the same time. 
         /// </summary>
         /// <returns>QuicConnection</returns>
-        public async Task<QuicConnection> AcceptIncomingAsync()
+        public Task<QuicConnection> AcceptAsync(CancellationToken cancellationToken)
         {
             Console.WriteLine("Listening...");
-            await _awaitingConnection.AsTask();
-            _awaitingConnection.Reset();
-            return new QuicConnection(_connections[_lastIncomingConnection], _lastIncomingConnection);
+            return _connectionListener.NextAsync(cancellationToken);
         }
 
         /// <summary>
@@ -75,17 +75,105 @@ namespace Quic.Implementation
                     e.TransmitPacket.Destination);
         }
 
-        private void OnNewConnection(object sender, NewConnectionEventArgs e)
+        private void OnNewConnection(object? sender, NewConnectionEventArgs e)
         {
-            if (!IsThisEndpoint(e.Id)) return;
+            if (IsThisEndpoint(e.EndpointId))
+                _connections[e.ConnectionId] = e.ConnectionHandle;
+        }
+    }
 
-            _connections[e.Id] = e.ConnectionHandle;
-            _lastIncomingConnection = e.Id;
+    public enum IncomingState
+    {
+        Listening,
+        Connecting,
+        Connected
+    }
+    
 
-            // Set reset event for `AcceptIncomingAsync`. 
-            _awaitingConnection.Set();
+    internal class ConnectionListener
+    {
+        private readonly CancellationToken _token;
+        private readonly int _endpointId;
+        private readonly BufferBlock<Incoming> _incomingConnections;
+
+        public ConnectionListener(CancellationToken token, int endpointId)
+        {
+            _token = token;
+            _endpointId = endpointId;
+            _incomingConnections = new BufferBlock<Incoming>();
+            EndpointEvents.NewConnection += OnNewConnection;
         }
 
+        public async Task<QuicConnection> NextAsync(CancellationToken token)
+        {
+            Console.WriteLine("Awaiting next...");
+            var incoming = await _incomingConnections.ReceiveAsync(token);
+            Console.WriteLine("initializing connection...");
+            return await incoming.ConnectionInitialized(); // result is set when finished.
+        }
         
+        private void OnNewConnection(object sender, NewConnectionEventArgs e)
+        {
+            if (_endpointId != e.EndpointId) return;
+
+            Console.WriteLine("On new connection");
+           var incoming = new Incoming(e.ConnectionHandle, e.ConnectionId);
+           incoming.ProcessIncoming(_token);
+            
+           _incomingConnections.Post(incoming);
+        }
+    }
+
+    internal class Incoming
+    {
+        private readonly ManualResetEvent _awaitingConnection = new(false);
+
+        private IncomingState State = IncomingState.Listening;
+
+        private readonly int _id;
+        private readonly ConnectionHandle _handle;
+        private Task<QuicConnection> _processingTask;
+
+        public Incoming(ConnectionHandle handle, int id)
+        {
+            _id = id;
+            _handle = handle;
+
+            ConnectionEvents.ConnectionInitialized += OnConnectionInitialized;
+        }
+
+        private void OnConnectionInitialized(object? sender, ConnectionIdEventArgs e)
+        {
+            Console.WriteLine("On initizlied...");
+
+            // Only set awaiting state if current connection and state is listening.
+            if (State == IncomingState.Listening && e.Id == _id)
+                _awaitingConnection.Set();
+        }
+
+        public void ProcessIncoming(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("Processing incoming ...");
+            State = IncomingState.Listening;
+            _processingTask = Task.Run(async () =>
+            {
+                QuicConnection quicConnection = new QuicConnection(_handle, _id);
+                quicConnection.SetState(IncomingState.Connecting);
+
+                await _awaitingConnection.AsTask(cancellationToken)
+                    .ContinueWith((_) =>
+                    {
+                        quicConnection.SetState(IncomingState.Connected);
+                        
+                    }, cancellationToken);
+                
+                return quicConnection;
+            }, cancellationToken);
+        }
+        
+        public Task<QuicConnection> ConnectionInitialized()
+        {
+            return _processingTask;
+        }
     }
 }

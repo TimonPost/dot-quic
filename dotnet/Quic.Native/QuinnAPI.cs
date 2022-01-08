@@ -311,7 +311,7 @@ namespace Quic.Native
         public static QuinnResult
             AcceptStream(ConnectionHandle handle, byte streamDirection, out long streamId)
         {
-            return QuinnApiFFI.AcceptStream(handle, streamDirection, out streamId);
+            return QuinnApiFFI.accept_stream(handle, streamDirection, out streamId);
         }
 
         /// <summary>

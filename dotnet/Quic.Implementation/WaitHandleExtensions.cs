@@ -8,12 +8,19 @@ namespace Quic.Implementation
     {
         public static Task AsTask(this WaitHandle handle)
         {
-            return AsTask(handle, Timeout.InfiniteTimeSpan);
+            return AsTask(handle, new CancellationToken());
         }
 
-        public static Task AsTask(this WaitHandle handle, TimeSpan timeout)
+        public static Task AsTask(this WaitHandle handle, CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<object>();
+
+            cancellationToken.Register(() =>
+            {
+                tcs.SetCanceled(cancellationToken);
+            });
+            
+            
             var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, timedOut) =>
             {
                 var localTcs = (TaskCompletionSource<object>)state;
@@ -21,7 +28,7 @@ namespace Quic.Implementation
                     localTcs.TrySetCanceled();
                 else
                     localTcs.TrySetResult(null);
-            }, tcs, timeout, executeOnlyOnce: true);
+            }, tcs, Timeout.InfiniteTimeSpan, executeOnlyOnce: true);
             tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state).Unregister(null), registration, TaskScheduler.Default);
             return tcs.Task;
         }

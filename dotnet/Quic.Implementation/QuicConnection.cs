@@ -23,20 +23,19 @@ namespace Quic.Implementation
     /// </summary>
     public class QuicConnection
     {
-        private readonly ConnectionHandle _connectionHandle;
+        public ConnectionHandle ConnectionHandle { get; }
         private readonly Dictionary<long, QuicStream> _biDirectionalQuicStreams;
         private readonly Dictionary<long, QuicStream> _uniDirectionalQuicStreams;
-        private bool _connected;
+        private IncomingState ConnectionState;
 
         public QuicConnection(ConnectionHandle connectionHandle, int connectionId)
         {
-            _connectionHandle = connectionHandle;
+            ConnectionHandle = connectionHandle;
             ConnectionId = connectionId;
 
             _uniDirectionalQuicStreams = new Dictionary<long, QuicStream>();
             _biDirectionalQuicStreams = new Dictionary<long, QuicStream>();
-
-            ConnectionEvents.ConnectionInitialized += OnConnectionInitialized;
+            
             ConnectionEvents.ConnectionLost += OnConnectionLost;
             ConnectionEvents.DatagramReceived += DatagramReceived;
             ConnectionEvents.StreamAvailable += StreamAvailable;
@@ -45,8 +44,6 @@ namespace Quic.Implementation
             ConnectionEvents.StreamReadable += OnStreamReadable;
             ConnectionEvents.StreamStopped += OnStreamStopped;
             ConnectionEvents.StreamWritable += OnStreamWritable;
-
-            QuinnApi.PollConnection(_connectionHandle);
         }
 
         /// <summary>
@@ -72,7 +69,7 @@ namespace Quic.Implementation
         /// Returns whether this connection is connected to the remote endpoint.
         /// A connection is connected if all handshaking procedures are finished.
         /// </summary>
-        public bool IsConnected => _connected;
+        public bool IsConnected => ConnectionState == IncomingState.Connected;
 
         /// <summary>
         /// Event is triggered when new data is ready to be read on a given stream.
@@ -92,9 +89,9 @@ namespace Quic.Implementation
             if (!IsConnected)
                 throw new Exception("Connection is not yet fully initialized.");
 
-            QuinnApi.OpenStream(_connectionHandle, StreamType.BiDirectional, out var streamId).Unwrap();
+            QuinnApi.OpenStream(ConnectionHandle, StreamType.BiDirectional, out var streamId).Unwrap();
 
-            var stream = new QuicStream(_connectionHandle, StreamType.BiDirectional, streamId, true, true);
+            var stream = new QuicStream(ConnectionHandle, StreamType.BiDirectional, streamId, true, true);
             _biDirectionalQuicStreams.Add(streamId, stream);
             return stream;
         }
@@ -111,9 +108,9 @@ namespace Quic.Implementation
             if (!IsConnected)
                 throw new Exception("Connection is not yet fully initialized.");
 
-            QuinnApi.OpenStream(_connectionHandle, StreamType.UniDirectional, out var streamId).Unwrap();
+            QuinnApi.OpenStream(ConnectionHandle, StreamType.UniDirectional, out var streamId).Unwrap();
 
-            var stream = new QuicStream(_connectionHandle, StreamType.UniDirectional, streamId, false, true);
+            var stream = new QuicStream(ConnectionHandle, StreamType.UniDirectional, streamId, false, true);
             _uniDirectionalQuicStreams.Add(streamId, stream);
             return stream;
         }
@@ -201,19 +198,19 @@ namespace Quic.Implementation
         {
             if (!IsThisConnection(e.ConnectionId)) return;
 
-            QuinnApi.AcceptStream(_connectionHandle, (byte)e.StreamType, out var streamId).Unwrap();
+            QuinnApi.AcceptStream(ConnectionHandle, (byte)e.StreamType, out var streamId).Unwrap();
 
             switch (e.StreamType)
             {
                 case StreamType.UniDirectional:
                     {
-                        var newStream = new QuicStream(_connectionHandle, e.StreamType, streamId, true, false);
+                        var newStream = new QuicStream(ConnectionHandle, e.StreamType, streamId, true, false);
                         _uniDirectionalQuicStreams.Add(streamId, newStream);
                         break;
                     }
                 case StreamType.BiDirectional:
                     {
-                        var newStream = new QuicStream(_connectionHandle, e.StreamType, streamId, true, true);
+                        var newStream = new QuicStream(ConnectionHandle, e.StreamType, streamId, true, true);
                         _biDirectionalQuicStreams.Add(streamId, newStream);
                         newStream.SetReadable();
                         DataReceived?.Invoke(null, new DataReceivedEventArgs() {Stream = newStream});
@@ -248,12 +245,10 @@ namespace Quic.Implementation
             if (!IsThisConnection(e.Id)) return;
         }
 
-        private void OnConnectionInitialized(object? sender, ConnectionIdEventArgs e)
+
+        public void SetState(IncomingState state)
         {
-            if (!IsThisConnection(e.Id)) return;
-
-            _connected = true;
+            ConnectionState = state;
         }
-
     }
 }

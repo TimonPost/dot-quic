@@ -12,31 +12,15 @@ namespace Quic.Runner
     internal class Program
     {
         private static readonly IPEndPoint serverIp = new(IPAddress.Parse("127.0.0.1"), 5000);
-
-        [DllImport(@"E:\programming\quinn-ffi\quinn-ffi\target\debug\quinn_ffi.dll", EntryPoint =
-            "add", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int add(int a, int b);
-
+        
         private static async Task Main(string[] args)
         {
-            var a = add(10, 5);
-            Console.WriteLine(a);
-
             QuinnApi.Initialize();
 
             var server = new QuicListener(serverIp);
             
-            var connection = await server.AcceptIncomingAsync();
+            var connection = await server.AcceptAsync(new CancellationToken());
             connection.DataReceived += OnDataReceive;
-            
-            //var stream = connection.OpenBiDirectionalStream();
-
-            
-            //var clientIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
-
-
-            // QuicStream stream1 = connection.OpenUniDirectionalStream();
-
 
             Console.ReadKey();
         }

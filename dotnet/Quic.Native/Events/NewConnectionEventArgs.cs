@@ -5,13 +5,14 @@ namespace Quic.Native.Events
 {
     public class NewConnectionEventArgs : EventArgs
     {
-        public NewConnectionEventArgs(ConnectionHandle handle, int id)
+        public NewConnectionEventArgs(ConnectionHandle handle, int connectionId)
         {
             ConnectionHandle = handle;
-            Id = id;
+            ConnectionId = connectionId;
         }
 
         public ConnectionHandle ConnectionHandle { get; }
-        public int Id { get; set; }
+        public int ConnectionId { get; set; }
+        public int EndpointId { get; set; } = 1;
     }
 }

@@ -128,10 +128,10 @@ namespace Quic.Native
         internal static extern QuinnResult write_stream(ConnectionHandle handle, long streamId, IntPtr bufferPtr,
             uint bufferLength, out uint bytesWritten);
 
-        [DllImport(NativeLib, EntryPoint = nameof(AcceptStream), ExactSpelling = true,
+        [DllImport(NativeLib, EntryPoint = nameof(accept_stream), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
         internal static extern QuinnResult
-            AcceptStream(ConnectionHandle handle, byte streamDirection, out long streamId);
+            accept_stream(ConnectionHandle handle, byte streamDirection, out long streamId);
 
         [DllImport(NativeLib, EntryPoint = nameof(open_stream), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
