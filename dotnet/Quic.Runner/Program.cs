@@ -15,8 +15,6 @@ namespace Quic.Runner
         
         private static async Task Main(string[] args)
         {
-            QuinnApi.Initialize();
-
             var server = new QuicListener(serverIp);
             
             var connection = await server.AcceptAsync(new CancellationToken());

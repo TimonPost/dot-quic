@@ -37,10 +37,16 @@ namespace Quic.Native
     /// </summary>
     public static class QuinnApi
     {
+        private static bool _isInitialized = false;
         public static void Initialize()
         {
-            ConnectionEvents.Initialize();
-            EndpointEvents.Initialize();
+            if (!_isInitialized)
+            {
+                ConnectionEvents.Initialize();
+                EndpointEvents.Initialize();
+            }
+
+            _isInitialized = true;
         }
 
         #region Connection

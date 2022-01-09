@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using Quic.Native;
 using Quic.Native.Events;
 using Quic.Native.Handles;
@@ -10,9 +11,8 @@ namespace Quic.Implementation
 {
     public class QuicClient : Endpoint
     {
-        private readonly ManualResetEvent _awaitingConnection = new(false);
-        private int _connectionid;
         private ConnectionDriver _connectionDriver;
+        private QuicConnection _innerConnection;
 
         public QuicClient(IPEndPoint clientIp)
         {
@@ -23,19 +23,40 @@ namespace Quic.Implementation
             Handle = handle;
             QuicSocket = new UdpClient(clientIp);
             EndpointEvents.TransmitReady += OnTransmitReady;
-            ConnectionEvents.ConnectionInitialized += OnNewConnection;
             StartReceivingAsync();
             StartPollingAsync();
         }
 
-        private void OnNewConnection(object? sender, ConnectionIdEventArgs e)
+        public QuicConnection Connection => _innerConnection;
+       
+
+        /// <summary>
+        /// Connect to the given server ip.
+        /// This method will block the current thread until connected.
+        /// </summary>
+        /// <returns>QuicConnection</returns>
+        public QuicConnection Connect(IPEndPoint serverIp)
         {
-            Console.WriteLine("OnNewConnection");
+           return ConnectAsync(serverIp, CancellationToken.None).Result;
+        }
 
-            _connectionid = e.Id;
+        /// <summary>
+        /// Connect asynchronously to the given server ip. 
+        /// </summary>
+        /// <returns>QuicConnection</returns>
+        public async Task<QuicConnection> ConnectAsync(IPEndPoint serverIp, CancellationToken token)
+        {
+            Console.WriteLine("Connecting ...");
+            QuinnApi.ConnectClient(Handle, serverIp.ToNative(), out ConnectionHandle connectionHandle, out int connectionId).Unwrap();
 
-            // Set reset event for `AcceptIncomingAsync`. 
-            _awaitingConnection.Set();
+            _connectionDriver = new ConnectionDriver((id => connectionHandle));
+            _connectionDriver.StartPollingAsync();
+
+            var incoming = new Incoming(connectionHandle, connectionId);
+            incoming.ProcessIncoming(token);
+            _innerConnection = await incoming.ConnectionInitialized();
+            Console.WriteLine("Connected");
+            return _innerConnection;
         }
 
         private void OnTransmitReady(object? sender, TransmitEventArgs e)
@@ -46,20 +67,6 @@ namespace Quic.Implementation
             if (Id == e.Id)
                 QuicSocket.Send(e.TransmitPacket.Contents, e.TransmitPacket.Contents.Length,
                     e.TransmitPacket.Destination);
-        }
-
-        public QuicConnection Connect(IPEndPoint serverIp)
-        {
-            Console.WriteLine("Connecting ...");
-            QuinnApi.ConnectClient(Handle, serverIp.ToNative(), out ConnectionHandle connectionHandle, out int connectionId).Unwrap();
-            var newConnection = new QuicConnection(connectionHandle, connectionId);
-            _connectionDriver = new ConnectionDriver((id => connectionHandle));
-            _connectionDriver.StartPollingAsync();
-            _awaitingConnection.WaitOne();
-            Console.WriteLine("Connected");
-
-            return newConnection;
-
         }
     }
 }

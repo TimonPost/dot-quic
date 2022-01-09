@@ -9,3 +9,4 @@ E:\programming\quinn-ffi\dotnet\Quic.Native\obj\Debug\net5.0\Quic.Native.csproj.
 E:\programming\quinn-ffi\dotnet\Quic.Native\obj\Debug\net5.0\Quic.Native.dll
 E:\programming\quinn-ffi\dotnet\Quic.Native\obj\Debug\net5.0\ref\Quic.Native.dll
 E:\programming\quinn-ffi\dotnet\Quic.Native\obj\Debug\net5.0\Quic.Native.pdb
+E:\programming\quinn-ffi\dotnet\Quic.Native\obj\Debug\net5.0\Quic.Native.csproj.AssemblyReference.cache

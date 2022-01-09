@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Quic.Implementation;
 using Quic.Native;
@@ -20,7 +21,7 @@ namespace Quic.Sandbox.Client
 
             var client = new QuicClient(clientIp);
 
-            var connection = client.Connect(serverIp);
+            var connection = await client.ConnectAsync(serverIp, CancellationToken.None);
 
             var stream = connection.OpenBiDirectionalStream();
 
