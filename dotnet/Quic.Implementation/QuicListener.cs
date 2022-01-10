@@ -50,7 +50,7 @@ namespace Quic.Implementation
         /// This function should not be called more then once at the same time. 
         /// </summary>
         /// <returns>QuicConnection</returns>
-        public Task<QuicConnection> AcceptAsync(CancellationToken cancellationToken)
+        public Task<QuicConnection> AcceptAsync(CancellationToken cancellationToken = new())
         {
             Console.WriteLine("Listening...");
             return _connectionListener.NextAsync(cancellationToken);

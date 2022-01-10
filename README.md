@@ -1,4 +1,5 @@
-Quic protocol for .NET with pure rust backend. 
+# QUIC for .NET
+[QUIC][QUIC] implemention for .NET with pure rust backend implemented with [Quinn][quinn].
 
 **This library is very new and in active development, dont use it yet**
 
@@ -15,9 +16,13 @@ C# does not yet have a native, uptodate, QUIC implementation. MsQuic its API wil
 5) Wirting QUIC in pure C# will be a lot of work, therefore levering an existing implementation could be a good solution for now.
 
 
-## Motivation
+## Main Interface
 
-The motivation of this library is to align its API to the future implementation of QUIC in .NET which can be found in `System.Net.Quic`. This API is similar to how TCP works. It exists out of a Listener, client streams, and a Client.
+The motivation of this library is to align its API to the future implementation of QUIC in .NET which can be found in `System.Net.Quic`.
+
+- `QuicListener`: Is like `TcpListener` and accepts incoming connections. 
+- `QuicConnection`: Is a connection connected to some remote endpoint. 
+- `QuicStream`: Is a stream that can be either bidirectional, or unidirectional. A `QuicConnection` has one ore more streams. 
 
 ## Examples
 
@@ -28,7 +33,7 @@ IPEndPoint serverIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5000);
 QuicListener server = new QuicListener(serverIp);
 
 # Listen for incoming connections.
-QuicConnection connection = await server.AcceptIncomingAsync();
+QuicConnection connection = await server.AcceptAsync();
 connection.DataReceived += OnDataReceive;
 
 # Create server => client streams 
@@ -36,18 +41,18 @@ QuicStream biStream = connection.OpenBiDirectionalStream();
 QuicStream uniStream = connection.OpenUniDirectionalStream();
 
 # Send Data
-biStream.Send(data);
+biStream.Write(data);
 
 # Receive Data
 var buffer = new byte[10];
-uniStream.Read(buffer);
+uniStream.ReadAsync(buffer);
 
 void OnDataReceive(object? sender, DataReceivedEventArgs e) 
 {
     var buffer = new byte[10];
-    e.Stream.Read(buffer);
+    e.Stream.Read(buffer); // should not block
     
-   if (e.Stream.IsBiStream) e.Stream.Send(buffer);  
+   if (e.Stream.IsBiStream) e.Stream.Write(buffer);  
 }
 ```
 
@@ -56,31 +61,25 @@ Client Example:
 ```csharp
 IPEndPoint connectionIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5001);
 QuicClient client = new QuicClient(connectionIp);
-client.DataReceived += OnDataReceive;
 
-client.Connect(serverIp);
+client.ConnectAsync(serverIp);
 
 # Open client => server streams. 
 QuicStream biStream = client.OpenBiDirectionalStream();
 QuicStream uniStream = client.OpenUniDirectionalStream();
 
 # Send Data
-biStream.Send(data);
+biStream.Write(data);
 
 # Receive Data
 var buffer = new byte[10];
-uniStream.Read(buffer);
-
-void OnDataReceive(object? sender, DataReceivedEventArgs e) 
-{
-    var buffer = new byte[10];
-    e.Stream.Read(buffer);
-
-    if (e.Stream.IsBiStream) e.Stream.Send(buffer);
-}
+uniStream.ReadAsync(buffer);
 ```
 
+
 ## Features
+
+- `QuicListener` that can accept incomming `QuicConnections`
 
 - Listening with server for incoming connections.
 - Receiving data from clients
@@ -104,3 +103,5 @@ Cleanup:
 - ConnectionHandle
 
 
+[Quinn]: https://github.com/quinn-rs/quinn
+[QUIC]: https://en.wikipedia.org/wiki/QUIC

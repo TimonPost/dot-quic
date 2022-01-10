@@ -36,13 +36,11 @@ namespace Quic.Native.ApiWrappers
         /// <param name="streamId">id of the stream to write to</param>
         /// <param name="buffer">buffer to write to the stream</param>
         /// <returns>Written bytes/</returns>
-        public static uint WriteToStream(ConnectionHandle handle, long streamId, byte[] buffer)
+        public static uint WriteToStream(ConnectionHandle handle, long streamId, ReadOnlySpan<byte> buffer)
         {
-            var bufferSpan = new ReadOnlySpan<byte>(buffer);
-
             unsafe
             {
-                fixed (byte* bufferPtr = bufferSpan)
+                fixed (byte* bufferPtr = buffer)
                 {
                     QuinnApi.WriteStream(
                         handle,

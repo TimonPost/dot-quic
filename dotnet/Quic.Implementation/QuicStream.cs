@@ -12,6 +12,11 @@ namespace Quic.Implementation
     /// <summary>
     /// An initiated QUIC stream that is either unidirectional or bidirectional.
     /// Make sure to respect the directionality otherwise the stream read or write might fail.
+    ///
+    /// Note that not all stream methods are implemented. Restrict usage to:
+    /// - Write
+    /// - Read and ReadAsync
+    /// - CanRead / CanWrite
     /// </summary>
     public class QuicStream : Stream
     {
@@ -22,11 +27,9 @@ namespace Quic.Implementation
         
         private readonly ConnectionHandle _handle;
 
-        private BufferBlock<byte> ReadableEvents;
+        private readonly BufferBlock<byte> ReadableEvents;
         private readonly ManualResetEvent _writeManualResetEvent;
-
-        public StreamType StreamType { get; }
-
+        
         public QuicStream(ConnectionHandle handle, StreamType streamType, long streamId, bool readable, bool writable)
         {
             StreamType = streamType;
@@ -40,20 +43,13 @@ namespace Quic.Implementation
             ReadableEvents = new BufferBlock<byte>();
         }
 
-        public override bool CanRead => ReadableEvents.Count != 0;
-
-        public override bool CanSeek => false;
+        public override bool CanRead => ReadableEvents.Count != 0 && _readable;
         public override bool CanWrite => _writable;
-        public override long Length { get; }
-        public override long Position { get; set; }
+        public StreamType StreamType { get; }
+
         public bool IsBiStream => StreamType == StreamType.BiDirectional;
         public bool IsUniStream => StreamType == StreamType.UniDirectional;
-
-        public override void Flush()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override int Read(byte[] buffer, int offset, int count)
         {
             return ReadAsync(buffer).Result;
@@ -61,11 +57,11 @@ namespace Quic.Implementation
 
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = new CancellationToken())
         {
-            ReadAccessCheck();
-
-
+            AssertReadAccess();
+            
             async Task<int> _readAsync()
             {
+                // When buffer is blocked, try receiving again till next event arrives.
                 while (true)
                 {
                     await ReadableEvents.ReceiveAsync(cancellationToken);
@@ -84,27 +80,33 @@ namespace Quic.Implementation
 
             return await ValueTask.FromResult(read);
         }
-
+        
         public override int Read(Span<byte> buffer)
         {
             var bytesRead = QuinnFFIHelpers.ReadFromStream(_handle, _streamId, buffer);
             return (int)bytesRead;
         }
 
-        public override long Seek(long offset, SeekOrigin origin)
+        public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = new CancellationToken())
         {
-            throw new NotImplementedException();
+            return new ValueTask(Task.Run(() => Write(buffer.Span), cancellationToken));
         }
 
-        public override void SetLength(long value)
+        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => Write(buffer, offset, count), cancellationToken);
+        }
+
+        public override void Write(ReadOnlySpan<byte> buffer)
+        {
+            AssertWriteAccess();
+            QuinnFFIHelpers.WriteToStream(_handle, _streamId, buffer[..buffer.Length]);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (!_writable) return;
-            Position = 0;
+            AssertWriteAccess();
+
             QuinnFFIHelpers.WriteToStream(_handle, _streamId, buffer[..count]);
         }
 
@@ -123,11 +125,44 @@ namespace Quic.Implementation
                 _writeManualResetEvent.Set();
         }
 
-        private void ReadAccessCheck()
+        private void AssertReadAccess()
         {
             if (!_readable)
                 throw new Exception(
                     $"Trying to read a {StreamType} stream that can not be read from this remote endpoint.");
+        }
+
+        private void AssertWriteAccess()
+        {
+            if (!_writable)
+                throw new Exception(
+                    $"Trying to read a {StreamType} stream that can not be read from this remote endpoint.");
+        }
+
+
+        public override long Length =>
+            throw new NotSupportedException("`Length` property of `QuicStream` is not supported.");
+        public override bool CanSeek => throw new NotImplementedException("`Position` property of `QuicStream` is not supported.");
+
+        public override long Position
+        {
+            get => throw new NotSupportedException("`Position` property of `QuicStream` is not supported.");
+            set => throw new NotSupportedException("`Position` property of `QuicStream` is not supported.");
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            throw new NotSupportedException("`Seek` method of `QuicStream` is not supported.");
+        }
+
+        public override void SetLength(long value)
+        {
+            throw new NotSupportedException("`SetLength` method of `QuicStream` is not supported.");
+        }
+
+        public override void Flush()
+        {
+            throw new NotSupportedException("`Flush` method of `QuicStream` is not supported.");
         }
     }
 }

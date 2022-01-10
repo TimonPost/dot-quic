@@ -7,7 +7,10 @@ using Quic.Native.Handles;
 
 namespace Quic.Implementation
 {
-    internal class Incoming
+    /// <summary>
+    /// Async processor of an incoming connection. 
+    /// </summary>
+    internal class IncomingConnection
     {
         private readonly ManualResetEvent _awaitingConnection = new(false);
 
@@ -17,7 +20,7 @@ namespace Quic.Implementation
         private readonly ConnectionHandle _handle;
         private Task<QuicConnection> _processingTask;
 
-        public Incoming(ConnectionHandle handle, int id)
+        public IncomingConnection(ConnectionHandle handle, int id)
         {
             _id = id;
             _handle = handle;
@@ -32,6 +35,10 @@ namespace Quic.Implementation
                 _awaitingConnection.Set();
         }
 
+        /// <summary>
+        /// Starts an asynchronous task for accepting the incoming connection. 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
         public void ProcessIncoming(CancellationToken cancellationToken)
         {
             State = IncomingState.Listening;
@@ -43,18 +50,18 @@ namespace Quic.Implementation
                 // A first poll is sometimes required to get events flowing.
                 QuinnApi.PollConnection(_handle);
 
-                await _awaitingConnection.AsTask(cancellationToken)
-                    .ContinueWith((_) =>
-                    {
-                        quicConnection.SetState(IncomingState.Connected);
-                        
-                    }, cancellationToken);
+                await _awaitingConnection.AsTask(cancellationToken);
+                quicConnection.SetState(IncomingState.Connected);
                 
                 return quicConnection;
             }, cancellationToken);
         }
         
-        public Task<QuicConnection> ConnectionInitialized()
+        /// <summary>
+        /// Waits till the connection is initialized.
+        /// </summary>
+        /// <returns></returns>
+        public Task<QuicConnection> WaitAsync()
         {
             return _processingTask;
         }

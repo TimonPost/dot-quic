@@ -26,6 +26,9 @@ namespace Quic.Implementation
             StartReceivingAsync();
         }
 
+        /// <summary>
+        /// The underlying QUIC Connection.
+        /// </summary>
         public QuicConnection Connection => _innerConnection;
        
 
@@ -43,16 +46,16 @@ namespace Quic.Implementation
         /// Connect asynchronously to the given server ip. 
         /// </summary>
         /// <returns>QuicConnection</returns>
-        public async Task<QuicConnection> ConnectAsync(IPEndPoint serverIp, CancellationToken token)
+        public async Task<QuicConnection> ConnectAsync(IPEndPoint serverIp, CancellationToken token = new())
         {
             QuinnApi.ConnectClient(Handle, serverIp.ToNative(), out ConnectionHandle connectionHandle, out int connectionId).Unwrap();
 
             _connectionDriver = new ConnectionDriver((id => connectionHandle));
             _connectionDriver.StartPollingAsync();
 
-            var incoming = new Incoming(connectionHandle, connectionId);
+            var incoming = new IncomingConnection(connectionHandle, connectionId);
             incoming.ProcessIncoming(token);
-            _innerConnection = await incoming.ConnectionInitialized();
+            _innerConnection = await incoming.WaitAsync();
 
             return _innerConnection;
         }

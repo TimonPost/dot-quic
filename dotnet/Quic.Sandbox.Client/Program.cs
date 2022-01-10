@@ -20,7 +20,7 @@ namespace Quic.Sandbox.Client
             QuinnApi.Initialize();
 
             var client = new QuicClient(clientIp);
-
+            
             var connection = await client.ConnectAsync(serverIp, CancellationToken.None);
 
             var stream = connection.OpenBiDirectionalStream();
