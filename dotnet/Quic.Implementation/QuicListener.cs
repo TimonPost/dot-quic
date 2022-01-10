@@ -41,7 +41,6 @@ namespace Quic.Implementation
             EndpointEvents.TransmitReady += OnTransmitReady;
 
             StartReceivingAsync();
-            StartPollingAsync();
             _connectionDriver.StartPollingAsync();
         }
 

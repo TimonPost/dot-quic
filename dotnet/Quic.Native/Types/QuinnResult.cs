@@ -21,13 +21,26 @@ namespace Quic.Native.Types
 
         public bool IsBufferTooSmall()
         {
-            return ResultKind == ResultKind.IsBufferToSmall;
+            return ResultKind == ResultKind.BufferToSmall;
+        }
+
+        public bool IsBufferBlocked()
+        {
+            return ResultKind == ResultKind.BufferBlocked;
         }
 
         public void Unwrap()
         {
             if (Erroneous())
                 throw new Exception(QuinnFFIHelpers.LastError().Reason);
+
+            if (IsBufferBlocked())
+                throw new BufferBlockedException();
         }
+    }
+
+    public class BufferBlockedException : Exception
+    {
+        public override string Message => "The buffer has no data to be read.";
     }
 }

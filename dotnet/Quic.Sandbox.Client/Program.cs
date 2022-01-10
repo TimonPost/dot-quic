@@ -31,7 +31,7 @@ namespace Quic.Sandbox.Client
                 var request = Encoding.UTF8.GetBytes($"Request {_count}");
                 stream.Write(request);
 
-                var response = new byte[10];
+                var response = new byte[20];
                 var read = await stream.ReadAsync(response);
                 Console.WriteLine("{0}", Encoding.UTF8.GetString(response));
                 _count++;

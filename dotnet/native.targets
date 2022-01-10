@@ -32,7 +32,7 @@
     </PropertyGroup>
 
     <Target Name="Cargo" BeforeTargets="Build">
-        <Exec Command="cargo build" WorkingDirectory="$(CargoWorkspacePath)" />
+        <Exec Command="cargo build" WorkingDirectory="$(CargoWorkspacePath)\" />
     </Target>
 
     <!-- In AOT builds, add a reference to the IL compiler and link the static native artifact -->

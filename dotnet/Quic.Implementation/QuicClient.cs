@@ -24,7 +24,6 @@ namespace Quic.Implementation
             QuicSocket = new UdpClient(clientIp);
             EndpointEvents.TransmitReady += OnTransmitReady;
             StartReceivingAsync();
-            StartPollingAsync();
         }
 
         public QuicConnection Connection => _innerConnection;
@@ -46,7 +45,6 @@ namespace Quic.Implementation
         /// <returns>QuicConnection</returns>
         public async Task<QuicConnection> ConnectAsync(IPEndPoint serverIp, CancellationToken token)
         {
-            Console.WriteLine("Connecting ...");
             QuinnApi.ConnectClient(Handle, serverIp.ToNative(), out ConnectionHandle connectionHandle, out int connectionId).Unwrap();
 
             _connectionDriver = new ConnectionDriver((id => connectionHandle));
@@ -55,14 +53,14 @@ namespace Quic.Implementation
             var incoming = new Incoming(connectionHandle, connectionId);
             incoming.ProcessIncoming(token);
             _innerConnection = await incoming.ConnectionInitialized();
-            Console.WriteLine("Connected");
+
             return _innerConnection;
         }
 
         private void OnTransmitReady(object? sender, TransmitEventArgs e)
         {
             if (!IsThisEndpoint(e.Id)) return;
-            Console.WriteLine("OnTransmit");
+
             // TODO: maybe don't send immediately when data is transmit ready. 
             if (Id == e.Id)
                 QuicSocket.Send(e.TransmitPacket.Contents, e.TransmitPacket.Contents.Length,

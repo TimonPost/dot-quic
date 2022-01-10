@@ -27,8 +27,6 @@ namespace Quic.Implementation
 
         private void OnConnectionInitialized(object? sender, ConnectionIdEventArgs e)
         {
-            Console.WriteLine("On initialized...");
-
             // Only set awaiting state if current connection and state is listening.
             if (State == IncomingState.Listening && e.Id == _id)
                 _awaitingConnection.Set();
@@ -36,7 +34,6 @@ namespace Quic.Implementation
 
         public void ProcessIncoming(CancellationToken cancellationToken)
         {
-            Console.WriteLine("Processing incoming ...");
             State = IncomingState.Listening;
             _processingTask = Task.Run(async () =>
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quic.Implementation;
 using Quic.Native;
+using DataReceivedEventArgs = Quic.Implementation.DataReceivedEventArgs;
 
 namespace Quic.Runner
 {
@@ -21,13 +23,19 @@ namespace Quic.Runner
             connection.DataReceived += OnDataReceive;
 
             Console.ReadKey();
+            
         }
 
         private static int _count = 0;
-
+        private static DateTime started;
         private static void OnDataReceive(object? sender, DataReceivedEventArgs e)
         {
-            var buffer = new byte[10];
+            if (_count == 0)
+            {
+                started = DateTime.Now;
+            }
+
+            var buffer = new byte[20];
 
             if (e.Stream.CanRead)
             {
@@ -38,13 +46,9 @@ namespace Quic.Runner
                 e.Stream.Position = 0;
                 if (e.Stream.IsBiStream) e.Stream.Write(response);
 
-                try
+                if (_count == 4000)
                 {
-                    Console.WriteLine("written: {0}", Encoding.UTF8.GetString(response));
-                }
-                catch(Exception ex)
-                {
-
+                    Console.WriteLine("Packets per second: {0}", _count / (DateTime.Now - started).Seconds);
                 }
 
                 _count++;

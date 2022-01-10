@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Quic.Native.ApiWrappers;
 using Quic.Native.Handles;
 using Quic.Native.Types;
@@ -21,7 +22,7 @@ namespace Quic.Implementation
         
         private readonly ConnectionHandle _handle;
 
-        private readonly ManualResetEvent _readManualResetEvent;
+        private BufferBlock<byte> ReadableEvents;
         private readonly ManualResetEvent _writeManualResetEvent;
 
         public StreamType StreamType { get; }
@@ -34,11 +35,12 @@ namespace Quic.Implementation
             _writable = writable;
             _handle = handle;
 
-            _readManualResetEvent = new ManualResetEvent(false);
+            
             _writeManualResetEvent = new ManualResetEvent(false);
+            ReadableEvents = new BufferBlock<byte>();
         }
 
-        public override bool CanRead => _readManualResetEvent.WaitOne(10);
+        public override bool CanRead => ReadableEvents.Count != 0;
 
         public override bool CanSeek => false;
         public override bool CanWrite => _writable;
@@ -54,31 +56,41 @@ namespace Quic.Implementation
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            ReadAccessCheck();
-
-            _readManualResetEvent.WaitOne();
-            var read = Read(buffer);
-            _readManualResetEvent.Reset();
-            return read;
-        }
-
-        public override int Read(Span<byte> buffer)
-        {
-            var bytesRead = QuinnFFIHelpers.ReadFromStream(_handle, _streamId, buffer);
-
-            return (int)bytesRead;
+            return ReadAsync(buffer).Result;
         }
 
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = new CancellationToken())
         {
             ReadAccessCheck();
 
-            await _readManualResetEvent.AsTask();
-            var read = await new Task<int>(() => Read(buffer.Span));
-            _readManualResetEvent.Reset();
+
+            async Task<int> _readAsync()
+            {
+                while (true)
+                {
+                    await ReadableEvents.ReceiveAsync(cancellationToken);
+                    try
+                    {
+                        return Read(buffer.Span);
+                    }
+                    catch (BufferBlockedException e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+
+            var read = await _readAsync();
+
             return await ValueTask.FromResult(read);
         }
-        
+
+        public override int Read(Span<byte> buffer)
+        {
+            var bytesRead = QuinnFFIHelpers.ReadFromStream(_handle, _streamId, buffer);
+            return (int)bytesRead;
+        }
+
         public override long Seek(long offset, SeekOrigin origin)
         {
             throw new NotImplementedException();
@@ -99,10 +111,10 @@ namespace Quic.Implementation
         /// <summary>
         /// Allows the `Read` or `ReadAsync` to continue with its work. 
         /// </summary>
-        public void SetReadable()
+        public void QueueReadEvent()
         {
             if (_readable)
-                _readManualResetEvent.Set();
+                ReadableEvents.Post((byte)0);
         }
 
         public void SetWritable()

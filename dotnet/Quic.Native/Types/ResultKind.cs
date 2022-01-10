@@ -4,6 +4,7 @@
     {
         Ok,
         Error,
-        IsBufferToSmall
+        BufferToSmall,
+        BufferBlocked
     }
 }

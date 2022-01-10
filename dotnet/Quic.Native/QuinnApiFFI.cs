@@ -13,7 +13,7 @@ namespace Quic.Native
     /// </summary>
     internal static class QuinnApiFFI
     {
-        private const string NativeLib = @"E:\programming\quinn-ffi\quinn-ffi\target\debug\quinn_ffi.dll";
+        private const string NativeLib = @"./Native/quinn_ffi.dll";
         
         #region Connection
 

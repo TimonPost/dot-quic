@@ -38,9 +38,11 @@ namespace Quic.Implementation
             
             ConnectionEvents.ConnectionLost += OnConnectionLost;
             ConnectionEvents.DatagramReceived += DatagramReceived;
+
             ConnectionEvents.StreamAvailable += StreamAvailable;
-            ConnectionEvents.StreamFinished += OnStreamFinished;
             ConnectionEvents.StreamOpened += OnStreamOpened;
+
+            ConnectionEvents.StreamFinished += OnStreamFinished;
             ConnectionEvents.StreamReadable += OnStreamReadable;
             ConnectionEvents.StreamStopped += OnStreamStopped;
             ConnectionEvents.StreamWritable += OnStreamWritable;
@@ -181,11 +183,11 @@ namespace Quic.Implementation
             {
                 case StreamType.UniDirectional:
                     stream = _uniDirectionalQuicStreams[e.StreamId];
-                    stream.SetReadable();
+                    stream.QueueReadEvent();
                     break;
                 case StreamType.BiDirectional:
                     stream = _biDirectionalQuicStreams[e.StreamId];
-                    stream.SetReadable();
+                    stream.QueueReadEvent();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -212,7 +214,7 @@ namespace Quic.Implementation
                     {
                         var newStream = new QuicStream(ConnectionHandle, e.StreamType, streamId, true, true);
                         _biDirectionalQuicStreams.Add(streamId, newStream);
-                        newStream.SetReadable();
+                        newStream.QueueReadEvent();
                         DataReceived?.Invoke(null, new DataReceivedEventArgs() {Stream = newStream});
                         break;
                     }
