@@ -1,8 +1,6 @@
 # QUIC for .NET
 [QUIC][QUIC] implementation for .NET with pure rust QUIC implementation by [Quinn][quinn].
 
-[QUIC][QUIC] implemention for .NET with pure rust backend implemented with [Quinn][quinn].
-
 **This library is very new and in active development, dont use it yet**
 
 ## Why
