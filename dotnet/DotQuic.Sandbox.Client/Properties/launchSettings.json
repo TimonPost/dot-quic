@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Quic.Sandbox.Client": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Quic.Implementation": {
-      "commandName": "Project",
-      "nativeDebugging": true
-    }
-  }
-}

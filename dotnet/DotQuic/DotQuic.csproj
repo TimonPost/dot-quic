@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+	<Import Project="../quic.targets" />
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DotQuic.Native\DotQuic.Native.csproj" />
+	</ItemGroup>
+
+
+</Project>
