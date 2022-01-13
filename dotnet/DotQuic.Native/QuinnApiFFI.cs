@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using DotQuic.Native.Handles;
 using DotQuic.Native.Types;
 
@@ -22,6 +23,7 @@ namespace DotQuic.Native
 
         [DllImport(NativeLib, EntryPoint = nameof(poll_connection), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
+        [SuppressUnmanagedCodeSecurity]
         internal static extern QuinnResult poll_connection(ConnectionHandle connectionHandle);
 
         #endregion
@@ -139,6 +141,7 @@ namespace DotQuic.Native
 
         [DllImport(NativeLib, EntryPoint = nameof(handle_datagram), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
+        [SuppressUnmanagedCodeSecurity]
         internal static extern QuinnResult handle_datagram(EndpointHandle handle, IntPtr buffer, UIntPtr length,
             SockaddrInV4 sockaddrInV4);
 
