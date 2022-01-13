@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Version>0.0.1</Version>
+    <Description>QUIC implementation for .NET with pure rust QUIC implementation by Quinn.</Description>
+    <PackageProjectUrl>https://github.com/TimonPost/quic-csharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TimonPost/quic-csharp</RepositoryUrl>
+    <RepositoryType>network</RepositoryType>
+    <PackageTags>QUIC networking protocol dotnet net</PackageTags>
   </PropertyGroup>
 
 	<Import Project="../quic.targets" />
