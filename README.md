@@ -1,4 +1,4 @@
-# QUIC for .NET
+# Dot QUIC
 [QUIC][QUIC] implementation for .NET with pure rust QUIC implementation by [Quinn][quinn].
 
 **This library is very new and in active development, dont use it yet**
@@ -80,21 +80,13 @@ uniStream.ReadAsync(buffer);
 ## Features
 
 - `QuicListener` that can accept incomming `QuicConnections`
-
-- Listening with server for incoming connections.
+- A `QuicClient` that can connect to quic endpoints. 
 - Receiving data from clients
 - Sending data to clients.
-- Opening UNI/BIdirectional streams  
+- Opening UNI/BIdirectional streams on both clients and server.
 
 ## Todo:
-- Async API's
-- Client logic
 - Configuration of both server and clients. 
-
-
-
-Notes
-
 - Implement stram finialisation
 - Implement connection termination
 
