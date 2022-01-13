@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Quic.Native;
 using Quic.Native.Events;
 using Quic.Native.Handles;
@@ -23,13 +25,15 @@ namespace Quic.Implementation
     /// </summary>
     public class QuicConnection
     {
+        private readonly ConnectionDriver _connectionDriver;
         public ConnectionHandle ConnectionHandle { get; }
         private readonly Dictionary<long, QuicStream> _biDirectionalQuicStreams;
         private readonly Dictionary<long, QuicStream> _uniDirectionalQuicStreams;
         private IncomingState ConnectionState;
 
-        public QuicConnection(ConnectionHandle connectionHandle, int connectionId)
+        public QuicConnection(ConnectionHandle connectionHandle, int connectionId, ConnectionDriver connectionDriver)
         {
+            _connectionDriver = connectionDriver;
             ConnectionHandle = connectionHandle;
             ConnectionId = connectionId;
 
@@ -193,32 +197,36 @@ namespace Quic.Implementation
                     throw new ArgumentOutOfRangeException();
             }
 
-            DataReceived?.Invoke(this, new DataReceivedEventArgs { Stream = stream });
+            _connectionDriver.Schedule(() => DataReceived?.Invoke(this, new DataReceivedEventArgs { Stream = stream }));
         }
+        
 
         private void OnStreamOpened(object? sender, StreamTypeEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
-
-            QuinnApi.AcceptStream(ConnectionHandle, (byte)e.StreamType, out var streamId).Unwrap();
-
-            switch (e.StreamType)
+            
+            _connectionDriver.Schedule(() =>
             {
-                case StreamType.UniDirectional:
+                QuinnApi.AcceptStream(ConnectionHandle, (byte)e.StreamType, out var streamId).Unwrap();
+
+                switch (e.StreamType)
+                {
+                    case StreamType.UniDirectional:
                     {
                         var newStream = new QuicStream(ConnectionHandle, e.StreamType, streamId, true, false);
                         _uniDirectionalQuicStreams.Add(streamId, newStream);
                         break;
                     }
-                case StreamType.BiDirectional:
+                    case StreamType.BiDirectional:
                     {
                         var newStream = new QuicStream(ConnectionHandle, e.StreamType, streamId, true, true);
                         _biDirectionalQuicStreams.Add(streamId, newStream);
                         newStream.QueueReadEvent();
-                        DataReceived?.Invoke(null, new DataReceivedEventArgs() {Stream = newStream});
+                        DataReceived?.Invoke(null, new DataReceivedEventArgs() { Stream = newStream });
                         break;
                     }
-            }
+                }
+            });
         }
 
         private void OnStreamFinished(object? sender, StreamEventArgs e)

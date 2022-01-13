@@ -17,7 +17,7 @@ namespace Quic.Native.Handles
         }
 
         public override bool IsInvalid => handle == IntPtr.Zero;
-
+        
         protected override bool ReleaseHandle()
         {
             if (handle == IntPtr.Zero) return true;

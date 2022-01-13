@@ -53,7 +53,7 @@ namespace Quic.Implementation
             _connectionDriver = new ConnectionDriver((id => connectionHandle));
             _connectionDriver.StartPollingAsync();
 
-            var incoming = new IncomingConnection(connectionHandle, connectionId);
+            var incoming = new IncomingConnection(connectionHandle, connectionId, _connectionDriver);
             incoming.ProcessIncoming(token);
             _innerConnection = await incoming.WaitAsync();
 

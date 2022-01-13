@@ -29,6 +29,11 @@ namespace Quic.Native.Types
             return ResultKind == ResultKind.BufferBlocked;
         }
 
+        public bool ArgumentNull()
+        {
+            return ResultKind == ResultKind.BufferBlocked;
+        }
+
         public void Unwrap()
         {
             if (Erroneous())
@@ -36,6 +41,9 @@ namespace Quic.Native.Types
 
             if (IsBufferBlocked())
                 throw new BufferBlockedException();
+
+            if (ArgumentNull())
+                throw new ArgumentNullException(QuinnFFIHelpers.LastError().Reason);
         }
     }
 

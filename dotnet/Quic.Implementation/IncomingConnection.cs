@@ -17,12 +17,14 @@ namespace Quic.Implementation
         private IncomingState State = IncomingState.Listening;
 
         private readonly int _id;
+        private readonly ConnectionDriver _connectionDriver;
         private readonly ConnectionHandle _handle;
         private Task<QuicConnection> _processingTask;
 
-        public IncomingConnection(ConnectionHandle handle, int id)
+        public IncomingConnection(ConnectionHandle handle, int id, ConnectionDriver connectionDriver)
         {
             _id = id;
+            _connectionDriver = connectionDriver;
             _handle = handle;
 
             ConnectionEvents.ConnectionInitialized += OnConnectionInitialized;
@@ -30,6 +32,7 @@ namespace Quic.Implementation
 
         private void OnConnectionInitialized(object? sender, ConnectionIdEventArgs e)
         {
+            Console.WriteLine("{0}", e);
             // Only set awaiting state if current connection and state is listening.
             if (State == IncomingState.Listening && e.Id == _id)
                 _awaitingConnection.Set();
@@ -44,7 +47,7 @@ namespace Quic.Implementation
             State = IncomingState.Listening;
             _processingTask = Task.Run(async () =>
             {
-                QuicConnection quicConnection = new QuicConnection(_handle, _id);
+                QuicConnection quicConnection = new QuicConnection(_handle, _id, _connectionDriver);
                 quicConnection.SetState(IncomingState.Connecting);
 
                 // A first poll is sometimes required to get events flowing.

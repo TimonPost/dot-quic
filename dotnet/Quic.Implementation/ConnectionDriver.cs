@@ -21,13 +21,15 @@ namespace Quic.Implementation
     /// <summary>
     /// Polls connections if they should be polled. 
     /// </summary>
-    internal class ConnectionDriver : IDisposable
+    public class ConnectionDriver : IDisposable
     {
         // Dont mutate any state of quic listener. 
         private readonly Func<int, ConnectionHandle> _getConnectionHandle;
         private readonly BufferBlock<PollTask> _pollTasks;
         private readonly CancellationTokenSource Source;
         private Task _connectionPollTask;
+
+        private readonly BufferBlock<Action> _scheduledTasks;
 
         public ConnectionDriver(Func<int, ConnectionHandle> getConnectionHandle)
         {
@@ -36,6 +38,7 @@ namespace Quic.Implementation
             Source = new CancellationTokenSource();
             
             EndpointEvents.ConnectionPollable += OnConnectionPollable;
+            _scheduledTasks = new BufferBlock<Action>();
 
         }
 
@@ -51,8 +54,22 @@ namespace Quic.Implementation
                     // Wait for poll task
                     var task = await _pollTasks.ReceiveAsync(Source.Token);
                     QuinnApi.PollConnection(_getConnectionHandle(task.Id));
+
+                   
+                    while (_scheduledTasks.Count != 0)
+                    {
+                        var scheduled = await _scheduledTasks.ReceiveAsync();
+                        scheduled();
+                    }
                 }
             });
+        }
+        
+        // A connection poll might result in callbacks from rust to C#. 
+        // To prevent deadlocks on connection handle tasks are schedule for when the poll operation finished.
+        public void Schedule(Action task)
+        {
+            _scheduledTasks.Post(task);
         }
         
         private void OnConnectionPollable(object? sender, ConnectionIdEventArgs e)

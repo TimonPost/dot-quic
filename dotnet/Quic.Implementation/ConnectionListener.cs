@@ -10,12 +10,14 @@ namespace Quic.Implementation
     {
         private readonly CancellationToken _token;
         private readonly int _endpointId;
+        private readonly ConnectionDriver _connectionDriver;
         private readonly BufferBlock<IncomingConnection> _incomingConnections;
 
-        public ConnectionListener(CancellationToken token, int endpointId)
+        public ConnectionListener(CancellationToken token, int endpointId, ConnectionDriver connectionDriver)
         {
             _token = token;
             _endpointId = endpointId;
+            _connectionDriver = connectionDriver;
             _incomingConnections = new BufferBlock<IncomingConnection>();
             EndpointEvents.NewConnection += OnNewConnection;
         }
@@ -33,7 +35,7 @@ namespace Quic.Implementation
             if (_endpointId != e.EndpointId) return;
 
             Console.WriteLine("On new connection");
-            var incoming = new IncomingConnection(e.ConnectionHandle, e.ConnectionId);
+            var incoming = new IncomingConnection(e.ConnectionHandle, e.ConnectionId, _connectionDriver);
             incoming.ProcessIncoming(_token);
             
             _incomingConnections.Post(incoming);

@@ -35,7 +35,7 @@ namespace Quic.Implementation
             _connections = new Dictionary<int, ConnectionHandle>();
             _connectionDriver = new ConnectionDriver(id => _connections[id]);
             _connectionListenerCancellationToken = new CancellationToken();
-            _connectionListener = new ConnectionListener(_connectionListenerCancellationToken, Id);
+            _connectionListener = new ConnectionListener(_connectionListenerCancellationToken, Id, _connectionDriver);
 
             EndpointEvents.NewConnection += OnNewConnection;
             EndpointEvents.TransmitReady += OnTransmitReady;

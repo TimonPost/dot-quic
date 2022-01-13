@@ -43,7 +43,7 @@ namespace Quic.Runner
 
                 Console.WriteLine("{0}", Encoding.UTF8.GetString(buffer[..read]));
                 var response = new ReadOnlySpan<byte>(Encoding.UTF8.GetBytes($"Ack {_count}"));
-                e.Stream.Position = 0;
+                
                 if (e.Stream.IsBiStream) e.Stream.Write(response);
 
                 if (_count == 4000)

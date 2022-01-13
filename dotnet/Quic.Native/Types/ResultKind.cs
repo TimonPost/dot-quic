@@ -5,6 +5,7 @@
         Ok,
         Error,
         BufferToSmall,
-        BufferBlocked
+        BufferBlocked,
+        ArgumentNull
     }
 }
