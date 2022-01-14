@@ -48,7 +48,7 @@ namespace DotQuic.Native.Events
         public static event EventHandler<ConnectionIdEventArgs> ConnectionLost;
 
         /// Is triggered when a stream is opened. 
-        public static event EventHandler<StreamTypeEventArgs> StreamOpened;
+        public static event EventHandler<StreamEventArgs> StreamOpened;
 
         /// Is triggered when a stream is available for accepting. 
         public static event EventHandler<StreamTypeEventArgs> StreamAvailable;
@@ -79,9 +79,9 @@ namespace DotQuic.Native.Events
             ConnectionLost?.Invoke(null, new ConnectionIdEventArgs(connectionId));
         }
 
-        private static void OnStreamOpened(int connectionId, byte streamType)
+        private static void OnStreamOpened(int connectionId, long streamId, byte streamType)
         {
-            StreamOpened?.Invoke(null, new StreamTypeEventArgs(connectionId, (StreamType)streamType));
+            StreamOpened?.Invoke(null, new StreamEventArgs(connectionId, streamId, (StreamType)streamType));
         }
 
         private static void OnStreamAvailable(int connectionId, byte streamType)

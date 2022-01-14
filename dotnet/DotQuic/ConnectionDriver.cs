@@ -51,16 +51,9 @@ namespace DotQuic
             {
                 while (!Source.IsCancellationRequested)
                 {
-                    // Wait for poll task
-                    var task = await _pollTasks.ReceiveAsync(Source.Token);
-                    QuinnApi.PollConnection(_getConnectionHandle(task.Id));
-
-                   
-                    while (_scheduledTasks.Count != 0)
-                    {
-                        var scheduled = await _scheduledTasks.ReceiveAsync();
-                        scheduled();
-                    }
+                    var scheduled = await _scheduledTasks.ReceiveAsync();
+                    await Task.Delay(200);
+                    scheduled();
                 }
             });
         }

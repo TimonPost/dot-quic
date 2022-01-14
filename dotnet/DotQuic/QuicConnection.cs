@@ -39,9 +39,9 @@ namespace DotQuic
             _biDirectionalQuicStreams = new Dictionary<long, QuicStream>();
             
             ConnectionEvents.ConnectionLost += OnConnectionLost;
-            ConnectionEvents.DatagramReceived += DatagramReceived;
+            ConnectionEvents.DatagramReceived += OnDatagramReceived;
 
-            ConnectionEvents.StreamAvailable += StreamAvailable;
+            ConnectionEvents.StreamAvailable += OnStreamAvailable;
             ConnectionEvents.StreamOpened += OnStreamOpened;
 
             ConnectionEvents.StreamFinished += OnStreamFinished;
@@ -201,33 +201,35 @@ namespace DotQuic
             _connectionDriver.Schedule(() => DataReceived?.Invoke(this, new DataReceivedEventArgs { Stream = stream }));
         }
         
-        private void OnStreamOpened(object? sender, StreamTypeEventArgs e)
+        private void OnStreamOpened(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
-            
+
+            switch (e.StreamType)
+            {
+                case StreamType.UniDirectional:
+                {
+                    var newStream = new QuicStream(ConnectionHandle, e.StreamType, e.StreamId, true, false);
+                    _uniDirectionalQuicStreams.Add(e.StreamId, newStream);
+                    break;
+                }
+                case StreamType.BiDirectional:
+                {
+                    var newStream = new QuicStream(ConnectionHandle, e.StreamType, e.StreamId, true, true);
+                    _biDirectionalQuicStreams.Add(e.StreamId, newStream);
+                    newStream.QueueReadEvent();
+                    _connectionDriver.Schedule(() =>
+                    {
+                        DataReceived?.Invoke(null, new DataReceivedEventArgs() { Stream = newStream });
+                    });
+                       
+                    break;
+                }
+            }
+
             _connectionDriver.Schedule(() =>
             {
-                QuinnApi.AcceptStream(ConnectionHandle, (byte)e.StreamType, out var streamId).Unwrap();
-
-                switch (e.StreamType)
-                {
-                    case StreamType.UniDirectional:
-                    {
-                        var newStream = new QuicStream(ConnectionHandle, e.StreamType, streamId, true, false);
-                        _uniDirectionalQuicStreams.Add(streamId, newStream);
-                        break;
-                    }
-                    case StreamType.BiDirectional:
-                    {
-                        var newStream = new QuicStream(ConnectionHandle, e.StreamType, streamId, true, true);
-                        _biDirectionalQuicStreams.Add(streamId, newStream);
-                        newStream.QueueReadEvent();
-                        DataReceived?.Invoke(null, new DataReceivedEventArgs() { Stream = newStream });
-                        break;
-                    }
-                }
-
-                StreamInitiated?.Invoke(null, new StreamEventArgs(e.ConnectionId, streamId, e.StreamType));
+                StreamInitiated?.Invoke(null, new StreamEventArgs(e.ConnectionId, e.StreamId, e.StreamType));
             });
         }
 
@@ -244,12 +246,12 @@ namespace DotQuic
         }
 
 
-        private void StreamAvailable(object? sender, StreamTypeEventArgs e)
+        private void OnStreamAvailable(object? sender, StreamTypeEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
         }
 
-        private void DatagramReceived(object? sender, ConnectionIdEventArgs e)
+        private void OnDatagramReceived(object? sender, ConnectionIdEventArgs e)
         {
             if (!IsThisConnection(e.Id)) return;
         }

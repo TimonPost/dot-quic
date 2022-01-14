@@ -17,7 +17,7 @@ namespace DotQuic.Native
 
     public delegate void OnStreamFinished(int connectionId, long streamId, byte direction);
 
-    public delegate void OnStreamOpened(int connectionId, byte streamType);
+    public delegate void OnStreamOpened(int connectionId, long streamId, byte streamType);
 
     public delegate void OnStreamReadable(int connectionId, long streamId, byte direction);
 
