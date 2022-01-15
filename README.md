@@ -1,4 +1,4 @@
-# QUIC for .NET
+# Dot Quic - QUIC for .NET
 [QUIC][QUIC] implementation for .NET with pure rust, up-to-date, QUIC implementation by [Quinn][quinn].
 
 **This library is very new and in active development, dont use it yet**
