@@ -32,9 +32,11 @@ namespace DotQuic.Native.Events
             ConnectionPollable?.Invoke(null, new ConnectionIdEventArgs(connectionId));
         }
 
-        private static void OnNewConnection(IntPtr handle, int connectionId)
+        private static void OnNewConnection(IntPtr handle, int connectionId, int endpointId)
         {
-            NewConnection?.Invoke(null, new NewConnectionEventArgs(new ConnectionHandle(handle), connectionId));
+            Console.WriteLine("On new COnnection");
+            NewConnection?.Invoke(null,
+                new NewConnectionEventArgs(new ConnectionHandle(handle), connectionId, endpointId));
         }
 
 

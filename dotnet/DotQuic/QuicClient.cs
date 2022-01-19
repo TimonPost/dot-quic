@@ -4,61 +4,69 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotQuic.Native;
 using DotQuic.Native.Events;
-using DotQuic.Native.Handles;
 
 namespace DotQuic
 {
     public class QuicClient : Endpoint
     {
         private ConnectionDriver _connectionDriver;
-        private QuicConnection _innerConnection;
 
-        public QuicClient(IPEndPoint clientIp)
+        public QuicClient(IPEndPoint clientIp, string certificatePath, string privateKeyPath)
         {
             QuinnApi.Initialize();
 
-            var clientConfig = new ClientConfig();
+            var clientConfig = new ClientConfig(certificatePath, privateKeyPath);
             QuinnApi.CreateClientEndpoint(clientConfig.Handle, out var id, out var handle).Unwrap();
 
             Id = id;
             Handle = handle;
             QuicSocket = new UdpClient(clientIp);
             EndpointEvents.TransmitReady += OnTransmitReady;
+
+
             StartReceivingAsync();
         }
 
         /// <summary>
-        /// The underlying QUIC Connection.
+        ///     The underlying QUIC Connection.
         /// </summary>
-        public QuicConnection Connection => _innerConnection;
-       
+        public QuicConnection Connection { get; private set; }
+
 
         /// <summary>
-        /// Connect to the given server ip.
-        /// This method will block the current thread until connected.
+        ///     Connect to the given server ip.
+        ///     This method will block the current thread until connected.
         /// </summary>
         /// <returns>QuicConnection</returns>
-        public QuicConnection Connect(IPEndPoint serverIp)
+        public QuicConnection Connect(IPEndPoint serverIp, string serverName)
         {
-           return ConnectAsync(serverIp, CancellationToken.None).Result;
+            return ConnectAsync(serverIp, serverName, CancellationToken.None).Result;
         }
 
         /// <summary>
-        /// Connect asynchronously to the given server ip. 
+        ///     Connect asynchronously to the given server ip.
         /// </summary>
         /// <returns>QuicConnection</returns>
-        public async Task<QuicConnection> ConnectAsync(IPEndPoint serverIp, CancellationToken token = new())
+        public async Task<QuicConnection> ConnectAsync(IPEndPoint serverIp, string serverName,
+            CancellationToken token = new())
         {
-            QuinnApi.ConnectClient(Handle, serverIp.ToNative(), out ConnectionHandle connectionHandle, out int connectionId).Unwrap();
+            var waitEvent = new ManualResetEvent(false);
+            ConnectionEvents.ConnectionInitialized += (sender, args) => { waitEvent.Set(); };
 
-            _connectionDriver = new ConnectionDriver((id => connectionHandle));
+            QuinnApi.ConnectClient(Handle, serverName, serverIp.ToNative(), out var connectionHandle,
+                out var connectionId).Unwrap();
+
+            _connectionDriver = new ConnectionDriver(id => connectionHandle);
             _connectionDriver.StartPollingAsync();
 
-            var incoming = new IncomingConnection(connectionHandle, connectionId, _connectionDriver);
-            incoming.ProcessIncoming(token);
-            _innerConnection = await incoming.WaitAsync();
+            Connection = new QuicConnection(connectionHandle, connectionId, _connectionDriver);
 
-            return _innerConnection;
+            // Wait until the handhsake is performed. 
+            await waitEvent.AsTask(token);
+
+            Connection.SetState(IncomingState.Connected);
+
+            return Connection;
         }
 
         private void OnTransmitReady(object? sender, TransmitEventArgs e)

@@ -8,10 +8,10 @@ namespace DotQuic
 {
     internal class ConnectionListener
     {
-        private readonly CancellationToken _token;
-        private readonly int _endpointId;
         private readonly ConnectionDriver _connectionDriver;
+        private readonly int _endpointId;
         private readonly BufferBlock<IncomingConnection> _incomingConnections;
+        private readonly CancellationToken _token;
 
         public ConnectionListener(CancellationToken token, int endpointId, ConnectionDriver connectionDriver)
         {
@@ -29,7 +29,7 @@ namespace DotQuic
             Console.WriteLine("initializing connection...");
             return await incoming.WaitAsync(); // result is set when finished.
         }
-        
+
         private void OnNewConnection(object sender, NewConnectionEventArgs e)
         {
             if (_endpointId != e.EndpointId) return;
@@ -37,7 +37,7 @@ namespace DotQuic
             Console.WriteLine("On new connection");
             var incoming = new IncomingConnection(e.ConnectionHandle, e.ConnectionId, _connectionDriver);
             incoming.ProcessIncoming(_token);
-            
+
             _incomingConnections.Post(incoming);
         }
     }

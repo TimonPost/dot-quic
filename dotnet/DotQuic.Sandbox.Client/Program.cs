@@ -11,30 +11,45 @@ namespace DotQuic.Sandbox.Client
         private static readonly IPEndPoint clientIp = new(IPAddress.Parse("127.0.0.1"), 5001);
         private static readonly IPEndPoint serverIp = new(IPAddress.Parse("127.0.0.1"), 5000);
 
-        private static int _count = 0;
+        private static int _count;
 
         private static async Task Main(string[] args)
         {
-            var client = new QuicClient(clientIp);
-            
-            var connection = await client.ConnectAsync(serverIp, CancellationToken.None);
+            var client = new QuicClient(clientIp, "E:\\programming\\certs\\cert.der",
+                "E:\\programming\\certs\\key.der");
 
-            var stream = connection.OpenBiDirectionalStream();
+            var connection = await client.ConnectAsync(serverIp, "localhost", CancellationToken.None);
 
+            connection.DataReceived += OnDatagramReceived;
 
-            while (true)
-            {
-                var request = Encoding.UTF8.GetBytes($"Request {_count}");
-                stream.Write(request);
+            var _stream = connection.OpenBiDirectionalStream();
 
-                var response = new byte[20];
-                var read = await stream.ReadAsync(response);
-                Console.WriteLine("{0}", Encoding.UTF8.GetString(response));
-                _count++;
-            }
-
+            var request = Encoding.UTF8.GetBytes($"Request {_count}");
+            _stream.Write(request);
+            _stream.Write(request);
+            _stream.Write(request);
 
             Console.ReadKey();
+        }
+
+        private static void OnDatagramReceived(object? sender, DataReceivedEventArgs e)
+        {
+            var response = new byte[20];
+
+            try
+            {
+                var read = e.Stream.Read(response);
+                Console.WriteLine("{0}", Encoding.UTF8.GetString(response));
+
+                var request = Encoding.UTF8.GetBytes($"Request {_count}");
+                e.Stream.Write(request);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(e);
+            }
+
+            _count++;
         }
     }
 }

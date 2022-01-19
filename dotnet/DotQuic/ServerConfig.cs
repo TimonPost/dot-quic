@@ -5,9 +5,9 @@ namespace DotQuic
 {
     public class ServerConfig
     {
-        public ServerConfig()
+        public ServerConfig(string certificatePath, string privateKeyPath)
         {
-            QuinnApi.DefaultServerConfig(out var handle).Unwrap();
+            QuinnApi.CreateServerConfig(out var handle, certificatePath, privateKeyPath);
             Handle = handle;
         }
 
@@ -16,9 +16,9 @@ namespace DotQuic
 
     public class ClientConfig
     {
-        public ClientConfig()
+        public ClientConfig(string certificatePath, string privateKeyPath)
         {
-            QuinnApi.DefaultClientConfig(out var handle).Unwrap();
+            QuinnApi.CreateClientConfig(out var handle, certificatePath, privateKeyPath);
             Handle = handle;
         }
 

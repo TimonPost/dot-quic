@@ -1,0 +1,65 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "DotQuic.Sandbox.Server/1.0.0": {
+        "dependencies": {
+          "DotQuic": "0.0.1"
+        },
+        "runtime": {
+          "DotQuic.Sandbox.Server.dll": {}
+        }
+      },
+      "Portable.BouncyCastle/1.9.0": {
+        "runtime": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
+            "assemblyVersion": "1.9.0.0",
+            "fileVersion": "1.9.0.1"
+          }
+        }
+      },
+      "DotQuic/0.0.1": {
+        "dependencies": {
+          "DotQuic.Native": "1.0.0",
+          "Portable.BouncyCastle": "1.9.0"
+        },
+        "runtime": {
+          "DotQuic.dll": {}
+        }
+      },
+      "DotQuic.Native/1.0.0": {
+        "runtime": {
+          "DotQuic.Native.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DotQuic.Sandbox.Server/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Portable.BouncyCastle/1.9.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eZZBCABzVOek+id9Xy04HhmgykF0wZg9wpByzrWN7q8qEI0Qen9b7tfd7w8VA3dOeesumMG7C5ZPy0jk7PSRHw==",
+      "path": "portable.bouncycastle/1.9.0",
+      "hashPath": "portable.bouncycastle.1.9.0.nupkg.sha512"
+    },
+    "DotQuic/0.0.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DotQuic.Native/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

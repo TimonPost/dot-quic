@@ -8,24 +8,23 @@ using DotQuic.Native.Types;
 namespace DotQuic
 {
     /// <summary>
-    /// Carries the stream form which data can be read. 
+    ///     Carries the stream form which data can be read.
     /// </summary>
     public class DataReceivedEventArgs : EventArgs
     {
         /// <summary>
-        /// The stream that has data ready to be read.
+        ///     The stream that has data ready to be read.
         /// </summary>
         public QuicStream Stream { get; set; }
     }
 
     /// <summary>
-    /// A QUIC protocol connection to some remote QUIC endpoint.
+    ///     A QUIC protocol connection to some remote QUIC endpoint.
     /// </summary>
     public class QuicConnection
     {
-        private readonly ConnectionDriver _connectionDriver;
-        public ConnectionHandle ConnectionHandle { get; }
         private readonly Dictionary<long, QuicStream> _biDirectionalQuicStreams;
+        private readonly ConnectionDriver _connectionDriver;
         private readonly Dictionary<long, QuicStream> _uniDirectionalQuicStreams;
         private IncomingState ConnectionState;
 
@@ -37,7 +36,7 @@ namespace DotQuic
 
             _uniDirectionalQuicStreams = new Dictionary<long, QuicStream>();
             _biDirectionalQuicStreams = new Dictionary<long, QuicStream>();
-            
+
             ConnectionEvents.ConnectionLost += OnConnectionLost;
             ConnectionEvents.DatagramReceived += OnDatagramReceived;
 
@@ -50,45 +49,56 @@ namespace DotQuic
             ConnectionEvents.StreamWritable += OnStreamWritable;
         }
 
-        public event EventHandler<StreamEventArgs> StreamInitiated;
-        public event EventHandler<StreamEventArgs> StreamClosed;
+        public ConnectionHandle ConnectionHandle { get; }
+
 
         /// <summary>
-        /// The id of this connection.
+        ///     The id of this connection.
         /// </summary>
         public int ConnectionId { get; }
 
         /// <summary>
-        /// Returns whether the given stream is an unidirectional stream.
-        /// </summary>
-        /// <param name="streamId"></param>
-        /// <returns>bool</returns>
-        public bool IsUniStream(long streamId) => _uniDirectionalQuicStreams.ContainsKey(streamId);
-
-        /// <summary>
-        /// Returns whether the given stream is an bidirectional stream.
-        /// </summary>
-        /// <param name="streamId"></param>
-        /// <returns>bool</returns>
-        public bool IsBiStream(long streamId) => _biDirectionalQuicStreams.ContainsKey(streamId);
-
-        /// <summary>
-        /// Returns whether this connection is connected to the remote endpoint.
-        /// A connection is connected if all handshaking procedures are finished.
+        ///     Returns whether this connection is connected to the remote endpoint.
+        ///     A connection is connected if all handshaking procedures are finished.
         /// </summary>
         public bool IsConnected => ConnectionState == IncomingState.Connected;
 
         /// <summary>
-        /// Event is triggered when new data is ready to be read on a given stream.
+        ///     Returns whether the given stream is an unidirectional stream.
+        /// </summary>
+        /// <param name="streamId"></param>
+        /// <returns>bool</returns>
+        public bool IsUniStream(long streamId)
+        {
+            return _uniDirectionalQuicStreams.ContainsKey(streamId);
+        }
+
+        /// <summary>
+        ///     Returns whether the given stream is an bidirectional stream.
+        /// </summary>
+        /// <param name="streamId"></param>
+        /// <returns>bool</returns>
+        public bool IsBiStream(long streamId)
+        {
+            return _biDirectionalQuicStreams.ContainsKey(streamId);
+        }
+
+        /// <summary>
+        ///     Event is triggered when new data is ready to be read on a given stream.
         /// </summary>
         public event EventHandler<DataReceivedEventArgs> DataReceived;
 
-        private bool IsThisConnection(int id) => id == ConnectionId;
+        public event EventHandler<StreamEventArgs> StreamInitiated;
+        public event EventHandler<StreamEventArgs> StreamClosed;
+
+        private bool IsThisConnection(int id)
+        {
+            return id == ConnectionId;
+        }
 
         /// <summary>
-        /// Opens a bidirectional stream to the remote endpoint.
-        ///
-        /// Exception is thrown if the stream can not be opened or the connection is not yet initialized.
+        ///     Opens a bidirectional stream to the remote endpoint.
+        ///     Exception is thrown if the stream can not be opened or the connection is not yet initialized.
         /// </summary>
         /// <returns>QuicStream</returns>
         public QuicStream OpenBiDirectionalStream()
@@ -99,15 +109,15 @@ namespace DotQuic
             QuinnApi.OpenStream(ConnectionHandle, StreamType.BiDirectional, out var streamId).Unwrap();
 
             var stream = new QuicStream(ConnectionHandle, StreamType.BiDirectional, streamId, true, true);
+
             _biDirectionalQuicStreams.Add(streamId, stream);
             return stream;
         }
 
 
         /// <summary>
-        /// Opens a unidirectional stream to the remote endpoint.
-        ///
-        /// Exception is thrown if the stream can not be opened or the connection is not yet initialized.
+        ///     Opens a unidirectional stream to the remote endpoint.
+        ///     Exception is thrown if the stream can not be opened or the connection is not yet initialized.
         /// </summary>
         /// <returns>QuicStream</returns>
         public QuicStream OpenUniDirectionalStream()
@@ -124,9 +134,8 @@ namespace DotQuic
 
 
         /// <summary>
-        /// Returns an bidirectional stream with the given stream id.
-        ///
-        /// Exception is thrown if there is no unidirectional stream with the given id. 
+        ///     Returns an bidirectional stream with the given stream id.
+        ///     Exception is thrown if there is no unidirectional stream with the given id.
         /// </summary>
         /// <param name="streamId"></param>
         /// <returns>QuicStream</returns>
@@ -139,9 +148,8 @@ namespace DotQuic
         }
 
         /// <summary>
-        /// Returns an unidirectional stream with the given stream id.
-        ///
-        /// Exception is thrown if there is no unidirectional stream with the given id. 
+        ///     Returns an unidirectional stream with the given stream id.
+        ///     Exception is thrown if there is no unidirectional stream with the given id.
         /// </summary>
         /// <param name="streamId"></param>
         /// <returns>QuicStream</returns>
@@ -171,9 +179,8 @@ namespace DotQuic
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
         }
-        
+
         private void OnStreamStopped(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
@@ -200,29 +207,27 @@ namespace DotQuic
 
             _connectionDriver.Schedule(() => DataReceived?.Invoke(this, new DataReceivedEventArgs { Stream = stream }));
         }
-        
+
         private void OnStreamOpened(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
+
+            QuicStream newStream = null;
 
             switch (e.StreamType)
             {
                 case StreamType.UniDirectional:
                 {
-                    var newStream = new QuicStream(ConnectionHandle, e.StreamType, e.StreamId, true, false);
+                    newStream = new QuicStream(ConnectionHandle, e.StreamType, e.StreamId, true, false);
                     _uniDirectionalQuicStreams.Add(e.StreamId, newStream);
+                    newStream.QueueReadEvent();
                     break;
                 }
                 case StreamType.BiDirectional:
                 {
-                    var newStream = new QuicStream(ConnectionHandle, e.StreamType, e.StreamId, true, true);
+                    newStream = new QuicStream(ConnectionHandle, e.StreamType, e.StreamId, true, true);
                     _biDirectionalQuicStreams.Add(e.StreamId, newStream);
                     newStream.QueueReadEvent();
-                    _connectionDriver.Schedule(() =>
-                    {
-                        DataReceived?.Invoke(null, new DataReceivedEventArgs() { Stream = newStream });
-                    });
-                       
                     break;
                 }
             }
@@ -230,6 +235,11 @@ namespace DotQuic
             _connectionDriver.Schedule(() =>
             {
                 StreamInitiated?.Invoke(null, new StreamEventArgs(e.ConnectionId, e.StreamId, e.StreamType));
+            });
+
+            _connectionDriver.Schedule(() =>
+            {
+                DataReceived?.Invoke(null, new DataReceivedEventArgs { Stream = newStream });
             });
         }
 
@@ -266,7 +276,5 @@ namespace DotQuic
         {
             ConnectionState = state;
         }
-
-
     }
 }

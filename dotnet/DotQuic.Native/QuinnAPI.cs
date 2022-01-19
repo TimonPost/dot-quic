@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using DotQuic.Native.Events;
 using DotQuic.Native.Handles;
 using DotQuic.Native.Types;
@@ -11,7 +12,7 @@ namespace DotQuic.Native
 
     public delegate void OnDatagramReceived(int connectionId);
 
-    public delegate void OnNewConnection(IntPtr handle, int connectionId);
+    public delegate void OnNewConnection(IntPtr handle, int connectionId, int endpointId);
 
     public delegate void OnStreamAvailable(int connectionId, byte streamType);
 
@@ -31,13 +32,13 @@ namespace DotQuic.Native
 
 
     /// <summary>
-    /// FFI into the QUINN rust QUIC protocol implementation.
-    /// 
-    /// This class calls into the internal class `QuinnApiFFI` which contains all ddl import functions.
+    ///     FFI into the QUINN rust QUIC protocol implementation.
+    ///     This class calls into the internal class `QuinnApiFFI` which contains all ddl import functions.
     /// </summary>
     public static class QuinnApi
     {
-        private static bool _isInitialized = false;
+        private static bool _isInitialized;
+
         public static void Initialize()
         {
             if (!_isInitialized)
@@ -50,23 +51,36 @@ namespace DotQuic.Native
         }
 
         #region Connection
+
         /// <summary>
-        ///  Polls the connection for any events. This function might trigger other callbacks to be called.
+        ///     Polls the connection for any events. This function might trigger other callbacks to be called.
         /// </summary>
         /// <remarks>
-        /// Connection handle should be valid pointer for the duration of the call. 
-        /// </remarks>> 
-        public static QuinnResult ConnectClient(EndpointHandle endpointHandle, SockaddrInV4 addr, out ConnectionHandle connectionHandle, out int connectionId)
+        ///     Connection handle should be valid pointer for the duration of the call.
+        /// </remarks>
+        /// >
+        public static QuinnResult ConnectClient(EndpointHandle endpointHandle, string hostName, SockaddrInV4 addr,
+            out ConnectionHandle connectionHandle, out int connectionId)
         {
-            return QuinnApiFFI.connect_client(endpointHandle, addr, out connectionHandle, out connectionId);
+            var hostNameBytes = Encoding.UTF8.GetBytes(hostName);
+
+            unsafe
+            {
+                fixed (byte* hostNamePtr = hostNameBytes)
+                {
+                    return QuinnApiFFI.connect_client(endpointHandle, (IntPtr)hostNamePtr, hostNameBytes.Length, addr,
+                        out connectionHandle, out connectionId);
+                }
+            }
         }
 
         /// <summary>
-        ///  Polls the connection for any events. This function might trigger other callbacks to be called.
+        ///     Polls the connection for any events. This function might trigger other callbacks to be called.
         /// </summary>
         /// <remarks>
-        /// Connection handle should be valid pointer for the duration of the call. 
-        /// </remarks>> 
+        ///     Connection handle should be valid pointer for the duration of the call.
+        /// </remarks>
+        /// >
         public static QuinnResult PollConnection(ConnectionHandle connectionHandle)
         {
             return QuinnApiFFI.poll_connection(connectionHandle);
@@ -76,164 +90,234 @@ namespace DotQuic.Native
 
         #region Configuration
 
-        public static QuinnResult DefaultServerConfig(out ServerConfigHandle serverConfig)
+        // public static QuinnResult CreateTestCertificate(string certificatePath, string privateKeyPath)
+        // {
+        //     var certPathBytes = Encoding.UTF8.GetBytes(certificatePath);
+        //     var keyPathBytes = Encoding.UTF8.GetBytes(privateKeyPath);
+        //
+        //     unsafe
+        //     {
+        //         fixed (byte* certPathBytesPtr = certPathBytes)
+        //         fixed (byte* keyPathBytesPtr = keyPathBytes)
+        //         {
+        //             QuinnApiFFI.create_test_certificate(
+        //                 (IntPtr)certPathBytesPtr,
+        //                 certPathBytes.Length,
+        //                 (IntPtr)keyPathBytesPtr,
+        //                 keyPathBytes.Length
+        //             ).Unwrap();
+        //         }
+        //     }
+        // }
+
+        /// <summary>
+        ///     Writes the given buffer into the stream.
+        /// </summary>
+        /// <returns></returns>
+        public static void CreateServerConfig(out ServerConfigHandle serverConfig, string certificatePath,
+            string privateKeyPath)
         {
-            return QuinnApiFFI.default_server_config(out serverConfig);
+            var certPathBytes = Encoding.UTF8.GetBytes(certificatePath);
+            var keyPathBytes = Encoding.UTF8.GetBytes(privateKeyPath);
+
+            unsafe
+            {
+                fixed (byte* certPathBytesPtr = certPathBytes)
+                fixed (byte* keyPathBytesPtr = keyPathBytes)
+                {
+                    QuinnApiFFI.create_server_config(
+                        out serverConfig,
+                        (IntPtr)certPathBytesPtr,
+                        certPathBytes.Length,
+                        (IntPtr)keyPathBytesPtr,
+                        keyPathBytes.Length
+                    ).Unwrap();
+                }
+            }
         }
 
-       public static QuinnResult DefaultClientConfig(out ClientConfigHandle clientConfig)
-       {
-           return QuinnApiFFI.default_client_config(out clientConfig);
-       }
+        public static void CreateClientConfig(out ClientConfigHandle clientConfig, string certificatePath,
+            string privateKeyPath)
+        {
+            var certPathBytes = Encoding.UTF8.GetBytes(certificatePath);
+            var keyPathBytes = Encoding.UTF8.GetBytes(privateKeyPath);
 
-       /// <summary>
-       ///  Returns the last thrown error by the protocol. 
-       /// </summary>
-       /// <remarks>
-       /// An error will be returned if the error does not fit in the given buffer.
-       /// In that case the actual error size is passed in `actualMessageLenght`
-       /// </remarks>> 
-       public static QuinnResult LastError(
-           IntPtr messageBuf,
-           UIntPtr messageBufLen,
-           out UIntPtr actualMessageLen)
-       {
-           return QuinnApiFFI.last_error(messageBuf, messageBufLen, out actualMessageLen);
-       }
+            unsafe
+            {
+                fixed (byte* certPathBytesPtr = certPathBytes)
+                fixed (byte* keyPathBytesPtr = keyPathBytes)
+                {
+                    QuinnApiFFI.create_client_config(
+                        out clientConfig,
+                        (IntPtr)certPathBytesPtr,
+                        certPathBytes.Length,
+                        (IntPtr)keyPathBytesPtr,
+                        keyPathBytes.Length
+                    ).Unwrap();
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Returns the last thrown error by the protocol.
+        /// </summary>
+        /// <remarks>
+        ///     An error will be returned if the error does not fit in the given buffer.
+        ///     In that case the actual error size is passed in `actualMessageLenght`
+        /// </remarks>
+        /// >
+        public static QuinnResult LastError(
+            IntPtr messageBuf,
+            UIntPtr messageBufLen,
+            out UIntPtr actualMessageLen)
+        {
+            return QuinnApiFFI.last_error(messageBuf, messageBufLen, out actualMessageLen);
+        }
 
         #endregion
 
         #region SetCallbacks
 
         /// <summary>
-        ///  Sets the callback function for when new connections are fully initialized.
+        ///     Sets the callback function for when new connections are fully initialized.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnNewConnection(OnNewConnection callback)
         {
             return QuinnApiFFI.set_on_new_connection(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when new connections are incoming.
+        ///     Sets the callback function for when new connections are incoming.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnConnected(OnConnected callback)
         {
             return QuinnApiFFI.set_on_connected(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when connections are lost.
+        ///     Sets the callback function for when connections are lost.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnConnectionLost(OnConnectionLost callback)
         {
             return QuinnApiFFI.set_on_connection_lost(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a stream becomes writable. 
+        ///     Sets the callback function for when a stream becomes writable.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnStreamWritable(OnStreamWritable callback)
         {
             return QuinnApiFFI.set_on_stream_writable(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a stream becomes readable. 
+        ///     Sets the callback function for when a stream becomes readable.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnStreamReadable(OnStreamReadable callback)
         {
             return QuinnApiFFI.set_on_stream_readable(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a stream is finished. 
+        ///     Sets the callback function for when a stream is finished.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
-
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnStreamFinished(OnStreamFinished callback)
         {
             return QuinnApiFFI.set_on_stream_finished(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a stream is stopped. 
+        ///     Sets the callback function for when a stream is stopped.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnStreamStopped(OnStreamStopped callback)
         {
             return QuinnApiFFI.set_on_stream_stopped(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a datagram is received. 
+        ///     Sets the callback function for when a datagram is received.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnDatagramReceived(OnDatagramReceived callback)
         {
             return QuinnApiFFI.set_on_datagram_received(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a stream is opened. 
+        ///     Sets the callback function for when a stream is opened.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
-        /// A stream is readable when first opened!
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        ///     A stream is readable when first opened!
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnStreamOpened(OnStreamOpened callback)
         {
             return QuinnApiFFI.set_on_stream_opened(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a stream becomes available. 
+        ///     Sets the callback function for when a stream becomes available.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>>
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnStreamAvailable(OnStreamAvailable callback)
         {
             return QuinnApiFFI.set_on_stream_available(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a transmit is ready. 
+        ///     Sets the callback function for when a transmit is ready.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnTransmit(OnTransmit callback)
         {
             return QuinnApiFFI.set_on_transmit(callback);
         }
 
         /// <summary>
-        ///  Sets the callback function for when a connection can be polled. 
+        ///     Sets the callback function for when a connection can be polled.
         /// </summary>
         /// <remarks>
-        /// Only one callback can be set. Make sure that the passed delegate will never be garbage collected. 
-        /// </remarks>> 
+        ///     Only one callback can be set. Make sure that the passed delegate will never be garbage collected.
+        /// </remarks>
+        /// >
         public static QuinnResult SetOnPollableConnection(OnConnectionPollable callback)
         {
             return QuinnApiFFI.set_on_pollable_connection(callback);
@@ -244,22 +328,24 @@ namespace DotQuic.Native
         #region Endpoint
 
         /// <summary>
-        ///  Polls the endpoint for any events. This function might trigger other callbacks to be called.
+        ///     Polls the endpoint for any events. This function might trigger other callbacks to be called.
         /// </summary>
         /// <remarks>
-        /// Endpoint handle should be valid pointer for the duration of the call. 
-        /// </remarks>> 
+        ///     Endpoint handle should be valid pointer for the duration of the call.
+        /// </remarks>
+        /// >
         public static QuinnResult PollEndpoint(EndpointHandle connectionHandle)
         {
             return QuinnApiFFI.poll_endpoint(connectionHandle);
         }
 
         /// <summary>
-        ///  Creates a server endpoint with the given server config. 
+        ///     Creates a server endpoint with the given server config.
         /// </summary>
         /// <remarks>
-        /// The server config handle is valid for the duration of the call.
-        /// </remarks>> 
+        ///     The server config handle is valid for the duration of the call.
+        /// </remarks>
+        /// >
         public static QuinnResult CreateServerEndpoint(ServerConfigHandle serverConfig, out byte endpointId,
             out EndpointHandle endpointHandle)
         {
@@ -267,28 +353,30 @@ namespace DotQuic.Native
         }
 
         /// <summary>
-        ///  Creates a client endpoint with the given client config. 
+        ///     Creates a client endpoint with the given client config.
         /// </summary>
         /// <remarks>
-        /// The client config handle is valid for the duration of the call.
-        /// </remarks>> 
+        ///     The client config handle is valid for the duration of the call.
+        /// </remarks>
+        /// >
         public static QuinnResult CreateClientEndpoint(ClientConfigHandle clientConfig, out byte endpointId,
             out EndpointHandle endpointHandle)
         {
             return QuinnApiFFI.create_client_endpoint(clientConfig, out endpointId, out endpointHandle);
         }
+
         #endregion
 
         #region Data
 
         /// <summary>
-        ///  Reads data from a stream with the given id, into the given buffer. 
+        ///     Reads data from a stream with the given id, into the given buffer.
         /// </summary>
         /// <remarks>
-        /// The connection handle is valid for the duration of the call.
-        /// Buffer should be fixed and should not be deallocated.
-        /// </remarks>> 
-
+        ///     The connection handle is valid for the duration of the call.
+        ///     Buffer should be fixed and should not be deallocated.
+        /// </remarks>
+        /// >
         public static QuinnResult ReadStream(ConnectionHandle handle, long streamId, IntPtr bufferPtr,
             uint bufferLength, out uint actualLength)
         {
@@ -296,12 +384,13 @@ namespace DotQuic.Native
         }
 
         /// <summary>
-        ///  Writes the given data to a stream with the given id. 
+        ///     Writes the given data to a stream with the given id.
         /// </summary>
         /// <remarks>
-        /// The connection handle is valid for the duration of the call.
-        /// Buffer should be fixed and should not be deallocated.
-        /// </remarks>> 
+        ///     The connection handle is valid for the duration of the call.
+        ///     Buffer should be fixed and should not be deallocated.
+        /// </remarks>
+        /// >
         public static QuinnResult WriteStream(ConnectionHandle handle, long streamId, IntPtr bufferPtr,
             uint bufferLength, out uint bytesWritten)
         {
@@ -309,11 +398,12 @@ namespace DotQuic.Native
         }
 
         /// <summary>
-        ///  Accepts an incoming stream and returns its stream id. 
+        ///     Accepts an incoming stream and returns its stream id.
         /// </summary>
         /// <remarks>
-        /// The connection handle is valid for the duration of the call.
-        /// </remarks>> 
+        ///     The connection handle is valid for the duration of the call.
+        /// </remarks>
+        /// >
         public static QuinnResult
             AcceptStream(ConnectionHandle handle, byte streamDirection, out long streamId)
         {
@@ -321,11 +411,12 @@ namespace DotQuic.Native
         }
 
         /// <summary>
-        ///  Opens a stream of the given directionality. 
+        ///     Opens a stream of the given directionality.
         /// </summary>
         /// <remarks>
-        /// The connection handle is valid for the duration of the call.
-        /// </remarks>> 
+        ///     The connection handle is valid for the duration of the call.
+        /// </remarks>
+        /// >
         public static QuinnResult OpenStream(ConnectionHandle connectionHandle, StreamType streamType,
             out long openedStreamId)
         {
@@ -333,12 +424,13 @@ namespace DotQuic.Native
         }
 
         /// <summary>
-        ///  Processes an incoming QUIC data packet. 
+        ///     Processes an incoming QUIC data packet.
         /// </summary>
         /// <remarks>
-        /// The connection handle is valid for the duration of the call.
-        /// Buffer should be fixed and should not be deallocated.
-        /// </remarks>> 
+        ///     The connection handle is valid for the duration of the call.
+        ///     Buffer should be fixed and should not be deallocated.
+        /// </remarks>
+        /// >
         public static QuinnResult HandleDatagram(EndpointHandle handle, IntPtr buffer, UIntPtr length,
             SockaddrInV4 sockaddrInV4)
         {

@@ -13,17 +13,16 @@ namespace DotQuic
     /// Listens for connections from QUIC protocol clients.
     public class QuicListener : Endpoint
     {
-        private readonly Dictionary<int, ConnectionHandle> _connections;
-
         private readonly ConnectionDriver _connectionDriver;
         private readonly ConnectionListener _connectionListener;
         private readonly CancellationToken _connectionListenerCancellationToken;
+        private readonly Dictionary<int, ConnectionHandle> _connections;
 
-        public QuicListener(IPEndPoint ipEndpoint)
+        public QuicListener(IPEndPoint ipEndpoint, string certificatePath, string privateKeyPath)
         {
             QuinnApi.Initialize();
 
-            var serverConfig = new ServerConfig();
+            var serverConfig = new ServerConfig(certificatePath, privateKeyPath);
             QuinnApi.CreateServerEndpoint(serverConfig.Handle, out var id, out var handle).Unwrap();
 
             Id = id;
@@ -42,12 +41,16 @@ namespace DotQuic
             _connectionDriver.StartPollingAsync();
         }
 
+        public QuicListener(IPEndPoint ipEndpoint)
+        {
+            // Generate self-signed certificate. 
+        }
+
         public event EventHandler<NewConnectionEventArgs> Incoming;
 
         /// <summary>
-        /// Asynchronously wait for incoming connections.
-        ///
-        /// This function should not be called more then once at the same time. 
+        ///     Asynchronously wait for incoming connections.
+        ///     This function should not be called more then once at the same time.
         /// </summary>
         /// <returns>QuicConnection</returns>
         public Task<QuicConnection> AcceptAsync(CancellationToken cancellationToken = new())
@@ -57,9 +60,8 @@ namespace DotQuic
         }
 
         /// <summary>
-        /// Block wait for incoming connections.
-        ///
-        /// This function should not be called more then once at the same time. 
+        ///     Block wait for incoming connections.
+        ///     This function should not be called more then once at the same time.
         /// </summary>
         /// <returns>QuicConnection</returns>
         public QuicConnection Accept()
@@ -69,13 +71,15 @@ namespace DotQuic
         }
 
         /// <summary>
-        /// Returns the connection handle for a given connection.
-        ///
-        /// This handle is a direct pointer into rust and should be treated with care.
+        ///     Returns the connection handle for a given connection.
+        ///     This handle is a direct pointer into rust and should be treated with care.
         /// </summary>
         /// <param name="connectionId"></param>
         /// <returns>ConnectionHandle</returns>
-        public ConnectionHandle ConnectionHandle(int connectionId) => _connections[connectionId];
+        public ConnectionHandle ConnectionHandle(int connectionId)
+        {
+            return _connections[connectionId];
+        }
 
         private void OnTransmitReady(object sender, TransmitEventArgs e)
         {

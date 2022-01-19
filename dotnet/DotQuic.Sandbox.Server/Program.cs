@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using DotQuic.Native.Events;
 
@@ -13,18 +12,21 @@ namespace DotQuic.Sandbox.Server
 
         public static QuicListener Server;
 
+        private static int _count;
+        private static DateTime started;
+
         private static async Task Main(string[] args)
         {
-            Server = new QuicListener(serverIp);
+            Server = new QuicListener(serverIp, "E:\\programming\\certs\\cert.der", "E:\\programming\\certs\\key.der");
             Server.Incoming += OnIncoming;
-            
+
             Console.ReadKey();
         }
-        
+
         private static async void OnIncoming(object? sender, NewConnectionEventArgs e)
         {
             // Do something when connection is incoming. 
-            var connection = await Server.AcceptAsync(new CancellationToken());
+            var connection = await Server.AcceptAsync();
             connection.DataReceived += OnDataReceive;
             connection.StreamInitiated += OnStreamInitiated;
             connection.StreamClosed += OnStreamClosed;
@@ -40,14 +42,9 @@ namespace DotQuic.Sandbox.Server
             // Do something when stream is closed.
         }
 
-        private static int _count = 0;
-        private static DateTime started;
         private static void OnDataReceive(object? sender, DataReceivedEventArgs e)
         {
-            if (_count == 0)
-            {
-                started = DateTime.Now;
-            }
+            if (_count == 0) started = DateTime.Now;
 
             var buffer = new byte[20];
 
@@ -57,13 +54,11 @@ namespace DotQuic.Sandbox.Server
 
                 Console.WriteLine("{0}", Encoding.UTF8.GetString(buffer[..read]));
                 var response = new ReadOnlySpan<byte>(Encoding.UTF8.GetBytes($"Ack {_count}"));
-                
+
                 if (e.Stream.IsBiStream) e.Stream.Write(response);
 
                 if (_count == 4000)
-                {
                     Console.WriteLine("Packets per second: {0}", _count / (DateTime.Now - started).Seconds);
-                }
 
                 _count++;
             }

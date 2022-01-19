@@ -7,19 +7,20 @@ using DotQuic.Native.Types;
 namespace DotQuic.Native
 {
     /// <summary>
-    /// FFI into the QUINN rust QUIC protocol implementation.
-    /// This class is internal because C# requires ddl imports to be either private or internal.
-    /// Instead this class should be called via `QuinnApi`.
+    ///     FFI into the QUINN rust QUIC protocol implementation.
+    ///     This class is internal because C# requires ddl imports to be either private or internal.
+    ///     Instead this class should be called via `QuinnApi`.
     /// </summary>
     internal static class QuinnApiFFI
     {
         private const string NativeLib = @"./Native/quinn_ffi.dll";
-        
+
         #region Connection
 
         [DllImport(NativeLib, EntryPoint = nameof(connect_client), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
-        internal static extern QuinnResult connect_client(EndpointHandle endpointHandle, SockaddrInV4 addr, out ConnectionHandle connectionHandle, out int connectionId);
+        internal static extern QuinnResult connect_client(EndpointHandle endpointHandle, IntPtr hostNameBytes,
+            int hostNameLength, SockaddrInV4 addr, out ConnectionHandle connectionHandle, out int connectionId);
 
         [DllImport(NativeLib, EntryPoint = nameof(poll_connection), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
@@ -30,13 +31,20 @@ namespace DotQuic.Native
 
         #region Configuration
 
-        [DllImport(NativeLib, EntryPoint = nameof(default_server_config), ExactSpelling = true,
+        [DllImport(NativeLib, EntryPoint = nameof(create_test_certificate), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
-        internal static extern QuinnResult default_server_config(out ServerConfigHandle serverConfig);
+        public static extern void create_test_certificate(IntPtr certPathBytesPtr, int length, IntPtr keyPathBytesPtr,
+            int keyPathBytesLenght);
 
-        [DllImport(NativeLib, EntryPoint = nameof(default_client_config), ExactSpelling = true,
+        [DllImport(NativeLib, EntryPoint = nameof(create_server_config), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
-        internal static extern QuinnResult default_client_config(out ClientConfigHandle clientConfig);
+        internal static extern QuinnResult create_server_config(out ServerConfigHandle serverConfig, IntPtr certPath,
+            int certPathLength, IntPtr keyPath, int keyPathLength);
+
+        [DllImport(NativeLib, EntryPoint = nameof(create_client_config), ExactSpelling = true,
+            CallingConvention = CallingConvention.Cdecl)]
+        internal static extern QuinnResult create_client_config(out ClientConfigHandle clientConfig, IntPtr certPath,
+            int certPathLength, IntPtr keyPath, int keyPathLength);
 
         [DllImport(NativeLib, EntryPoint = nameof(last_error), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
@@ -52,11 +60,11 @@ namespace DotQuic.Native
         [DllImport(NativeLib, EntryPoint = nameof(set_on_new_connection), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
         internal static extern QuinnResult set_on_new_connection(OnNewConnection callback);
-        
+
         [DllImport(NativeLib, EntryPoint = nameof(set_on_connected), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
         internal static extern QuinnResult set_on_connected(OnConnected callback);
-        
+
         [DllImport(NativeLib, EntryPoint = nameof(set_on_connection_lost), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
         internal static extern QuinnResult set_on_connection_lost(OnConnectionLost callback);
@@ -73,7 +81,7 @@ namespace DotQuic.Native
             CallingConvention = CallingConvention.Cdecl)]
         internal static extern QuinnResult set_on_stream_finished(OnStreamFinished callback);
 
- 
+
         [DllImport(NativeLib, EntryPoint = nameof(set_on_stream_stopped), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
         internal static extern QuinnResult set_on_stream_stopped(OnStreamStopped callback);
@@ -115,6 +123,7 @@ namespace DotQuic.Native
             CallingConvention = CallingConvention.Cdecl)]
         internal static extern QuinnResult create_client_endpoint(ClientConfigHandle clientConfig, out byte endpointId,
             out EndpointHandle endpointHandle);
+
         #endregion
 
         #region Data

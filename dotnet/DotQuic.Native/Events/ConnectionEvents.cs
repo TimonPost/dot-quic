@@ -7,12 +7,12 @@ namespace DotQuic.Native.Events
     {
         private static readonly OnConnected _onConnected = OnConnected;
         private static readonly OnConnectionLost _onConnectionLost = OnConnectionLost;
-        private static readonly OnDatagramReceived _onDatagramReceived= OnDatagramReceived;
-        private static readonly OnStreamOpened _onStreamOpened= OnStreamOpened;
-        private static readonly OnStreamAvailable _onStreamAvailable= OnStreamAvailable;
+        private static readonly OnDatagramReceived _onDatagramReceived = OnDatagramReceived;
+        private static readonly OnStreamOpened _onStreamOpened = OnStreamOpened;
+        private static readonly OnStreamAvailable _onStreamAvailable = OnStreamAvailable;
         private static readonly OnStreamWritable _onStreamWritable = OnStreamWritable;
         private static readonly OnStreamReadable _onStreamReadable = OnStreamReadable;
-        private static readonly OnStreamStopped _onStreamStopped= OnStreamStopped;
+        private static readonly OnStreamStopped _onStreamStopped = OnStreamStopped;
         private static readonly OnStreamFinished _onStreamFinished = OnStreamFinished;
 
         public static void Initialize()
@@ -40,37 +40,38 @@ namespace DotQuic.Native.Events
             QuinnApi.SetOnStreamStopped(_onStreamStopped).Unwrap();
             QuinnApi.SetOnStreamFinished(_onStreamFinished).Unwrap();
         }
-        
+
         /// Is triggered when a connection is fully initialized and ready to be used.
         public static event EventHandler<ConnectionIdEventArgs> ConnectionInitialized;
 
-        /// Is triggered when a connection is lost. 
+        /// Is triggered when a connection is lost.
         public static event EventHandler<ConnectionIdEventArgs> ConnectionLost;
 
-        /// Is triggered when a stream is opened. 
+        /// Is triggered when a stream is opened.
         public static event EventHandler<StreamEventArgs> StreamOpened;
 
-        /// Is triggered when a stream is available for accepting. 
+        /// Is triggered when a stream is available for accepting.
         public static event EventHandler<StreamTypeEventArgs> StreamAvailable;
 
         /// Is triggered when a stream is writable.
         public static event EventHandler<StreamEventArgs> StreamWritable;
 
-        /// Is triggered when a stream is readable. 
+        /// Is triggered when a stream is readable.
         public static event EventHandler<StreamEventArgs> StreamReadable;
 
-        /// Is triggered when a stream is finished. 
+        /// Is triggered when a stream is finished.
         public static event EventHandler<StreamEventArgs> StreamFinished;
-        
-        /// Is triggered when a stream is stopped. 
+
+        /// Is triggered when a stream is stopped.
         public static event EventHandler<StreamEventArgs> StreamStopped;
 
-        /// Is triggered when a datagram is received. 
+        /// Is triggered when a datagram is received.
         public static event EventHandler<ConnectionIdEventArgs> DatagramReceived;
 
 
         public static void OnConnected(int connectionId)
         {
+            Console.WriteLine("On Connected");
             ConnectionInitialized?.Invoke(null, new ConnectionIdEventArgs(connectionId));
         }
 

@@ -10,26 +10,24 @@ using DotQuic.Native.Types;
 namespace DotQuic
 {
     /// <summary>
-    /// An initiated QUIC stream that is either unidirectional or bidirectional.
-    /// Make sure to respect the directionality otherwise the stream read or write might fail.
-    ///
-    /// Note that not all stream methods are implemented. Restrict usage to:
-    /// - Write
-    /// - Read and ReadAsync
-    /// - CanRead / CanWrite
+    ///     An initiated QUIC stream that is either unidirectional or bidirectional.
+    ///     Make sure to respect the directionality otherwise the stream read or write might fail.
+    ///     Note that not all stream methods are implemented. Restrict usage to:
+    ///     - Write
+    ///     - Read and ReadAsync
+    ///     - CanRead / CanWrite
     /// </summary>
     public class QuicStream : Stream
     {
+        private readonly ConnectionHandle _handle;
         private readonly bool _readable;
         private readonly long _streamId;
-        
+
         private readonly bool _writable;
-        
-        private readonly ConnectionHandle _handle;
+        private readonly ManualResetEvent _writeManualResetEvent;
 
         private readonly BufferBlock<byte> ReadableEvents;
-        private readonly ManualResetEvent _writeManualResetEvent;
-        
+
         public QuicStream(ConnectionHandle handle, StreamType streamType, long streamId, bool readable, bool writable)
         {
             StreamType = streamType;
@@ -38,7 +36,7 @@ namespace DotQuic
             _writable = writable;
             _handle = handle;
 
-            
+
             _writeManualResetEvent = new ManualResetEvent(false);
             ReadableEvents = new BufferBlock<byte>();
         }
@@ -49,22 +47,37 @@ namespace DotQuic
 
         public bool IsBiStream => StreamType == StreamType.BiDirectional;
         public bool IsUniStream => StreamType == StreamType.UniDirectional;
-        
+
+
+        public override long Length =>
+            throw new NotSupportedException("`Length` property of `QuicStream` is not supported.");
+
+        public override bool CanSeek =>
+            throw new NotImplementedException("`Position` property of `QuicStream` is not supported.");
+
+        public override long Position
+        {
+            get => throw new NotSupportedException("`Position` property of `QuicStream` is not supported.");
+            set => throw new NotSupportedException("`Position` property of `QuicStream` is not supported.");
+        }
+
         public override int Read(byte[] buffer, int offset, int count)
         {
             return ReadAsync(buffer).Result;
         }
 
-        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = new CancellationToken())
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = new())
         {
             AssertReadAccess();
-            
+
             async Task<int> _readAsync()
             {
                 // When buffer is blocked, try receiving again till next event arrives.
                 while (true)
                 {
+                    Console.WriteLine("Before readable event");
                     await ReadableEvents.ReceiveAsync(cancellationToken);
+                    Console.WriteLine("After readable event");
                     try
                     {
                         return Read(buffer.Span);
@@ -80,14 +93,14 @@ namespace DotQuic
 
             return await ValueTask.FromResult(read);
         }
-        
+
         public override int Read(Span<byte> buffer)
         {
             var bytesRead = QuinnFFIHelpers.ReadFromStream(_handle, _streamId, buffer);
             return (int)bytesRead;
         }
 
-        public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = new CancellationToken())
+        public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = new())
         {
             return new ValueTask(Task.Run(() => Write(buffer.Span), cancellationToken));
         }
@@ -111,7 +124,7 @@ namespace DotQuic
         }
 
         /// <summary>
-        /// Allows the `Read` or `ReadAsync` to continue with its work. 
+        ///     Allows the `Read` or `ReadAsync` to continue with its work.
         /// </summary>
         public void QueueReadEvent()
         {
@@ -137,17 +150,6 @@ namespace DotQuic
             if (!_writable)
                 throw new Exception(
                     $"Trying to read a {StreamType} stream that can not be read from this remote endpoint.");
-        }
-
-
-        public override long Length =>
-            throw new NotSupportedException("`Length` property of `QuicStream` is not supported.");
-        public override bool CanSeek => throw new NotImplementedException("`Position` property of `QuicStream` is not supported.");
-
-        public override long Position
-        {
-            get => throw new NotSupportedException("`Position` property of `QuicStream` is not supported.");
-            set => throw new NotSupportedException("`Position` property of `QuicStream` is not supported.");
         }
 
         public override long Seek(long offset, SeekOrigin origin)

@@ -14,12 +14,9 @@ namespace DotQuic
         {
             var tcs = new TaskCompletionSource<object>();
 
-            cancellationToken.Register(() =>
-            {
-                tcs.SetCanceled(cancellationToken);
-            });
-            
-            
+            cancellationToken.Register(() => { tcs.SetCanceled(cancellationToken); });
+
+
             var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, timedOut) =>
             {
                 var localTcs = (TaskCompletionSource<object>)state;
@@ -27,8 +24,9 @@ namespace DotQuic
                     localTcs.TrySetCanceled();
                 else
                     localTcs.TrySetResult(null);
-            }, tcs, Timeout.InfiniteTimeSpan, executeOnlyOnce: true);
-            tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state).Unregister(null), registration, TaskScheduler.Default);
+            }, tcs, Timeout.InfiniteTimeSpan, true);
+            tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state).Unregister(null), registration,
+                TaskScheduler.Default);
             return tcs.Task;
         }
     }
