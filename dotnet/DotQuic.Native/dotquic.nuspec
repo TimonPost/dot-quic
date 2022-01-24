@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+<metadata>
+    <id>DotQuic.Native</id>
+    <version>0.0.1-alpha.2.3</version>
+    <authors>TimonPost</authors>
+    <owners>TimonPost</owners>
+    <projectUrl>https://github.com/TimonPost/dot-quic</projectUrl>
+    <description>QUIC implementation for .NET with pure rust QUIC implementation by Quinn. This package contains the C# with Rust FFi comunication.</description>
+    <repository type="network" url="https://github.com/TimonPost/dot-quic" />
+    <dependencies>
+        <group targetFramework="net5.0" />
+    </dependencies>
+    <language>en-US</language>    
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright></copyright>
+    <dependencies>
+    </dependencies>
+    <references></references>
+    <tags>native</tags> <!-- This is important ! -->
+</metadata>
+<files>
+    <!-- Note that now, binaries are placed conventionally under a directory named build -->
+    <file src="bin\Release\net5.0\Native\quinn_ffi.dll" target="build\native\" exclude="**.pdb"/>
+</files>
+</package>

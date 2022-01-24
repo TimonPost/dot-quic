@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using DotQuic.Native.Events;
 using DotQuic.Native.Handles;
@@ -50,6 +51,19 @@ namespace DotQuic.Native
             _isInitialized = true;
         }
 
+        public static void SetLogFilter(string filter)
+        {
+            unsafe
+            {
+                var filterBytes = Encoding.UTF8.GetBytes(filter);
+
+                fixed (byte* filterBytesPtr = filterBytes)
+                {
+                    QuinnApiFFI.enable_log((IntPtr)filterBytesPtr, filterBytes.Length);
+                }
+            }
+        }
+
         #region Connection
 
         /// <summary>
@@ -90,26 +104,6 @@ namespace DotQuic.Native
 
         #region Configuration
 
-        // public static QuinnResult CreateTestCertificate(string certificatePath, string privateKeyPath)
-        // {
-        //     var certPathBytes = Encoding.UTF8.GetBytes(certificatePath);
-        //     var keyPathBytes = Encoding.UTF8.GetBytes(privateKeyPath);
-        //
-        //     unsafe
-        //     {
-        //         fixed (byte* certPathBytesPtr = certPathBytes)
-        //         fixed (byte* keyPathBytesPtr = keyPathBytes)
-        //         {
-        //             QuinnApiFFI.create_test_certificate(
-        //                 (IntPtr)certPathBytesPtr,
-        //                 certPathBytes.Length,
-        //                 (IntPtr)keyPathBytesPtr,
-        //                 keyPathBytes.Length
-        //             ).Unwrap();
-        //         }
-        //     }
-        // }
-
         /// <summary>
         ///     Writes the given buffer into the stream.
         /// </summary>
@@ -117,20 +111,20 @@ namespace DotQuic.Native
         public static void CreateServerConfig(out ServerConfigHandle serverConfig, string certificatePath,
             string privateKeyPath)
         {
-            var certPathBytes = Encoding.UTF8.GetBytes(certificatePath);
-            var keyPathBytes = Encoding.UTF8.GetBytes(privateKeyPath);
-
+            var certBytes = File.ReadAllBytes(certificatePath);
+            var keyBytes = File.ReadAllBytes(privateKeyPath);
+            
             unsafe
             {
-                fixed (byte* certPathBytesPtr = certPathBytes)
-                fixed (byte* keyPathBytesPtr = keyPathBytes)
+                fixed (byte* certBytesPtr = certBytes)
+                fixed (byte* keyBytesPtr = keyBytes)
                 {
                     QuinnApiFFI.create_server_config(
                         out serverConfig,
-                        (IntPtr)certPathBytesPtr,
-                        certPathBytes.Length,
-                        (IntPtr)keyPathBytesPtr,
-                        keyPathBytes.Length
+                        (IntPtr)certBytesPtr,
+                        certBytes.Length,
+                        (IntPtr)keyBytesPtr,
+                        keyBytes.Length
                     ).Unwrap();
                 }
             }
@@ -139,20 +133,20 @@ namespace DotQuic.Native
         public static void CreateClientConfig(out ClientConfigHandle clientConfig, string certificatePath,
             string privateKeyPath)
         {
-            var certPathBytes = Encoding.UTF8.GetBytes(certificatePath);
-            var keyPathBytes = Encoding.UTF8.GetBytes(privateKeyPath);
+            var certBytes = File.ReadAllBytes(certificatePath);
+            var keyBytes = File.ReadAllBytes(privateKeyPath);
 
             unsafe
             {
-                fixed (byte* certPathBytesPtr = certPathBytes)
-                fixed (byte* keyPathBytesPtr = keyPathBytes)
+                fixed (byte* certBytesPtr = certBytes)
+                fixed (byte* keyBytesPtr = keyBytes)
                 {
                     QuinnApiFFI.create_client_config(
                         out clientConfig,
-                        (IntPtr)certPathBytesPtr,
-                        certPathBytes.Length,
-                        (IntPtr)keyPathBytesPtr,
-                        keyPathBytes.Length
+                        (IntPtr)certBytesPtr,
+                        certBytes.Length,
+                        (IntPtr)keyBytesPtr,
+                        keyBytes.Length
                     ).Unwrap();
                 }
             }

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotQuic.Sandbox.Client", "d
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotQuic.Sandbox.Server", "dotnet\DotQuic.Sandbox.Server\DotQuic.Sandbox.Server.csproj", "{1B2F4EDB-13EF-44E0-80D1-007B57DB8D39}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{2811F904-78DE-4B71-93AA-ACF11CD5EB8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{1B2F4EDB-13EF-44E0-80D1-007B57DB8D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B2F4EDB-13EF-44E0-80D1-007B57DB8D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B2F4EDB-13EF-44E0-80D1-007B57DB8D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2811F904-78DE-4B71-93AA-ACF11CD5EB8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2811F904-78DE-4B71-93AA-ACF11CD5EB8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2811F904-78DE-4B71-93AA-ACF11CD5EB8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2811F904-78DE-4B71-93AA-ACF11CD5EB8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -28,6 +28,30 @@ The motivation of this library is to align its API to the future implementation 
 
 Either events or direct function calls such as `server.Incomming` vs `server.AcceptAsync()` respectively can be used to interact with the protocol. The same principle applies to `Read` vs `OnDataReceive`.
 
+## Setup
+[Dot Quic][DotQuic] does requires a build of [quinn FFI Rust library][qunn-ffi]
+
+1. Add [Dot Quic][dotquic] as dependency to your project (nuget). 
+2. Find the right [release build][release] for your platform, and download the dll. 
+3. Put the dll into project `bin/Debug` or `bin/Release` file. 
+
+# Configuration
+A certificate is mandatory for using this library with [Quinn][Quinn].
+Use openssl, keytool, lets encrypt to generate one. 
+
+```txt
+// Generate x509 ASN.1 PKSI#1 pem encoded certificate and RSA pem encoded private key.
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem -subj "/CN=exampleCA/OU=Example Org/O=Example Company/L=San Francisco/ST=California/C=US" -addext "subjectAltName=DNS:localhost" -addext "basicConstraints=CA:FALSE"
+
+// Convert PEM to DER encoded certificate
+openssl x509 -outform der -in cert.pem -out cert.der
+
+// Convert PEM to DER encoded private key. 
+openssl rsa -in key.pem -outform DER -out key.der
+```
+1. The certificate **MUST** be DER-encoded X.509.
+2. The private key **MUST** be DER-encoded ASN.1 in either PKCS#8 or PKCS#1 format.
+
 ## Examples
 
 Server Example:
@@ -82,6 +106,13 @@ void Main() {
 }
 ```
 
+
+
+# Debugging:
+
+The FFI library uses `tracing` for logging. You can enable protocol debug logs by calling `QuinnApi.enable_log("trace")`.
+The filter is any log filter in the format as described [here][tracing]
+
 ## Todo:
 - Configuration of both server and clients.
 - Implement stram finialisation
@@ -92,3 +123,7 @@ void Main() {
 
 [Quinn]: https://github.com/quinn-rs/quinn
 [QUIC]: https://en.wikipedia.org/wiki/QUIC
+[tracing]: https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.EnvFilter.html
+[dotquic]: https://www.nuget.org/packages/DotQuic/
+[qunn-ffi]: https://github.com/TimonPost/quinn-ffi
+[release]: https://github.com/TimonPost/quinn-ffi/releases

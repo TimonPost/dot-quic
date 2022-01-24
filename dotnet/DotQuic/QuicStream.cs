@@ -61,6 +61,8 @@ namespace DotQuic
             set => throw new NotSupportedException("`Position` property of `QuicStream` is not supported.");
         }
 
+        
+
         public override int Read(byte[] buffer, int offset, int count)
         {
             return ReadAsync(buffer).Result;
@@ -75,9 +77,7 @@ namespace DotQuic
                 // When buffer is blocked, try receiving again till next event arrives.
                 while (true)
                 {
-                    Console.WriteLine("Before readable event");
                     await ReadableEvents.ReceiveAsync(cancellationToken);
-                    Console.WriteLine("After readable event");
                     try
                     {
                         return Read(buffer.Span);
@@ -94,6 +94,11 @@ namespace DotQuic
             return await ValueTask.FromResult(read);
         }
 
+        /// <summary>
+        ///  Might throw an exception if buffer is blocked.
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public override int Read(Span<byte> buffer)
         {
             var bytesRead = QuinnFFIHelpers.ReadFromStream(_handle, _streamId, buffer);

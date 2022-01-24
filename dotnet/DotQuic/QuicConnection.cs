@@ -220,25 +220,22 @@ namespace DotQuic
                 {
                     newStream = new QuicStream(ConnectionHandle, e.StreamType, e.StreamId, true, false);
                     _uniDirectionalQuicStreams.Add(e.StreamId, newStream);
-                    newStream.QueueReadEvent();
                     break;
                 }
                 case StreamType.BiDirectional:
                 {
                     newStream = new QuicStream(ConnectionHandle, e.StreamType, e.StreamId, true, true);
                     _biDirectionalQuicStreams.Add(e.StreamId, newStream);
-                    newStream.QueueReadEvent();
                     break;
                 }
+                default:
+                    throw new ArgumentOutOfRangeException($"{e.StreamType}");
             }
 
+            newStream.QueueReadEvent();
             _connectionDriver.Schedule(() =>
             {
                 StreamInitiated?.Invoke(null, new StreamEventArgs(e.ConnectionId, e.StreamId, e.StreamType));
-            });
-
-            _connectionDriver.Schedule(() =>
-            {
                 DataReceived?.Invoke(null, new DataReceivedEventArgs { Stream = newStream });
             });
         }
@@ -270,8 +267,7 @@ namespace DotQuic
         {
             if (!IsThisConnection(e.Id)) return;
         }
-
-
+        
         public void SetState(IncomingState state)
         {
             ConnectionState = state;

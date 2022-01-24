@@ -11,57 +11,65 @@
         <IsAotBuild>false</IsAotBuild>
     </PropertyGroup>
 
+    <!-- Compile-time RIDs -->
     <PropertyGroup Condition=" '$(NativeRid)' == 'win-x64' Or ('$(NativeRid)' == '' And '$([MSBuild]::IsOsPlatform(`WINDOWS`))' == 'true') ">
         <IsWindows>true</IsWindows>
         <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(NativeRid)' == 'linux-x64' Or ('$(NativeRid)' == '' And '$([MSBuild]::IsOsPlatform(`LINUX`))' == 'true') ">
+	    <IsLinux>true</IsLinux>
+	    <IsUnix>true</IsUnix>
+	    <DefineConstants>$(DefineConstants);LINUX;UNIX</DefineConstants>
+    </PropertyGroup>
+
     <!-- Cargo configuration -->
     <PropertyGroup>
         <CargoTargetPath>$(CargoWorkspacePath)\target\debug</CargoTargetPath>
+
         <CargoConfiguration>release</CargoConfiguration>
         <CargoConfiguration Condition=" '$(Configuration)' == 'Debug' ">debug</CargoConfiguration>
 
+	    <CargoExtension Condition=" '$(IsWindows)' == 'true' ">dll</CargoExtension>
+	    <CargoExtension Condition=" '$(IsLinux)' == 'true' ">so</CargoExtension>
+
         <CargoTarget Condition=" '$(IsWindows)' == 'true' ">x86_64-pc-windows-msvc</CargoTarget>
-        <CargoExtension Condition=" '$(IsWindows)' == 'true' ">dll</CargoExtension>
-        <CargoExtension Condition=" '$(IsWindows)' == 'true' And '$(IsAotBuild)' == 'true' ">lib</CargoExtension>
+	    <CargoTarget Condition=" '$(IsLinux)' == 'true' ">x86_64-unknown-linux-gnu</CargoTarget>
 
-        <CargoArtifact Condition=" '$(IsWindows)' == 'true' ">$(CargoPackage).$(CargoExtension)</CargoArtifact>
-        <CargoArtifactPath>$(CargoWorkspacePath)\target\$(CargoConfiguration)\$(CargoArtifact)</CargoArtifactPath>
+        <CargoArtifact>$(CargoPackage)-nightly-$(CargoTarget).$(CargoExtension)</CargoArtifact>
+	    <CargoArtifactPath>$(CargoWorkspacePath)\target\$(CargoTarget)\$(CargoConfiguration)\$(CargoArtifact)</CargoArtifactPath>
 
+	    <CargoOriginalArtifact>$(CargoPackage).$(CargoExtension)</CargoOriginalArtifact>
+        <CargoOriginalArtifactPath>$(CargoWorkspacePath)\target\$(CargoTarget)\$(CargoConfiguration)\$(CargoOriginalArtifact)</CargoOriginalArtifactPath>
     </PropertyGroup>
 
+    <ItemGroup>
+	    <CargoChannelArg Condition=" '$(CargoChannel)' != '' " Include="+$(CargoChannel)" />
+	    <CargoBuildArg Include="--target $(CargoTarget)" />
+	    <CargoBuildArg Condition=" '$(CargoConfiguration)' == 'release' " Include="--release" />
+    </ItemGroup>
+
     <Target Name="Cargo" BeforeTargets="Build">
-        <Exec Command="cargo build" WorkingDirectory="$(CargoWorkspacePath)\" />
+        <Exec Command="cargo @(CargoChannelArg, ' ') build  @(CargoBuildArg, ' ')" WorkingDirectory="$(CargoWorkspacePath)\" />
+        <Message Text="Running: cargo @(CargoChannelArg, ' ') build  @(CargoBuildArg, ' ')" Importance="high" />
     </Target>
 
-    <!-- In AOT builds, add a reference to the IL compiler and link the static native artifact -->
-    <ItemGroup Condition=" '$(IsAotBuild)' == 'true' ">
-        <!-- This version of the IL Compiler is pinned to the framework (and by extension, ASP.NET) -->
-        <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-28124-02" />
-
-        <IlcArg Include="--completetypemetadata" />
-        <IlcArg Include="-g" />
-        <NativeLibrary Include="$(CargoArtifactPath)" />
-    </ItemGroup>
-
-    <!-- Some additional libs we need for Windows -->
-    <ItemGroup Condition=" '$(IsAotBuild)' == 'true' And '$(IsWindows)' == 'true' ">
-        <NativeLibrary Include="ws2_32.lib" />
-        <NativeLibrary Include="Userenv.lib" />
-        <NativeLibrary Include="Dbghelp.lib" />
-    </ItemGroup>
+    <Target Name="Rename" DependsOnTargets="Cargo" AfterTargets="Cargo">
+	    <Message Text="Renamed executable file." Importance="high" />
+	    <Move SourceFiles="$(CargoOriginalArtifactPath)" DestinationFiles="$(CargoArtifactPath)" />
+	    <Message Text="Renamed executable file." Importance="high" />
+    </Target>
 
     <!-- In standard builds, copy the native dynamic artifact to the output dir  -->
     <ItemGroup Condition=" '$(IsAotBuild)' == 'false' ">
         <CargoLibrary Include="$(CargoArtifactPath)" />
     </ItemGroup>
 
-    <Target Name="CargoBuildCopy" DependsOnTargets="Cargo" AfterTargets="Build" Condition=" '$(IsAotBuild)' == 'false' ">
-        <Copy Condition=" '$(TargetDir)' != '' " SourceFiles="@(CargoLibrary)" DestinationFolder="$(TargetDir)/Native" />
+    <Target Name="CargoBuildCopy" DependsOnTargets="Rename" AfterTargets="Build" Condition=" '$(IsAotBuild)' == 'false' ">
+        <Copy Condition=" '$(TargetDir)' != '' " SourceFiles="@(CargoLibrary)" DestinationFolder="$(TargetDir)" />
     </Target>
 
-    <Target Name="CargoPublishCopy" DependsOnTargets="Cargo" AfterTargets="Publish" Condition=" '$(IsAotBuild)' == 'false' ">
-        <Copy SourceFiles="@(CargoLibrary)" DestinationFolder="$(PublishDir)/Native" />
+    <Target Name="CargoPublishCopy" DependsOnTargets="Rename" AfterTargets="Publish" Condition=" '$(IsAotBuild)' == 'false' ">
+        <Copy SourceFiles="@(CargoLibrary)" DestinationFolder="$(PublishDir)" />
     </Target>
 </Project>

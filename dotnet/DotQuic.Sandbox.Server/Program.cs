@@ -17,7 +17,7 @@ namespace DotQuic.Sandbox.Server
 
         private static async Task Main(string[] args)
         {
-            Server = new QuicListener(serverIp, "E:\\programming\\certs\\cert.der", "E:\\programming\\certs\\key.der");
+            Server = new QuicListener(serverIp, "cert.der", "key.der");
             Server.Incoming += OnIncoming;
 
             Console.ReadKey();

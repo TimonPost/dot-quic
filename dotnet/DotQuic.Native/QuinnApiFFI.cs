@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text.RegularExpressions;
 using DotQuic.Native.Handles;
 using DotQuic.Native.Types;
 
 namespace DotQuic.Native
 {
+
     /// <summary>
     ///     FFI into the QUINN rust QUIC protocol implementation.
     ///     This class is internal because C# requires ddl imports to be either private or internal.
@@ -13,7 +19,28 @@ namespace DotQuic.Native
     /// </summary>
     internal static class QuinnApiFFI
     {
-        private const string NativeLib = @"./Native/quinn_ffi.dll";
+        private static IntPtr LibraryHandel = IntPtr.Zero;
+        private const string NativeLib = "quinn_ffi";
+
+        static QuinnApiFFI()
+        {
+            NativeLibrary.SetDllImportResolver(typeof(QuinnApiFFI).Assembly, ImportResolver);
+        }
+
+        private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+        {
+            if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
+            {
+                Regex r = new Regex("quinn_ffi-nightly-.*.(dll|so)");
+
+                var files = Directory.GetFiles("./")
+                    .First(path => r.IsMatch(path));
+                
+                NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
+            }
+
+            return LibraryHandel;
+        }
 
         #region Connection
 
@@ -30,6 +57,11 @@ namespace DotQuic.Native
         #endregion
 
         #region Configuration
+
+        [DllImport(NativeLib, EntryPoint = nameof(enable_log), ExactSpelling = true,
+            CallingConvention = CallingConvention.Cdecl)]
+        public static extern void enable_log(IntPtr logFilterBytes, int bufferLength);
+
 
         [DllImport(NativeLib, EntryPoint = nameof(create_test_certificate), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
