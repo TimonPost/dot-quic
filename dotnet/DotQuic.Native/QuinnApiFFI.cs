@@ -33,10 +33,17 @@ namespace DotQuic.Native
             {
                 Regex r = new Regex("quinn_ffi-nightly-.*.(dll|so)");
 
-                var files = Directory.GetFiles("./")
-                    .First(path => r.IsMatch(path));
-                
-                NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
+                try
+                {
+                    var files = Directory.GetFiles("./")
+                        .First(path => r.IsMatch(path));
+
+                    NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
+                }
+                catch (InvalidOperationException e)
+                {
+                    throw new QuinnFFILibraryNotFoundException();
+                }
             }
 
             return LibraryHandel;
@@ -187,5 +194,23 @@ namespace DotQuic.Native
             SockaddrInV4 sockaddrInV4);
 
         #endregion
+    }
+
+    internal class QuinnFFILibraryNotFoundException : Exception
+    {
+        public override string Message =>
+            @"
+            The source library that contains the rust interface for QUINN could not be found in the application folder. 
+
+            Make sure:
+            1. Download the appropriated release from github: https://github.com/TimonPost/quinn-ffi/releases
+            2. Put the binary in the /bin/Debug or /bin/Release folder (depending your configuration)
+            3. !!DONT RENAME the binary!!         
+                
+            What is a appropriated release:
+            1. Run 'rustup default' to retrieve your active rust toolchain. 
+            2. Make sure it is the nightly version. Make sure it matches the supported releases.
+            3. Find the binary on the releases page with this toolchain in its name. e.g: `quinn_ffi-nightly-x86_64-pc-windows-msvc.dll` if your running windows on msvc architecture. 
+            ";
     }
 }
