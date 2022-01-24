@@ -35,6 +35,7 @@ namespace DotQuic.Native
 
                 try
                 {
+                    Console.WriteLine("{}", Directory.GetCurrentDirectory());
                     var files = Directory.GetFiles(Directory.GetCurrentDirectory())
                         .First(path => r.IsMatch(path));
 
