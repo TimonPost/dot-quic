@@ -9,15 +9,13 @@ namespace DotQuic.Sandbox.Client
 {
     internal class Program
     {
-        private static readonly IPEndPoint clientIp = new(IPAddress.Parse("127.0.0.1"), 5001);
-        private static readonly IPEndPoint serverIp = new(IPAddress.Parse("127.0.0.1"), 5000);
+        private static readonly IPEndPoint clientIp = new(IPAddress.Parse("172.21.120.67"), 5001);
+        private static readonly IPEndPoint serverIp = new(IPAddress.Parse("192.168.0.114"), 5000);
 
         private static int _count;
 
         private static async Task Main(string[] args)
         {
-            QuinnApi.SetLogFilter("quinn_ffi=trace");
-
             var client = new QuicClient(clientIp, "cert.der",
                 "key.der");
             
