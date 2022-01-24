@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -31,13 +32,13 @@ namespace DotQuic.Native
         {
             if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
             {
-                Regex r = new Regex("quinn_ffi-nightly-.*.(dll|so)");
-
+                Regex r = new Regex("quinn_ffi-nightly-.*[\\.dll|\\.so]");
+                
                 try
                 {
-                    var files = Directory.GetFiles(Directory.GetCurrentDirectory())
+                    var files = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
                         .First(path => r.IsMatch(path));
-
+                    
                     NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
                 }
                 catch (InvalidOperationException e)

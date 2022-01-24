@@ -16,7 +16,6 @@ namespace DotQuic.Sandbox.Client
 
         private static async Task Main(string[] args)
         {
-            QuinnApi.SetLogFilter("quinn_ffi=trace");
 
             var client = new QuicClient(clientIp, "cert.der",
                 "key.der");
