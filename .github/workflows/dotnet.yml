@@ -18,7 +18,8 @@ jobs:
       with:
         # Filepath of the project to be packaged, relative to root of repository
         PROJECT_FILE_PATH: dotnet/DotQuic
-
+        
+        VERSION_FILE_PATH: dotnet/DotQuic/DotQuic.csproj
         # NuGet package id, used for version detection & defaults to project name
         PACKAGE_NAME: DotQuic
 
