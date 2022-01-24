@@ -30,7 +30,7 @@ namespace DotQuic.Native
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
-            Debug.WriteLine("test1");
+            throw new Exception($"{libraryName} - {Directory.GetCurrentDirectory()}");
 
             if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
             {
