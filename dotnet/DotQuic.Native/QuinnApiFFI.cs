@@ -35,7 +35,7 @@ namespace DotQuic.Native
 
                 try
                 {
-                    var files = Directory.GetFiles("./")
+                    var files = Directory.GetFiles(Directory.GetCurrentDirectory())
                         .First(path => r.IsMatch(path));
 
                     NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
