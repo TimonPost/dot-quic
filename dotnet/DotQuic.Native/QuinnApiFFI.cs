@@ -38,9 +38,7 @@ namespace DotQuic.Native
                 {
                     var files = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
                         .First(path => r.IsMatch(path));
-
-                    throw new Exception($"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)} - {files}");
-
+                    
                     NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
                 }
                 catch (InvalidOperationException e)
