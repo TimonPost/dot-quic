@@ -34,7 +34,7 @@ namespace DotQuic.Native
 
             if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
             {
-                Regex r = new Regex("quinn_ffi-nightly-.*.(dll|so)");
+                Regex r = new Regex("quinn_ffi-nightly-.*[\\.dll|\\.so]");
 
                 Debug.WriteLine("folder: {0}", Directory.GetCurrentDirectory());
                 Debug.WriteLine("test2");
