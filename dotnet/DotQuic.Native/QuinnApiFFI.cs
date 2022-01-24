@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,14 +30,14 @@ namespace DotQuic.Native
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
-            Console.WriteLine("test1");
+            Debug.WriteLine("test1");
 
             if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
             {
                 Regex r = new Regex("quinn_ffi-nightly-.*.(dll|so)");
 
-                Console.WriteLine("folder: {0}", Directory.GetCurrentDirectory());
-                Console.WriteLine("test2");
+                Debug.WriteLine("folder: {0}", Directory.GetCurrentDirectory());
+                Debug.WriteLine("test2");
                 try
                 {
                     var files = Directory.GetFiles(Directory.GetCurrentDirectory())
