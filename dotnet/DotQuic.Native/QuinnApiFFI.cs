@@ -33,15 +33,13 @@ namespace DotQuic.Native
             if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
             {
                 Regex r = new Regex("quinn_ffi-nightly-.*[\\.dll|\\.so]");
-
-                Debug.WriteLine("folder: {0}", Directory.GetCurrentDirectory());
-                Debug.WriteLine("test2");
+                
                 try
                 {
-                    var files = Directory.GetFiles("./")
+                    var files = Directory.GetFiles(Assembly.GetExecutingAssembly().Location)
                         .First(path => r.IsMatch(path));
 
-                    throw new Exception($"{libraryName} - {files}");
+                    throw new Exception($"{Assembly.GetExecutingAssembly().Location} - {files}");
 
                     NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
                 }
