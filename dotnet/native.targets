@@ -39,7 +39,7 @@
         <CargoArtifact>$(CargoPackage)-nightly-$(CargoTarget).$(CargoExtension)</CargoArtifact>
 	    <CargoArtifactPath>$(CargoWorkspacePath)\target\$(CargoTarget)\$(CargoConfiguration)\$(CargoArtifact)</CargoArtifactPath>
 
-	    <CargoOriginalArtifact Condition=" '$(IsWindows)' == 'true' ">(CargoPackage).$(CargoExtension)</CargoOriginalArtifact>
+	    <CargoOriginalArtifact Condition=" '$(IsWindows)' == 'true' ">$(CargoPackage).$(CargoExtension)</CargoOriginalArtifact>
 	    <CargoOriginalArtifact Condition=" '$(IsLinux)' == 'true' ">lib$(CargoPackage).$(CargoExtension)</CargoOriginalArtifact>
         <CargoOriginalArtifactPath>$(CargoWorkspacePath)\target\$(CargoTarget)\$(CargoConfiguration)\$(CargoOriginalArtifact)</CargoOriginalArtifactPath>
     </PropertyGroup>

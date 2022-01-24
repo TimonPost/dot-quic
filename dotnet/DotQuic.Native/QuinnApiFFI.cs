@@ -30,8 +30,6 @@ namespace DotQuic.Native
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
-            throw new Exception($"{libraryName} - {Directory.GetCurrentDirectory()}");
-
             if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
             {
                 Regex r = new Regex("quinn_ffi-nightly-.*[\\.dll|\\.so]");
@@ -40,8 +38,10 @@ namespace DotQuic.Native
                 Debug.WriteLine("test2");
                 try
                 {
-                    var files = Directory.GetFiles(Directory.GetCurrentDirectory())
+                    var files = Directory.GetFiles("./")
                         .First(path => r.IsMatch(path));
+
+                    throw new Exception($"{libraryName} - {files}");
 
                     NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
                 }
