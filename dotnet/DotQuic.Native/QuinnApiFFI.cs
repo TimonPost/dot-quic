@@ -36,10 +36,10 @@ namespace DotQuic.Native
                 
                 try
                 {
-                    var files = Directory.GetFiles(Assembly.GetExecutingAssembly().Location)
+                    var files = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
                         .First(path => r.IsMatch(path));
 
-                    throw new Exception($"{Assembly.GetExecutingAssembly().Location} - {files}");
+                    throw new Exception($"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)} - {files}");
 
                     NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
                 }
