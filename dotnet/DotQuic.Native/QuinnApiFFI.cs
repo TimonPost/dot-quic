@@ -29,13 +29,16 @@ namespace DotQuic.Native
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
+            Console.WriteLine("test1");
+
             if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
             {
                 Regex r = new Regex("quinn_ffi-nightly-.*.(dll|so)");
 
+                Console.WriteLine("folder: {0}", Directory.GetCurrentDirectory());
+                Console.WriteLine("test2");
                 try
                 {
-                    Console.WriteLine("{0}", Directory.GetCurrentDirectory());
                     var files = Directory.GetFiles(Directory.GetCurrentDirectory())
                         .First(path => r.IsMatch(path));
 
