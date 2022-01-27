@@ -3,6 +3,13 @@
 
 **This library is very new and in active development, dont use it yet**
 
+## Setup
+[Dot Quic][DotQuic] does requires a build of [quinn FFI Rust library][qunn-ffi]
+
+1. Add [Dot Quic][dotquic] as dependency to your project (nuget). 
+2. Find the right [release build][release] for your platform, and download the dll. 
+3. Put the dll into project `bin/Debug` or `bin/Release` file. 
+
 ## Why
 
 C# does not yet have a native, up-to-date, QUIC implementation. MsQuic its API will likely be exposed in .Net 7.0 API which is expected around November 2022. Therefore the .Net ecosystem will have to wait for some time for being able to use QUIC protocol. 
@@ -28,14 +35,10 @@ The motivation of this library is to align its API to the future implementation 
 
 Either events or direct function calls such as `server.Incomming` vs `server.AcceptAsync()` respectively can be used to interact with the protocol. The same principle applies to `Read` vs `OnDataReceive`.
 
-## Setup
-[Dot Quic][DotQuic] does requires a build of [quinn FFI Rust library][qunn-ffi]
+## Configuration
+<details>
+  <summary>Examples</summary>
 
-1. Add [Dot Quic][dotquic] as dependency to your project (nuget). 
-2. Find the right [release build][release] for your platform, and download the dll. 
-3. Put the dll into project `bin/Debug` or `bin/Release` file. 
-
-# Configuration
 A certificate is mandatory for using this library with [Quinn][Quinn].
 Use openssl, keytool, lets encrypt to generate one. 
 
@@ -52,18 +55,28 @@ openssl rsa -in key.pem -outform DER -out key.der
 1. The certificate **MUST** be DER-encoded X.509.
 2. The private key **MUST** be DER-encoded ASN.1 in either PKCS#8 or PKCS#1 format.
 
+### Debugging:
+
+The FFI library uses `tracing` for logging. You can enable protocol debug logs by calling `QuinnApi.enable_log("trace")`.
+The filter is any log filter in the format as described [here][tracing]
+
+</details>
+
 ## Examples
+<details>
+  <summary>Examples</summary>
 
 Server Example:
 ```csharp
 # Create server
 void Main() {
     IPEndPoint serverIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5000);
-    QuicListener server = new QuicListener(serverIp);
+    QuicListener server = new QuicListener(serverIp, "cert.der", "key.der");
     
     // It is also possible to use `Accept(Async)` for incoming connections instead of using events. 
     
     server.Incoming += OnIncoming;   
+    server.ConnectionClose += OnConnectionClose;
 }
 
 async void OnIncoming(object? sender, NewConnectionEventArgs e)
@@ -80,6 +93,7 @@ async void OnIncoming(object? sender, NewConnectionEventArgs e)
 
 void OnStreamInitiated(object? sender, StreamEventArgs e) { /* Do something when stream is initiated. */ }
 void OnStreamClosed(object? sender, StreamEventArgs e) { /* Do something when stream is closed.*/ }
+void OnConnectionClose(object? sender, ConnectionIdEventArgs args) { /* Connection is closed */  }
 
 private static void OnDataReceive(object? sender, DataReceivedEventArgs e)
 {
@@ -93,7 +107,7 @@ Client Example:
 ```csharp
 void Main() {
     IPEndPoint connectionIp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5001);
-    QuicClient client = new QuicClient(connectionIp);
+    QuicClient client = new QuicClient(connectionIp, "cert.der", "key.der");
 
     client.Connect(serverIp); // Async supported
 
@@ -105,20 +119,7 @@ void Main() {
     uniStream.Read(buffer); // Async supported
 }
 ```
-
-
-
-# Debugging:
-
-The FFI library uses `tracing` for logging. You can enable protocol debug logs by calling `QuinnApi.enable_log("trace")`.
-The filter is any log filter in the format as described [here][tracing]
-
-## Todo:
-- Configuration of both server and clients.
-- Implement stram finialisation
-- Implement connection termination
-- Cleanup resources
-
+</details>
 
 
 [Quinn]: https://github.com/quinn-rs/quinn
