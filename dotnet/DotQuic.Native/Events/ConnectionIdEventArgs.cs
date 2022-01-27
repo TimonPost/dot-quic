@@ -11,4 +11,14 @@ namespace DotQuic.Native.Events
 
         public int Id { get; }
     }
+
+    public class ConnectionCloseEventArgs : EventArgs
+    {
+        public ConnectionCloseEventArgs(int id)
+        {
+            Id = id;
+        }
+
+        public int Id { get; set; }
+    }
 }

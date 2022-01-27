@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace DotQuic.Native.Types
 {
     [StructLayout(LayoutKind.Sequential)]
-    public readonly ref struct QuinnResult
+    public readonly struct QuinnResult
     {
         private readonly ResultKind ResultKind;
 

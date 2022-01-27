@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using DotQuic.Native.Events;
 using DotQuic.Native.Handles;
@@ -12,18 +11,21 @@ namespace DotQuic
     internal class IncomingConnection
     {
         private readonly ManualResetEvent _awaitingConnection = new(false);
-        private readonly ConnectionDriver _connectionDriver;
-        private readonly ConnectionHandle _handle;
+        private readonly DeferredTaskExecutor _deferredTaskExecutor;
 
+        private readonly EndpointHandle _endpointHandle;
+        private readonly ConnectionHandle _handle;
         private readonly int _id;
         private Task<QuicConnection> _processingTask;
 
         private IncomingState State = IncomingState.Listening;
 
-        public IncomingConnection(ConnectionHandle handle, int id, ConnectionDriver connectionDriver)
+        public IncomingConnection(EndpointHandle endpointHandle, ConnectionHandle handle, int id,
+            DeferredTaskExecutor deferredTaskExecutor)
         {
+            _endpointHandle = endpointHandle;
             _id = id;
-            _connectionDriver = connectionDriver;
+            _deferredTaskExecutor = deferredTaskExecutor;
             _handle = handle;
 
             ConnectionEvents.ConnectionInitialized += OnConnectionInitialized;
@@ -31,7 +33,6 @@ namespace DotQuic
 
         private void OnConnectionInitialized(object? sender, ConnectionIdEventArgs e)
         {
-            Console.WriteLine("{0}", e);
             // Only set awaiting state if current connection and state is listening.
             if (State == IncomingState.Listening && e.Id == _id)
                 _awaitingConnection.Set();
@@ -46,13 +47,26 @@ namespace DotQuic
             State = IncomingState.Listening;
             _processingTask = Task.Run(async () =>
             {
-                var quicConnection = new QuicConnection(_handle, _id, _connectionDriver);
+                var quicConnection = new QuicConnection(_endpointHandle, _handle, _id, _deferredTaskExecutor);
                 quicConnection.SetState(IncomingState.Connecting);
 
-                // A first poll is sometimes required to get events flowing.
-                //QuinnApi.PollConnection(_handle);
+                var source = new CancellationTokenSource();
 
-                await _awaitingConnection.AsTask(cancellationToken);
+                // TODO: when auto poll is disabled, we should poll manually. 
+                // var task = Task.Run(async () =>
+                // {
+                //     while (true)
+                //     {
+                //         await Task.Delay(100, source.Token);
+                //         QuinnApi.PollConnection(_handle);
+                //     }
+                // }, source.Token);
+
+                var task2 = _awaitingConnection.AsTask(cancellationToken);
+
+                Task.WaitAny(task2);
+                source.Cancel();
+
                 quicConnection.SetState(IncomingState.Connected);
 
                 return quicConnection;

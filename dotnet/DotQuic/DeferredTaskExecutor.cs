@@ -20,7 +20,7 @@ namespace DotQuic
     /// <summary>
     ///     Polls connections if they should be polled.
     /// </summary>
-    public class ConnectionDriver : IDisposable
+    public class DeferredTaskExecutor : IDisposable
     {
         private readonly Func<int, ConnectionHandle> _getConnectionHandle;
         private readonly BufferBlock<PollTask> _pollTasks;
@@ -29,7 +29,7 @@ namespace DotQuic
         private readonly CancellationTokenSource Source;
         private Task _connectionPollTask;
 
-        public ConnectionDriver(Func<int, ConnectionHandle> getConnectionHandle)
+        public DeferredTaskExecutor(Func<int, ConnectionHandle> getConnectionHandle)
         {
             _getConnectionHandle = getConnectionHandle;
             _pollTasks = new BufferBlock<PollTask>();
@@ -56,7 +56,6 @@ namespace DotQuic
                 while (!Source.IsCancellationRequested)
                 {
                     var scheduled = await _scheduledTasks.ReceiveAsync();
-                    //await Task.Delay(100);
                     scheduled();
                 }
             });

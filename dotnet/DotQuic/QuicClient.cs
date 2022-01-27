@@ -9,7 +9,7 @@ namespace DotQuic
 {
     public class QuicClient : Endpoint
     {
-        private ConnectionDriver _connectionDriver;
+        private DeferredTaskExecutor _deferredTaskExecutor;
 
         public QuicClient(IPEndPoint clientIp, string certificatePath, string privateKeyPath)
         {
@@ -54,12 +54,12 @@ namespace DotQuic
             ConnectionEvents.ConnectionInitialized += (sender, args) => { waitEvent.Set(); };
 
             QuinnApi.ConnectClient(Handle, serverName, serverIp.ToNative(), out var connectionHandle,
-                out var connectionId).Unwrap();
+                out var connectionId);
 
-            _connectionDriver = new ConnectionDriver(id => connectionHandle);
-            _connectionDriver.StartPollingAsync();
+            _deferredTaskExecutor = new DeferredTaskExecutor(id => connectionHandle);
+            _deferredTaskExecutor.StartPollingAsync();
 
-            Connection = new QuicConnection(connectionHandle, connectionId, _connectionDriver);
+            Connection = new QuicConnection(Handle, connectionHandle, connectionId, _deferredTaskExecutor);
 
             // Wait until the handhsake is performed. 
             await waitEvent.AsTask(token);

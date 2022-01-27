@@ -45,7 +45,16 @@ namespace DotQuic
         private void OnReceiveCallback(IAsyncResult ar)
         {
             var receivedBytes = QuicSocket.EndReceive(ar, ref _lastAddress);
-            QuinnFFIHelpers.HandleDatagram(Handle, receivedBytes, _lastAddress);
+
+            try
+            {
+                if (receivedBytes.Length != 0)
+                    QuinnFFIHelpers.HandleDatagram(Handle, receivedBytes, _lastAddress);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Handle datagram wrong");
+            }
 
             if (!ReceiveCancellation.IsCancellationRequested)
                 StartReceivingAsync();

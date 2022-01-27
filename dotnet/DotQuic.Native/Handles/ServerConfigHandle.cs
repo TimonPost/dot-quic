@@ -1,25 +1,16 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace DotQuic.Native.Handles
 {
-    public class ServerConfigHandle : SafeHandle
+    public class ServerConfigHandle : Handle
     {
-        private ServerConfigHandle()
-            : base(IntPtr.Zero, true)
+        public ServerConfigHandle(IntPtr handle) : base(handle)
         {
+            SetHandle(handle);
         }
 
-        public override bool IsInvalid => handle == IntPtr.Zero;
-
-        protected override bool ReleaseHandle()
+        private ServerConfigHandle() : base(IntPtr.Zero)
         {
-            if (handle == IntPtr.Zero) return true;
-
-            var h = handle;
-            handle = IntPtr.Zero;
-
-            return true;
         }
     }
 }

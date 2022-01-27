@@ -11,6 +11,8 @@ namespace DotQuic.Native
 
     public delegate void OnConnectionLost(int connectionId);
 
+    public delegate void OnConnectionClose(int connectionId, long errorCode, IntPtr reasonBytes, int reasonBytesLength);
+
     public delegate void OnDatagramReceived(int connectionId);
 
     public delegate void OnNewConnection(IntPtr handle, int connectionId, int endpointId);
@@ -73,18 +75,21 @@ namespace DotQuic.Native
         ///     Connection handle should be valid pointer for the duration of the call.
         /// </remarks>
         /// >
-        public static QuinnResult ConnectClient(EndpointHandle endpointHandle, string hostName, SockaddrInV4 addr,
+        public static void ConnectClient(EndpointHandle endpointHandle, string hostName, SockaddrInV4 addr,
             out ConnectionHandle connectionHandle, out int connectionId)
         {
             var hostNameBytes = Encoding.UTF8.GetBytes(hostName);
 
             unsafe
             {
+                endpointHandle.Acquire();
                 fixed (byte* hostNamePtr = hostNameBytes)
                 {
-                    return QuinnApiFFI.connect_client(endpointHandle, (IntPtr)hostNamePtr, hostNameBytes.Length, addr,
-                        out connectionHandle, out connectionId);
+                    QuinnApiFFI.connect_client(endpointHandle, (IntPtr)hostNamePtr, hostNameBytes.Length, addr,
+                        out connectionHandle, out connectionId).Unwrap();
                 }
+
+                endpointHandle.Release();
             }
         }
 
@@ -94,10 +99,48 @@ namespace DotQuic.Native
         /// <remarks>
         ///     Connection handle should be valid pointer for the duration of the call.
         /// </remarks>
-        /// >
         public static QuinnResult PollConnection(ConnectionHandle connectionHandle)
         {
-            return QuinnApiFFI.poll_connection(connectionHandle);
+            connectionHandle.Acquire();
+            var result = QuinnApiFFI.poll_connection(connectionHandle);
+            connectionHandle.Release();
+            return result;
+        }
+
+        /// <summary>
+        ///     Frees the memory for this connection.
+        /// </summary>
+        /// <remarks>
+        ///     * Connection handle should be valid pointer for the duration of the call.
+        ///     * Connection handle should not be used after this call.
+        /// </remarks>
+        public static QuinnResult FreeConnection(EndpointHandle handle, ConnectionHandle connectionHandle)
+        {
+            handle.Acquire();
+            connectionHandle.Acquire();
+            var result = QuinnApiFFI.free_connection(handle, connectionHandle);
+            connectionHandle.Release();
+            handle.Release();
+            return result;
+        }
+
+        /// <summary>
+        ///     Closes the connection. Connection can not be used
+        /// </summary>
+        public static void CloseConnection(ConnectionHandle connectionHandle, string reason, long code)
+        {
+            var reasonBytes = Encoding.UTF8.GetBytes(reason);
+            connectionHandle.Acquire();
+            unsafe
+            {
+                fixed (byte* reasonBytesPtr = reasonBytes)
+                {
+                    QuinnApiFFI.close_connection(connectionHandle, (IntPtr)reasonBytesPtr, reasonBytes.Length, code)
+                        .Unwrap();
+                }
+            }
+
+            connectionHandle.Release();
         }
 
         #endregion
@@ -113,7 +156,7 @@ namespace DotQuic.Native
         {
             var certBytes = File.ReadAllBytes(certificatePath);
             var keyBytes = File.ReadAllBytes(privateKeyPath);
-            
+
             unsafe
             {
                 fixed (byte* certBytesPtr = certBytes)
@@ -328,9 +371,12 @@ namespace DotQuic.Native
         ///     Endpoint handle should be valid pointer for the duration of the call.
         /// </remarks>
         /// >
-        public static QuinnResult PollEndpoint(EndpointHandle connectionHandle)
+        public static QuinnResult PollEndpoint(EndpointHandle endpointHandle)
         {
-            return QuinnApiFFI.poll_endpoint(connectionHandle);
+            endpointHandle.Acquire();
+            var result = QuinnApiFFI.poll_endpoint(endpointHandle);
+            endpointHandle.Release();
+            return result;
         }
 
         /// <summary>
@@ -339,11 +385,13 @@ namespace DotQuic.Native
         /// <remarks>
         ///     The server config handle is valid for the duration of the call.
         /// </remarks>
-        /// >
         public static QuinnResult CreateServerEndpoint(ServerConfigHandle serverConfig, out byte endpointId,
             out EndpointHandle endpointHandle)
         {
-            return QuinnApiFFI.create_server_endpoint(serverConfig, out endpointId, out endpointHandle);
+            serverConfig.Acquire();
+            var result = QuinnApiFFI.create_server_endpoint(serverConfig, out endpointId, out endpointHandle);
+            serverConfig.Release();
+            return result;
         }
 
         /// <summary>
@@ -352,11 +400,13 @@ namespace DotQuic.Native
         /// <remarks>
         ///     The client config handle is valid for the duration of the call.
         /// </remarks>
-        /// >
         public static QuinnResult CreateClientEndpoint(ClientConfigHandle clientConfig, out byte endpointId,
             out EndpointHandle endpointHandle)
         {
-            return QuinnApiFFI.create_client_endpoint(clientConfig, out endpointId, out endpointHandle);
+            clientConfig.Acquire();
+            var result = QuinnApiFFI.create_client_endpoint(clientConfig, out endpointId, out endpointHandle);
+            clientConfig.Release();
+            return result;
         }
 
         #endregion
@@ -374,7 +424,10 @@ namespace DotQuic.Native
         public static QuinnResult ReadStream(ConnectionHandle handle, long streamId, IntPtr bufferPtr,
             uint bufferLength, out uint actualLength)
         {
-            return QuinnApiFFI.read_stream(handle, streamId, bufferPtr, bufferLength, out actualLength);
+            handle.Acquire();
+            var result = QuinnApiFFI.read_stream(handle, streamId, bufferPtr, bufferLength, out actualLength);
+            handle.Release();
+            return result;
         }
 
         /// <summary>
@@ -388,7 +441,10 @@ namespace DotQuic.Native
         public static QuinnResult WriteStream(ConnectionHandle handle, long streamId, IntPtr bufferPtr,
             uint bufferLength, out uint bytesWritten)
         {
-            return QuinnApiFFI.write_stream(handle, streamId, bufferPtr, bufferLength, out bytesWritten);
+            handle.Acquire();
+            var result = QuinnApiFFI.write_stream(handle, streamId, bufferPtr, bufferLength, out bytesWritten);
+            handle.Release();
+            return result;
         }
 
         /// <summary>
@@ -401,7 +457,10 @@ namespace DotQuic.Native
         public static QuinnResult
             AcceptStream(ConnectionHandle handle, byte streamDirection, out long streamId)
         {
-            return QuinnApiFFI.accept_stream(handle, streamDirection, out streamId);
+            handle.Acquire();
+            var result = QuinnApiFFI.accept_stream(handle, streamDirection, out streamId);
+            handle.Release();
+            return result;
         }
 
         /// <summary>
@@ -414,7 +473,10 @@ namespace DotQuic.Native
         public static QuinnResult OpenStream(ConnectionHandle connectionHandle, StreamType streamType,
             out long openedStreamId)
         {
-            return QuinnApiFFI.open_stream(connectionHandle, streamType, out openedStreamId);
+            connectionHandle.Acquire();
+            var result = QuinnApiFFI.open_stream(connectionHandle, streamType, out openedStreamId);
+            connectionHandle.Release();
+            return result;
         }
 
         /// <summary>
@@ -428,7 +490,10 @@ namespace DotQuic.Native
         public static QuinnResult HandleDatagram(EndpointHandle handle, IntPtr buffer, UIntPtr length,
             SockaddrInV4 sockaddrInV4)
         {
-            return QuinnApiFFI.handle_datagram(handle, buffer, length, sockaddrInV4);
+            handle.Acquire();
+            var result = QuinnApiFFI.handle_datagram(handle, buffer, length, sockaddrInV4);
+            handle.Release();
+            return result;
         }
 
         #endregion

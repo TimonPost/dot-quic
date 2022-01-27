@@ -24,20 +24,23 @@ namespace DotQuic
     public class QuicConnection
     {
         private readonly Dictionary<long, QuicStream> _biDirectionalQuicStreams;
-        private readonly ConnectionDriver _connectionDriver;
+        private readonly DeferredTaskExecutor _deferredTaskExecutor;
+        private readonly EndpointHandle _endpointHandle;
         private readonly Dictionary<long, QuicStream> _uniDirectionalQuicStreams;
         private IncomingState ConnectionState;
 
-        public QuicConnection(ConnectionHandle connectionHandle, int connectionId, ConnectionDriver connectionDriver)
+        public QuicConnection(EndpointHandle endpointHandle, ConnectionHandle connectionHandle, int connectionId,
+            DeferredTaskExecutor deferredTaskExecutor)
         {
-            _connectionDriver = connectionDriver;
+            _deferredTaskExecutor = deferredTaskExecutor;
             ConnectionHandle = connectionHandle;
             ConnectionId = connectionId;
+            _endpointHandle = endpointHandle;
 
             _uniDirectionalQuicStreams = new Dictionary<long, QuicStream>();
             _biDirectionalQuicStreams = new Dictionary<long, QuicStream>();
 
-            ConnectionEvents.ConnectionLost += OnConnectionLost;
+
             ConnectionEvents.DatagramReceived += OnDatagramReceived;
 
             ConnectionEvents.StreamAvailable += OnStreamAvailable;
@@ -161,6 +164,11 @@ namespace DotQuic
             return stream;
         }
 
+        public void Close()
+        {
+            QuinnApi.CloseConnection(ConnectionHandle, "Test reason", 1);
+        }
+
         private void OnStreamWritable(object? sender, StreamEventArgs e)
         {
             if (!IsThisConnection(e.ConnectionId)) return;
@@ -205,7 +213,8 @@ namespace DotQuic
                     throw new ArgumentOutOfRangeException();
             }
 
-            _connectionDriver.Schedule(() => DataReceived?.Invoke(this, new DataReceivedEventArgs { Stream = stream }));
+            _deferredTaskExecutor.Schedule(() =>
+                DataReceived?.Invoke(this, new DataReceivedEventArgs { Stream = stream }));
         }
 
         private void OnStreamOpened(object? sender, StreamEventArgs e)
@@ -233,7 +242,8 @@ namespace DotQuic
             }
 
             newStream.QueueReadEvent();
-            _connectionDriver.Schedule(() =>
+
+            _deferredTaskExecutor.Schedule(() =>
             {
                 StreamInitiated?.Invoke(null, new StreamEventArgs(e.ConnectionId, e.StreamId, e.StreamType));
                 DataReceived?.Invoke(null, new DataReceivedEventArgs { Stream = newStream });
@@ -263,11 +273,6 @@ namespace DotQuic
             if (!IsThisConnection(e.Id)) return;
         }
 
-        private void OnConnectionLost(object? sender, ConnectionIdEventArgs e)
-        {
-            if (!IsThisConnection(e.Id)) return;
-        }
-        
         public void SetState(IncomingState state)
         {
             ConnectionState = state;

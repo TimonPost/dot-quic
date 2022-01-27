@@ -1,25 +1,15 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace DotQuic.Native.Handles
 {
-    public class EndpointHandle : SafeHandle
+    public class EndpointHandle : Handle
     {
-        private EndpointHandle()
-            : base(IntPtr.Zero, true)
+        public EndpointHandle(IntPtr handle) : base(handle)
         {
         }
 
-        public override bool IsInvalid => handle == IntPtr.Zero;
-
-        protected override bool ReleaseHandle()
+        private EndpointHandle() : base(IntPtr.Zero)
         {
-            if (handle == IntPtr.Zero) return true;
-
-            var h = handle;
-            handle = IntPtr.Zero;
-
-            return true;
         }
     }
 }

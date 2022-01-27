@@ -3,21 +3,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using DotQuic.Native.Events;
+using DotQuic.Native.Handles;
 
 namespace DotQuic
 {
     internal class ConnectionListener
     {
-        private readonly ConnectionDriver _connectionDriver;
+        private readonly DeferredTaskExecutor _deferredTaskExecutor;
+        private readonly EndpointHandle _endpointHandle;
         private readonly int _endpointId;
         private readonly BufferBlock<IncomingConnection> _incomingConnections;
         private readonly CancellationToken _token;
 
-        public ConnectionListener(CancellationToken token, int endpointId, ConnectionDriver connectionDriver)
+        public ConnectionListener(EndpointHandle endpointHandle, CancellationToken token, int endpointId,
+            DeferredTaskExecutor deferredTaskExecutor)
         {
+            _endpointHandle = endpointHandle;
             _token = token;
             _endpointId = endpointId;
-            _connectionDriver = connectionDriver;
+            _deferredTaskExecutor = deferredTaskExecutor;
             _incomingConnections = new BufferBlock<IncomingConnection>();
             EndpointEvents.NewConnection += OnNewConnection;
         }
@@ -35,7 +39,8 @@ namespace DotQuic
             if (_endpointId != e.EndpointId) return;
 
             Console.WriteLine("On new connection");
-            var incoming = new IncomingConnection(e.ConnectionHandle, e.ConnectionId, _connectionDriver);
+            var incoming = new IncomingConnection(_endpointHandle, e.ConnectionHandle, e.ConnectionId,
+                _deferredTaskExecutor);
             incoming.ProcessIncoming(_token);
 
             _incomingConnections.Post(incoming);

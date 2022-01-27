@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +10,6 @@ using DotQuic.Native.Types;
 
 namespace DotQuic.Native
 {
-
     /// <summary>
     ///     FFI into the QUINN rust QUIC protocol implementation.
     ///     This class is internal because C# requires ddl imports to be either private or internal.
@@ -20,8 +17,8 @@ namespace DotQuic.Native
     /// </summary>
     internal static class QuinnApiFFI
     {
-        private static IntPtr LibraryHandel = IntPtr.Zero;
         private const string NativeLib = "quinn_ffi";
+        private static IntPtr LibraryHandel = IntPtr.Zero;
 
         static QuinnApiFFI()
         {
@@ -32,13 +29,13 @@ namespace DotQuic.Native
         {
             if (LibraryHandel == IntPtr.Zero && libraryName == NativeLib)
             {
-                Regex r = new Regex("quinn_ffi-nightly-.*[\\.dll|\\.so]");
-                
+                var r = new Regex("quinn_ffi-nightly-.*[\\.dll|\\.so]");
+
                 try
                 {
                     var files = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
                         .First(path => r.IsMatch(path));
-                    
+
                     NativeLibrary.TryLoad(files, assembly, searchPath, out LibraryHandel);
                 }
                 catch (InvalidOperationException e)
@@ -61,6 +58,17 @@ namespace DotQuic.Native
             CallingConvention = CallingConvention.Cdecl)]
         [SuppressUnmanagedCodeSecurity]
         internal static extern QuinnResult poll_connection(ConnectionHandle connectionHandle);
+
+        [DllImport(NativeLib, EntryPoint = nameof(free_connection), ExactSpelling = true,
+            CallingConvention = CallingConvention.Cdecl)]
+        internal static extern QuinnResult free_connection(EndpointHandle endpointHandle,
+            ConnectionHandle connectionHandle);
+
+        [DllImport(NativeLib, EntryPoint = nameof(close_connection), ExactSpelling = true,
+            CallingConvention = CallingConvention.Cdecl)]
+        [SuppressUnmanagedCodeSecurity]
+        internal static extern QuinnResult close_connection(ConnectionHandle connectionHandle, IntPtr reasonMsgBytes,
+            int reasonMsgLength, long errorCode);
 
         #endregion
 
@@ -108,6 +116,10 @@ namespace DotQuic.Native
         [DllImport(NativeLib, EntryPoint = nameof(set_on_connection_lost), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]
         internal static extern QuinnResult set_on_connection_lost(OnConnectionLost callback);
+
+        [DllImport(NativeLib, EntryPoint = nameof(set_on_connection_close), ExactSpelling = true,
+            CallingConvention = CallingConvention.Cdecl)]
+        internal static extern QuinnResult set_on_connection_close(OnConnectionClose callback);
 
         [DllImport(NativeLib, EntryPoint = nameof(set_on_stream_writable), ExactSpelling = true,
             CallingConvention = CallingConvention.Cdecl)]

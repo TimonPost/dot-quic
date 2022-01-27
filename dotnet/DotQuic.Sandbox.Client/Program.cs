@@ -13,20 +13,28 @@ namespace DotQuic.Sandbox.Client
         private static readonly IPEndPoint serverIp = new(IPAddress.Parse("127.0.0.1"), 5000);
 
         private static int _count;
+        private static QuicConnection _connection;
+        private static QuicStream _stream;
 
         private static async Task Main(string[] args)
         {
-
             var client = new QuicClient(clientIp, "cert.der",
                 "key.der");
-            
 
-            var connection = await client.ConnectAsync(serverIp, "localhost", CancellationToken.None);
+            _connection = await client.ConnectAsync(serverIp, "localhost", CancellationToken.None);
+            _stream = _connection.OpenBiDirectionalStream();
 
-            //connection.DataReceived += OnDatagramReceived;
+            QuinnApi.SetLogFilter("quinn_ffi=trace");
 
-            var _stream = connection.OpenBiDirectionalStream();
+            //StartWithEvent();
+            await StartWithLoop();
 
+            Console.ReadKey();
+        }
+
+
+        private static async Task StartWithLoop()
+        {
             var response = new byte[20];
 
             while (true)
@@ -38,15 +46,24 @@ namespace DotQuic.Sandbox.Client
                 Console.WriteLine("{0}", Encoding.UTF8.GetString(response));
 
                 _count++;
-            }
 
-            Console.ReadKey();
+                if (_count == 200)
+                {
+                    // _connection.Close();
+                    // break;
+                }
+            }
+        }
+
+        private static void StartWithEvent()
+        {
+            _connection.DataReceived += OnDatagramReceived;
         }
 
         private static void OnDatagramReceived(object? sender, DataReceivedEventArgs e)
         {
             var response = new byte[20];
-           
+
             try
             {
                 var read = e.Stream.Read(response);

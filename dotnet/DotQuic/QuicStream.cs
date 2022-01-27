@@ -61,7 +61,6 @@ namespace DotQuic
             set => throw new NotSupportedException("`Position` property of `QuicStream` is not supported.");
         }
 
-        
 
         public override int Read(byte[] buffer, int offset, int count)
         {
@@ -95,7 +94,7 @@ namespace DotQuic
         }
 
         /// <summary>
-        ///  Might throw an exception if buffer is blocked.
+        ///     Might throw an exception if buffer is blocked.
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>

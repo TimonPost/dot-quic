@@ -1,76 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <!-- Whether or not we're using corert to link up a native binary -->
+	<!-- Whether or not we're using corert to link up a native binary -->
 
-    <PropertyGroup Condition=" '$(AotBuild)' == 'true' ">
-        <IsAotBuild>true</IsAotBuild>
-        <DefineConstants>$(DefineConstants);AOT</DefineConstants>
-    </PropertyGroup>
+	<PropertyGroup Condition=" '$(AotBuild)' == 'true' ">
+		<IsAotBuild>true</IsAotBuild>
+		<DefineConstants>$(DefineConstants);AOT</DefineConstants>
+	</PropertyGroup>
 
-    <PropertyGroup Condition=" '$(AotBuild)' != 'true' ">
-        <IsAotBuild>false</IsAotBuild>
-    </PropertyGroup>
+	<PropertyGroup Condition=" '$(AotBuild)' != 'true' ">
+		<IsAotBuild>false</IsAotBuild>
+	</PropertyGroup>
 
-    <!-- Compile-time RIDs -->
-    <PropertyGroup Condition=" '$(NativeRid)' == 'win-x64' Or ('$(NativeRid)' == '' And '$([MSBuild]::IsOsPlatform(`WINDOWS`))' == 'true') ">
-        <IsWindows>true</IsWindows>
-        <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
-    </PropertyGroup>
+	<!-- Compile-time RIDs -->
+	<PropertyGroup
+		Condition=" '$(NativeRid)' == 'win-x64' Or ('$(NativeRid)' == '' And '$([MSBuild]::IsOsPlatform(`WINDOWS`))' == 'true') ">
+		<IsWindows>true</IsWindows>
+		<DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+	</PropertyGroup>
 
-    <PropertyGroup Condition=" '$(NativeRid)' == 'linux-x64' Or ('$(NativeRid)' == '' And '$([MSBuild]::IsOsPlatform(`LINUX`))' == 'true') ">
-	    <IsLinux>true</IsLinux>
-	    <IsUnix>true</IsUnix>
-	    <DefineConstants>$(DefineConstants);LINUX;UNIX</DefineConstants>
-    </PropertyGroup>
+	<PropertyGroup
+		Condition=" '$(NativeRid)' == 'linux-x64' Or ('$(NativeRid)' == '' And '$([MSBuild]::IsOsPlatform(`LINUX`))' == 'true') ">
+		<IsLinux>true</IsLinux>
+		<IsUnix>true</IsUnix>
+		<DefineConstants>$(DefineConstants);LINUX;UNIX</DefineConstants>
+	</PropertyGroup>
 
-    <!-- Cargo configuration -->
-    <PropertyGroup>
-        <CargoTargetPath>$(CargoWorkspacePath)\target\debug</CargoTargetPath>
+	<!-- Cargo configuration -->
+	<PropertyGroup>
+		<CargoTargetPath>$(CargoWorkspacePath)\target\debug</CargoTargetPath>
 
-        <CargoConfiguration>release</CargoConfiguration>
-        <CargoConfiguration Condition=" '$(Configuration)' == 'Debug' ">debug</CargoConfiguration>
+		<CargoConfiguration>release</CargoConfiguration>
+		<CargoConfiguration Condition=" '$(Configuration)' == 'Debug' ">debug</CargoConfiguration>
 
-	    <CargoExtension Condition=" '$(IsWindows)' == 'true' ">dll</CargoExtension>
-	    <CargoExtension Condition=" '$(IsLinux)' == 'true' ">so</CargoExtension>
+		<CargoExtension Condition=" '$(IsWindows)' == 'true' ">dll</CargoExtension>
+		<CargoExtension Condition=" '$(IsLinux)' == 'true' ">so</CargoExtension>
 
-        <CargoTarget Condition=" '$(IsWindows)' == 'true' ">x86_64-pc-windows-msvc</CargoTarget>
-	    <CargoTarget Condition=" '$(IsLinux)' == 'true' ">x86_64-unknown-linux-gnu</CargoTarget>
+		<CargoTarget Condition=" '$(IsWindows)' == 'true' ">x86_64-pc-windows-msvc</CargoTarget>
+		<CargoTarget Condition=" '$(IsLinux)' == 'true' ">x86_64-unknown-linux-gnu</CargoTarget>
 
-        <CargoArtifact>$(CargoPackage)-nightly-$(CargoTarget).$(CargoExtension)</CargoArtifact>
-	    <CargoArtifactPath>$(CargoWorkspacePath)\target\$(CargoTarget)\$(CargoConfiguration)\$(CargoArtifact)</CargoArtifactPath>
+		<CargoArtifact>$(CargoPackage)-nightly-$(CargoTarget).$(CargoExtension)</CargoArtifact>
+		<CargoArtifactPath>$(CargoWorkspacePath)\target\$(CargoTarget)\$(CargoConfiguration)\$(CargoArtifact)</CargoArtifactPath>
 
-	    <CargoOriginalArtifact Condition=" '$(IsWindows)' == 'true' ">$(CargoPackage).$(CargoExtension)</CargoOriginalArtifact>
-	    <CargoOriginalArtifact Condition=" '$(IsLinux)' == 'true' ">lib$(CargoPackage).$(CargoExtension)</CargoOriginalArtifact>
-        <CargoOriginalArtifactPath>$(CargoWorkspacePath)\target\$(CargoTarget)\$(CargoConfiguration)\$(CargoOriginalArtifact)</CargoOriginalArtifactPath>
-    </PropertyGroup>
+		<CargoOriginalArtifact Condition=" '$(IsWindows)' == 'true' ">$(CargoPackage).$(CargoExtension)</CargoOriginalArtifact>
+		<CargoOriginalArtifact Condition=" '$(IsLinux)' == 'true' ">lib$(CargoPackage).$(CargoExtension)</CargoOriginalArtifact>
+		<CargoOriginalArtifactPath>$(CargoWorkspacePath)\target\$(CargoTarget)\$(CargoConfiguration)\$(CargoOriginalArtifact)</CargoOriginalArtifactPath>
+	</PropertyGroup>
 
-    <ItemGroup>
-	    <CargoChannelArg Condition=" '$(CargoChannel)' != '' " Include="+$(CargoChannel)" />
-	    <CargoBuildArg Include="--target $(CargoTarget)" />
-	    <CargoBuildArg Condition=" '$(CargoConfiguration)' == 'release' " Include="--release" />
-    </ItemGroup>
+	<ItemGroup>
+		<CargoChannelArg Condition=" '$(CargoChannel)' != '' " Include="+$(CargoChannel)" />
+		<CargoBuildArg Include="--target $(CargoTarget)" />
+		<CargoBuildArg Condition=" '$(CargoConfiguration)' == 'release' " Include="--release" />
+		<CargoBuildArg Condition=" '$(CargoConfiguration)' == 'debug' "
+		               Include="--no-default-features --features=debug,safe-api,auto-poll" />
+	</ItemGroup>
 
-    <Target Name="Cargo" BeforeTargets="Build">
-        <Exec Command="cargo @(CargoChannelArg, ' ') build  @(CargoBuildArg, ' ')" WorkingDirectory="$(CargoWorkspacePath)\" />
-        <Message Text="Running: cargo @(CargoChannelArg, ' ') build  @(CargoBuildArg, ' ')" Importance="high" />
-    </Target>
+	<Target Name="Cargo" BeforeTargets="Build">
+		<Exec Command="cargo @(CargoChannelArg, ' ') build  @(CargoBuildArg, ' ')" WorkingDirectory="$(CargoWorkspacePath)\" />
+		<Message Text="Running: cargo @(CargoChannelArg, ' ') build  @(CargoBuildArg, ' ')" Importance="high" />
+	</Target>
 
-    <Target Name="Rename" DependsOnTargets="Cargo" AfterTargets="Cargo">
-	    <Message Text="Renamed executable file." Importance="high" />
-	    <Move SourceFiles="$(CargoOriginalArtifactPath)" DestinationFiles="$(CargoArtifactPath)" />
-	    <Message Text="Renamed executable file." Importance="high" />
-    </Target>
+	<Target Name="Rename" DependsOnTargets="Cargo" AfterTargets="Cargo">
+		<Message Text="Renamed executable file." Importance="high" />
+		<Move SourceFiles="$(CargoOriginalArtifactPath)" DestinationFiles="$(CargoArtifactPath)" />
+		<Message Text="Renamed executable file." Importance="high" />
+	</Target>
 
-    <!-- In standard builds, copy the native dynamic artifact to the output dir  -->
-    <ItemGroup Condition=" '$(IsAotBuild)' == 'false' ">
-        <CargoLibrary Include="$(CargoArtifactPath)" />
-    </ItemGroup>
+	<!-- In standard builds, copy the native dynamic artifact to the output dir  -->
+	<ItemGroup Condition=" '$(IsAotBuild)' == 'false' ">
+		<CargoLibrary Include="$(CargoArtifactPath)" />
+	</ItemGroup>
 
-    <Target Name="CargoBuildCopy" DependsOnTargets="Rename" AfterTargets="Build" Condition=" '$(IsAotBuild)' == 'false' ">
-        <Copy Condition=" '$(TargetDir)' != '' " SourceFiles="@(CargoLibrary)" DestinationFolder="$(TargetDir)" />
-    </Target>
+	<Target Name="CargoBuildCopy" DependsOnTargets="Rename" AfterTargets="Build" Condition=" '$(IsAotBuild)' == 'false' ">
+		<Copy Condition=" '$(TargetDir)' != '' " SourceFiles="@(CargoLibrary)" DestinationFolder="$(TargetDir)" />
+	</Target>
 
-    <Target Name="CargoPublishCopy" DependsOnTargets="Rename" AfterTargets="Publish" Condition=" '$(IsAotBuild)' == 'false' ">
-        <Copy SourceFiles="@(CargoLibrary)" DestinationFolder="$(PublishDir)" />
-    </Target>
+	<Target Name="CargoPublishCopy" DependsOnTargets="Rename" AfterTargets="Publish"
+	        Condition=" '$(IsAotBuild)' == 'false' ">
+		<Copy SourceFiles="@(CargoLibrary)" DestinationFolder="$(PublishDir)" />
+	</Target>
 </Project>

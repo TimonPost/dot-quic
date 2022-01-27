@@ -13,10 +13,10 @@ namespace DotQuic
     /// Listens for connections from QUIC protocol clients.
     public class QuicListener : Endpoint
     {
-        private readonly ConnectionDriver _connectionDriver;
         private readonly ConnectionListener _connectionListener;
         private readonly CancellationToken _connectionListenerCancellationToken;
         private readonly Dictionary<int, ConnectionHandle> _connections;
+        private readonly DeferredTaskExecutor _deferredTaskExecutor;
 
         public QuicListener(IPEndPoint ipEndpoint, string certificatePath, string privateKeyPath)
         {
@@ -30,23 +30,22 @@ namespace DotQuic
             QuicSocket = new UdpClient(ipEndpoint);
 
             _connections = new Dictionary<int, ConnectionHandle>();
-            _connectionDriver = new ConnectionDriver(id => _connections[id]);
+            _deferredTaskExecutor = new DeferredTaskExecutor(id => _connections[id]);
             _connectionListenerCancellationToken = new CancellationToken();
-            _connectionListener = new ConnectionListener(_connectionListenerCancellationToken, Id, _connectionDriver);
+            _connectionListener =
+                new ConnectionListener(Handle, _connectionListenerCancellationToken, Id, _deferredTaskExecutor);
 
             EndpointEvents.NewConnection += OnNewConnection;
             EndpointEvents.TransmitReady += OnTransmitReady;
+            ConnectionEvents.ConnectionLost += OnConnectionLost;
 
             StartReceivingAsync();
-            _connectionDriver.StartPollingAsync();
+            _deferredTaskExecutor.StartPollingAsync();
         }
 
-        public QuicListener(IPEndPoint ipEndpoint)
-        {
-            // Generate self-signed certificate. 
-        }
 
         public event EventHandler<NewConnectionEventArgs> Incoming;
+        public event EventHandler<ConnectionIdEventArgs> ConnectionClose;
 
         /// <summary>
         ///     Asynchronously wait for incoming connections.
@@ -91,13 +90,23 @@ namespace DotQuic
                     e.TransmitPacket.Destination);
         }
 
+        private void OnConnectionLost(object? sender, ConnectionIdEventArgs e)
+        {
+            var handle = _connections[e.Id];
+            if (_connections.Remove(e.Id))
+                _deferredTaskExecutor.Schedule(() =>
+                {
+                    QuinnApi.FreeConnection(Handle, handle);
+                    ConnectionClose?.Invoke(null, e);
+                });
+        }
+
         private void OnNewConnection(object? sender, NewConnectionEventArgs e)
         {
-            if (IsThisEndpoint(e.EndpointId))
-            {
-                _connections[e.ConnectionId] = e.ConnectionHandle;
-                Incoming?.Invoke(null, e);
-            }
+            if (!IsThisEndpoint(e.EndpointId)) return;
+
+            _connections[e.ConnectionId] = e.ConnectionHandle;
+            Incoming?.Invoke(null, e);
         }
     }
 }

@@ -7,13 +7,13 @@ using DotQuic.Native.Types;
 namespace DotQuic.Native
 {
     /// <summary>
-    /// Some helper functions for the Quinn Api FFI. 
+    ///     Some helper functions for the Quinn Api FFI.
     /// </summary>
     public class QuinnFFIHelpers
     {
         /// <summary>
-        /// Processes a received QUIC packet.
-        /// This function calls into rust and prevents the buffer memory from changing.
+        ///     Processes a received QUIC packet.
+        ///     This function calls into rust and prevents the buffer memory from changing.
         /// </summary>
         /// <param name="handle"></param>
         /// <param name="data"></param>
@@ -24,13 +24,14 @@ namespace DotQuic.Native
             {
                 fixed (byte* valuePtr = data)
                 {
-                    QuinnApi.HandleDatagram(handle, (IntPtr)valuePtr, (UIntPtr)data.Length, endpoint.ToNative()).Unwrap();
+                    QuinnApi.HandleDatagram(handle, (IntPtr)valuePtr, (UIntPtr)data.Length, endpoint.ToNative())
+                        .Unwrap();
                 }
             }
         }
 
         /// <summary>
-        /// Writes the given buffer into the stream.
+        ///     Writes the given buffer into the stream.
         /// </summary>
         /// <param name="handle">handle to connection owning stream</param>
         /// <param name="streamId">id of the stream to write to</param>
@@ -56,7 +57,7 @@ namespace DotQuic.Native
         }
 
         /// <summary>
-        /// Reads data into the given stream and returns the the total bytes read. 
+        ///     Reads data into the given stream and returns the the total bytes read.
         /// </summary>
         /// <param name="handle"></param>
         /// <param name="streamId"></param>
@@ -82,8 +83,8 @@ namespace DotQuic.Native
         }
 
         /// Returns the last occurred quinn error.
-        ///
-        /// Call this method when an exception occurred from the protocol. 
+        /// 
+        /// Call this method when an exception occurred from the protocol.
         /// <returns>QuinnError</returns>
         public static QuinnError LastError()
         {

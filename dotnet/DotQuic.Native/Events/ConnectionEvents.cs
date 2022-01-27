@@ -71,7 +71,6 @@ namespace DotQuic.Native.Events
 
         public static void OnConnected(int connectionId)
         {
-            Console.WriteLine("On Connected");
             ConnectionInitialized?.Invoke(null, new ConnectionIdEventArgs(connectionId));
         }
 
