@@ -28,8 +28,10 @@ jobs:
         uses: crazy-max/ghaction-chocolatey@v1
         with:
           args: install docfx
+      - name: Build Metafiles
+        run: docfx metadata
       - name: Build Docs
-        run: ./docs/build.sh
+        run: docfx build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
