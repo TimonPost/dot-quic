@@ -3,7 +3,10 @@ using DotQuic.Native.Handles;
 
 namespace DotQuic
 {
-    public class ServerConfig
+    /// <summary>
+    /// The FFI handle to the server endpoint configuration.
+    /// </summary>
+    internal class ServerConfig
     {
         public ServerConfig(string certificatePath, string privateKeyPath)
         {
@@ -11,17 +14,9 @@ namespace DotQuic
             Handle = handle;
         }
 
+        /// <summary>
+        /// The FFI handle to the client endpoint configuration.
+        /// </summary>
         public ServerConfigHandle Handle { get; }
-    }
-
-    public class ClientConfig
-    {
-        public ClientConfig(string certificatePath, string privateKeyPath)
-        {
-            QuinnApi.CreateClientConfig(out var handle, certificatePath, privateKeyPath);
-            Handle = handle;
-        }
-
-        public ClientConfigHandle Handle { get; }
     }
 }

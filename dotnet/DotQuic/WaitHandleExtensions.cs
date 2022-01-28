@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace DotQuic
 {
-    public static class WaitHandleExtensions
+    internal static class WaitHandleExtensions
     {
         public static Task AsTask(this WaitHandle handle)
         {

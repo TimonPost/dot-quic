@@ -10,7 +10,9 @@ using DotQuic.Native.Handles;
 
 namespace DotQuic
 {
-    /// Listens for connections from QUIC protocol clients.
+    /// <summary>
+    ///  Listener for connections from QUIC protocol clients.
+    /// </summary>
     public class QuicListener : Endpoint
     {
         private readonly ConnectionListener _connectionListener;
@@ -18,7 +20,21 @@ namespace DotQuic
         private readonly Dictionary<int, ConnectionHandle> _connections;
         private readonly DeferredTaskExecutor _deferredTaskExecutor;
 
-        public QuicListener(IPEndPoint ipEndpoint, string certificatePath, string privateKeyPath)
+        /// <summary>
+        /// Creates a QUIC Connection Listener.
+        /// </summary>
+        /// <remarks>
+        /// The default server configuration contains:
+        /// * only high-quality cipher suites: TLS13_AES_256_GCM_SHA384, TLS13_AES_128_GCM_SHA256, TLS13_CHACHA20_POLY1305_SHA256.
+        /// * only high-quality key exchange groups: curve25519, secp256r1, secp384r1.
+        /// * only TLS 1.2 and 1.3 support.
+        ///
+        /// For more instructions read the README, configuration section.
+        /// </remarks>
+        /// <param name="listenerIp">The ipv4 address of this server.</param>
+        /// <param name="certificatePath">The certificate must be DER-encoded X.509.</param>
+        /// <param name="privateKeyPath">The private key must be DER-encoded ASN.1 in either PKCS#8 or PKCS#1 format.</param>
+        public QuicListener(IPEndPoint listenerIp, string certificatePath, string privateKeyPath)
         {
             QuinnApi.Initialize();
 
@@ -27,7 +43,7 @@ namespace DotQuic
 
             Id = id;
             Handle = handle;
-            QuicSocket = new UdpClient(ipEndpoint);
+            QuicSocket = new UdpClient(listenerIp);
 
             _connections = new Dictionary<int, ConnectionHandle>();
             _deferredTaskExecutor = new DeferredTaskExecutor(id => _connections[id]);
@@ -43,37 +59,41 @@ namespace DotQuic
             _deferredTaskExecutor.StartPollingAsync();
         }
 
-
+        /// <summary>
+        /// Event that is triggered when a new connection is initialized, and ready to be used. 
+        /// </summary>
         public event EventHandler<NewConnectionEventArgs> Incoming;
+
+        /// <summary>
+        /// Event that is triggered when a connection is closed.
+        /// </summary>
         public event EventHandler<ConnectionIdEventArgs> ConnectionClose;
 
         /// <summary>
         ///     Asynchronously wait for incoming connections.
-        ///     This function should not be called more then once at the same time.
         /// </summary>
-        /// <returns>QuicConnection</returns>
+        /// <remarks>This function should not be called more then once at the same time.</remarks>
+        /// <returns cref="QuicConnection">QuicConnection</returns>
         public Task<QuicConnection> AcceptAsync(CancellationToken cancellationToken = new())
         {
-            Console.WriteLine("Listening...");
             return _connectionListener.NextAsync(cancellationToken);
         }
 
         /// <summary>
-        ///     Block wait for incoming connections.
-        ///     This function should not be called more then once at the same time.
+        ///     Synchronously wait for incoming connections.     
         /// </summary>
-        /// <returns>QuicConnection</returns>
+        /// <remarks>This function should not be called more then once at the same time.</remarks>
+        /// <returns cref="QuicConnection">QuicConnection</returns>
         public QuicConnection Accept()
         {
-            Console.WriteLine("Listening...");
             return AcceptAsync(CancellationToken.None).Result;
         }
 
         /// <summary>
-        ///     Returns the connection handle for a given connection.
-        ///     This handle is a direct pointer into rust and should be treated with care.
+        ///     Returns the FFI connection handle for a given connection.
         /// </summary>
-        /// <param name="connectionId"></param>
+        /// <remarks>This handle is a direct pointer into rust and should be treated with care.</remarks>
+        /// <param name="connectionId">The connection id to fetch the handle from.</param>
         /// <returns>ConnectionHandle</returns>
         public ConnectionHandle ConnectionHandle(int connectionId)
         {

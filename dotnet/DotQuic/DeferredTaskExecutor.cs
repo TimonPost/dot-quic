@@ -20,7 +20,7 @@ namespace DotQuic
     /// <summary>
     ///     Polls connections if they should be polled.
     /// </summary>
-    public class DeferredTaskExecutor : IDisposable
+    internal class DeferredTaskExecutor : IDisposable
     {
         private readonly Func<int, ConnectionHandle> _getConnectionHandle;
         private readonly BufferBlock<PollTask> _pollTasks;

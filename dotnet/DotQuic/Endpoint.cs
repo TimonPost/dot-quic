@@ -10,34 +10,47 @@ namespace DotQuic
     public abstract class Endpoint : IDisposable
     {
         private IPEndPoint _lastAddress;
-        public CancellationTokenSource PollCancellation;
+        internal CancellationTokenSource PollCancellation;
 
-        public CancellationTokenSource ReceiveCancellation;
+        internal CancellationTokenSource ReceiveCancellation;
 
-        protected Endpoint()
+        internal Endpoint()
         {
             ReceiveCancellation = new CancellationTokenSource();
             PollCancellation = new CancellationTokenSource();
         }
 
-        public EndpointHandle Handle { get; protected set; }
-        public int Id { get; protected set; }
+        /// <summary>
+        /// The FFI handle to this endpoint. 
+        /// </summary>
+        /// <remarks>This handle is a direct pointer into rust and should be treated with care.</remarks>
+        public EndpointHandle Handle { get; internal set; }
+        public int Id { get; internal set; }
 
-        public UdpClient QuicSocket { get; protected set; }
+        internal UdpClient QuicSocket { get; set; }
 
+        /// <summary>
+        /// Disposes the endpoint and its handles. 
+        /// </summary>
         public void Dispose()
         {
             Handle?.Dispose();
             QuicSocket?.Dispose();
+
+            // TODO: dispose endpoint, configuration
         }
 
-        protected bool IsThisEndpoint(int id)
+        /// <summary>
+        /// Returns if the given endpoint id is equal to this endpoint its id.
+        /// </summary>
+        /// <param name="id">The endpoint id</param>
+        /// <returns>If the endpoint id is equal to this endpoint its id.</returns>
+        protected internal bool IsThisEndpoint(int id)
         {
             return Id == id;
         }
-
-
-        public void StartReceivingAsync()
+        
+        internal void StartReceivingAsync()
         {
             QuicSocket.BeginReceive(OnReceiveCallback, null);
         }

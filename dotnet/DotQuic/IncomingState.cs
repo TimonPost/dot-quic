@@ -1,6 +1,6 @@
 ﻿namespace DotQuic
 {
-    public enum IncomingState
+    internal enum IncomingState
     {
         Listening,
         Connecting,

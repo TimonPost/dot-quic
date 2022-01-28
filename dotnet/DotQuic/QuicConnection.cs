@@ -4,23 +4,14 @@ using DotQuic.Native;
 using DotQuic.Native.Events;
 using DotQuic.Native.Handles;
 using DotQuic.Native.Types;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace DotQuic
 {
     /// <summary>
-    ///     Carries the stream form which data can be read.
-    /// </summary>
-    public class DataReceivedEventArgs : EventArgs
-    {
-        /// <summary>
-        ///     The stream that has data ready to be read.
-        /// </summary>
-        public QuicStream Stream { get; set; }
-    }
-
-    /// <summary>
     ///     A QUIC protocol connection to some remote QUIC endpoint.
     /// </summary>
+    /// <remarks>You cant create an instance of `QuicConnection`, use `QuicClient` or `QuicListener` instead.</remarks>
     public class QuicConnection
     {
         private readonly Dictionary<long, QuicStream> _biDirectionalQuicStreams;
@@ -29,7 +20,7 @@ namespace DotQuic
         private readonly Dictionary<long, QuicStream> _uniDirectionalQuicStreams;
         private IncomingState ConnectionState;
 
-        public QuicConnection(EndpointHandle endpointHandle, ConnectionHandle connectionHandle, int connectionId,
+        internal QuicConnection(EndpointHandle endpointHandle, ConnectionHandle connectionHandle, int connectionId,
             DeferredTaskExecutor deferredTaskExecutor)
         {
             _deferredTaskExecutor = deferredTaskExecutor;
@@ -52,6 +43,10 @@ namespace DotQuic
             ConnectionEvents.StreamWritable += OnStreamWritable;
         }
 
+        /// <summary>
+        /// The FFI handle for this connection.
+        /// </summary>
+        /// <remarks>This handle is a direct pointer into rust and should be treated with care.</remarks>
         public ConnectionHandle ConnectionHandle { get; }
 
 
@@ -91,19 +86,21 @@ namespace DotQuic
         /// </summary>
         public event EventHandler<DataReceivedEventArgs> DataReceived;
 
+        /// <summary>
+        ///     Event is triggered when a stream is initialized and ready for use. 
+        /// </summary>
         public event EventHandler<StreamEventArgs> StreamInitiated;
-        public event EventHandler<StreamEventArgs> StreamClosed;
 
-        private bool IsThisConnection(int id)
-        {
-            return id == ConnectionId;
-        }
+        /// <summary>
+        ///     Event is triggered when a stream is closed.
+        /// </summary>
+        public event EventHandler<StreamEventArgs> StreamClosed;
 
         /// <summary>
         ///     Opens a bidirectional stream to the remote endpoint.
         ///     Exception is thrown if the stream can not be opened or the connection is not yet initialized.
         /// </summary>
-        /// <returns>QuicStream</returns>
+        /// <returns cref="QuicStream">QuicStream</returns>
         public QuicStream OpenBiDirectionalStream()
         {
             if (!IsConnected)
@@ -119,10 +116,10 @@ namespace DotQuic
 
 
         /// <summary>
-        ///     Opens a unidirectional stream to the remote endpoint.
-        ///     Exception is thrown if the stream can not be opened or the connection is not yet initialized.
+        ///     Opens a unidirectional stream to the remote endpoint.     
         /// </summary>
-        /// <returns>QuicStream</returns>
+        /// <exception cref="Exception">Exception is thrown if the stream can not be opened or the connection is closed.</exception>
+        /// <returns cref="QuicStream">The opened unidirectional stream.</returns>
         public QuicStream OpenUniDirectionalStream()
         {
             if (!IsConnected)
@@ -138,10 +135,10 @@ namespace DotQuic
 
         /// <summary>
         ///     Returns an bidirectional stream with the given stream id.
-        ///     Exception is thrown if there is no unidirectional stream with the given id.
         /// </summary>
         /// <param name="streamId"></param>
-        /// <returns>QuicStream</returns>
+        /// <exception cref="Exception">Exception is thrown if there is no bidirectional stream with the given id.</exception>
+        /// <returns cref="QuicStream">The bidirectional stream.</returns>
         public QuicStream GetBiStream(long streamId)
         {
             if (!_biDirectionalQuicStreams.TryGetValue(streamId, out var stream))
@@ -152,10 +149,10 @@ namespace DotQuic
 
         /// <summary>
         ///     Returns an unidirectional stream with the given stream id.
-        ///     Exception is thrown if there is no unidirectional stream with the given id.
         /// </summary>
-        /// <param name="streamId"></param>
-        /// <returns>QuicStream</returns>
+        /// <param name="streamId">The stream id of the unidirectional stream.</param>
+        /// <exception cref="Exception">Exception is thrown if there is no unidirectional stream with the given id.</exception>
+        /// <returns cref="QuicStream">The unidirectional stream</returns>
         public QuicStream GetUniStream(long streamId)
         {
             if (!_uniDirectionalQuicStreams.TryGetValue(streamId, out var stream))
@@ -164,9 +161,20 @@ namespace DotQuic
             return stream;
         }
 
-        public void Close()
+        /// <summary>
+        /// Close this connection.
+        /// </summary>
+        /// <param name="reason">The reason of close, will be send to the peer.</param>
+        /// <param name="code">A integer code indicating the closing reason.</param>
+        /// <remarks>The connection should not be used after close!</remarks>
+        public void Close(string reason, long code = 0)
         {
-            QuinnApi.CloseConnection(ConnectionHandle, "Test reason", 1);
+            QuinnApi.CloseConnection(ConnectionHandle, reason, code);
+        }
+
+        private bool IsThisConnection(int id)
+        {
+            return id == ConnectionId;
         }
 
         private void OnStreamWritable(object? sender, StreamEventArgs e)
@@ -273,7 +281,7 @@ namespace DotQuic
             if (!IsThisConnection(e.Id)) return;
         }
 
-        public void SetState(IncomingState state)
+        internal void SetState(IncomingState state)
         {
             ConnectionState = state;
         }
