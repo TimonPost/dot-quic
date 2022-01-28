@@ -27,9 +27,7 @@ jobs:
       - name: Choco help
         uses: crazy-max/ghaction-chocolatey@v1
         with:
-          args: -h
-      - name: Install Docfx
-        run: choco install docfx
+          args: install docfx
       - name: Build Docs
         run: ./docs/build.sh
       - name: Deploy
