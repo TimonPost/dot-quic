@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>0.0.1-alpha.2.4</Version>
+    <Version>0.0.1-alpha.2.5</Version>
     <Description>QUIC implementation for .NET with pure rust QUIC implementation by Quinn. This package contains the C# with Rust FFi comunication.</Description>
 	<PackageProjectUrl>https://github.com/TimonPost/dot-quic</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/TimonPost/dot-quic</RepositoryUrl>
