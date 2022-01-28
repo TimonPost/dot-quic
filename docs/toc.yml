@@ -5,4 +5,4 @@
   homepage: api/index.md
 - name: Rust FFI Documentation
   href: doc/quinn_ffi/
-  homepage: doc/quinn_ffi/index.html
+  homepage: https://timonpost.github.io/quinn-ffi/quinn_ffi/
