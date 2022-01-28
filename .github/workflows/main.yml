@@ -29,9 +29,9 @@ jobs:
         with:
           args: install docfx
       - name: Cd Docs
-        run: cd ./docs
+        run: cd .\docs
       - name: Build Metafiles
-        run: docfx metadata
+        run: docfx metadata .\docfx.json
       - name: Build Docs
         run: docfx build
       - name: Deploy
