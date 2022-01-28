@@ -1,0 +1,472 @@
+### YamlMime:XRefMap
+sorted: true
+references:
+- uid: DotQuic
+  name: DotQuic
+  href: api/DotQuic.html
+  commentId: N:DotQuic
+  fullName: DotQuic
+  nameWithType: DotQuic
+- uid: DotQuic.DataReceivedEventArgs
+  name: DataReceivedEventArgs
+  href: api/DotQuic.DataReceivedEventArgs.html
+  commentId: T:DotQuic.DataReceivedEventArgs
+  fullName: DotQuic.DataReceivedEventArgs
+  nameWithType: DataReceivedEventArgs
+- uid: DotQuic.DataReceivedEventArgs.Stream
+  name: Stream
+  href: api/DotQuic.DataReceivedEventArgs.html#DotQuic_DataReceivedEventArgs_Stream
+  commentId: P:DotQuic.DataReceivedEventArgs.Stream
+  fullName: DotQuic.DataReceivedEventArgs.Stream
+  nameWithType: DataReceivedEventArgs.Stream
+- uid: DotQuic.DataReceivedEventArgs.Stream*
+  name: Stream
+  href: api/DotQuic.DataReceivedEventArgs.html#DotQuic_DataReceivedEventArgs_Stream_
+  commentId: Overload:DotQuic.DataReceivedEventArgs.Stream
+  isSpec: "True"
+  fullName: DotQuic.DataReceivedEventArgs.Stream
+  nameWithType: DataReceivedEventArgs.Stream
+- uid: DotQuic.QuicClient
+  name: QuicClient
+  href: api/DotQuic.QuicClient.html
+  commentId: T:DotQuic.QuicClient
+  fullName: DotQuic.QuicClient
+  nameWithType: QuicClient
+- uid: DotQuic.QuicClient.#ctor(System.Net.IPEndPoint,System.String,System.String)
+  name: QuicClient(IPEndPoint, String, String)
+  href: api/DotQuic.QuicClient.html#DotQuic_QuicClient__ctor_System_Net_IPEndPoint_System_String_System_String_
+  commentId: M:DotQuic.QuicClient.#ctor(System.Net.IPEndPoint,System.String,System.String)
+  fullName: DotQuic.QuicClient.QuicClient(System.Net.IPEndPoint, System.String, System.String)
+  nameWithType: QuicClient.QuicClient(IPEndPoint, String, String)
+- uid: DotQuic.QuicClient.#ctor*
+  name: QuicClient
+  href: api/DotQuic.QuicClient.html#DotQuic_QuicClient__ctor_
+  commentId: Overload:DotQuic.QuicClient.#ctor
+  isSpec: "True"
+  fullName: DotQuic.QuicClient.QuicClient
+  nameWithType: QuicClient.QuicClient
+- uid: DotQuic.QuicClient.Connect(System.Net.IPEndPoint,System.String)
+  name: Connect(IPEndPoint, String)
+  href: api/DotQuic.QuicClient.html#DotQuic_QuicClient_Connect_System_Net_IPEndPoint_System_String_
+  commentId: M:DotQuic.QuicClient.Connect(System.Net.IPEndPoint,System.String)
+  fullName: DotQuic.QuicClient.Connect(System.Net.IPEndPoint, System.String)
+  nameWithType: QuicClient.Connect(IPEndPoint, String)
+- uid: DotQuic.QuicClient.Connect*
+  name: Connect
+  href: api/DotQuic.QuicClient.html#DotQuic_QuicClient_Connect_
+  commentId: Overload:DotQuic.QuicClient.Connect
+  isSpec: "True"
+  fullName: DotQuic.QuicClient.Connect
+  nameWithType: QuicClient.Connect
+- uid: DotQuic.QuicClient.ConnectAsync(System.Net.IPEndPoint,System.String,System.Threading.CancellationToken)
+  name: ConnectAsync(IPEndPoint, String, CancellationToken)
+  href: api/DotQuic.QuicClient.html#DotQuic_QuicClient_ConnectAsync_System_Net_IPEndPoint_System_String_System_Threading_CancellationToken_
+  commentId: M:DotQuic.QuicClient.ConnectAsync(System.Net.IPEndPoint,System.String,System.Threading.CancellationToken)
+  fullName: DotQuic.QuicClient.ConnectAsync(System.Net.IPEndPoint, System.String, System.Threading.CancellationToken)
+  nameWithType: QuicClient.ConnectAsync(IPEndPoint, String, CancellationToken)
+- uid: DotQuic.QuicClient.ConnectAsync*
+  name: ConnectAsync
+  href: api/DotQuic.QuicClient.html#DotQuic_QuicClient_ConnectAsync_
+  commentId: Overload:DotQuic.QuicClient.ConnectAsync
+  isSpec: "True"
+  fullName: DotQuic.QuicClient.ConnectAsync
+  nameWithType: QuicClient.ConnectAsync
+- uid: DotQuic.QuicClient.Connection
+  name: Connection
+  href: api/DotQuic.QuicClient.html#DotQuic_QuicClient_Connection
+  commentId: P:DotQuic.QuicClient.Connection
+  fullName: DotQuic.QuicClient.Connection
+  nameWithType: QuicClient.Connection
+- uid: DotQuic.QuicClient.Connection*
+  name: Connection
+  href: api/DotQuic.QuicClient.html#DotQuic_QuicClient_Connection_
+  commentId: Overload:DotQuic.QuicClient.Connection
+  isSpec: "True"
+  fullName: DotQuic.QuicClient.Connection
+  nameWithType: QuicClient.Connection
+- uid: DotQuic.QuicConnection
+  name: QuicConnection
+  href: api/DotQuic.QuicConnection.html
+  commentId: T:DotQuic.QuicConnection
+  fullName: DotQuic.QuicConnection
+  nameWithType: QuicConnection
+- uid: DotQuic.QuicConnection.Close(System.String,System.Int64)
+  name: Close(String, Int64)
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_Close_System_String_System_Int64_
+  commentId: M:DotQuic.QuicConnection.Close(System.String,System.Int64)
+  fullName: DotQuic.QuicConnection.Close(System.String, System.Int64)
+  nameWithType: QuicConnection.Close(String, Int64)
+- uid: DotQuic.QuicConnection.Close*
+  name: Close
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_Close_
+  commentId: Overload:DotQuic.QuicConnection.Close
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.Close
+  nameWithType: QuicConnection.Close
+- uid: DotQuic.QuicConnection.ConnectionHandle
+  name: ConnectionHandle
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_ConnectionHandle
+  commentId: P:DotQuic.QuicConnection.ConnectionHandle
+  fullName: DotQuic.QuicConnection.ConnectionHandle
+  nameWithType: QuicConnection.ConnectionHandle
+- uid: DotQuic.QuicConnection.ConnectionHandle*
+  name: ConnectionHandle
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_ConnectionHandle_
+  commentId: Overload:DotQuic.QuicConnection.ConnectionHandle
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.ConnectionHandle
+  nameWithType: QuicConnection.ConnectionHandle
+- uid: DotQuic.QuicConnection.ConnectionId
+  name: ConnectionId
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_ConnectionId
+  commentId: P:DotQuic.QuicConnection.ConnectionId
+  fullName: DotQuic.QuicConnection.ConnectionId
+  nameWithType: QuicConnection.ConnectionId
+- uid: DotQuic.QuicConnection.ConnectionId*
+  name: ConnectionId
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_ConnectionId_
+  commentId: Overload:DotQuic.QuicConnection.ConnectionId
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.ConnectionId
+  nameWithType: QuicConnection.ConnectionId
+- uid: DotQuic.QuicConnection.DataReceived
+  name: DataReceived
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_DataReceived
+  commentId: E:DotQuic.QuicConnection.DataReceived
+  fullName: DotQuic.QuicConnection.DataReceived
+  nameWithType: QuicConnection.DataReceived
+- uid: DotQuic.QuicConnection.GetBiStream(System.Int64)
+  name: GetBiStream(Int64)
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_GetBiStream_System_Int64_
+  commentId: M:DotQuic.QuicConnection.GetBiStream(System.Int64)
+  fullName: DotQuic.QuicConnection.GetBiStream(System.Int64)
+  nameWithType: QuicConnection.GetBiStream(Int64)
+- uid: DotQuic.QuicConnection.GetBiStream*
+  name: GetBiStream
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_GetBiStream_
+  commentId: Overload:DotQuic.QuicConnection.GetBiStream
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.GetBiStream
+  nameWithType: QuicConnection.GetBiStream
+- uid: DotQuic.QuicConnection.GetUniStream(System.Int64)
+  name: GetUniStream(Int64)
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_GetUniStream_System_Int64_
+  commentId: M:DotQuic.QuicConnection.GetUniStream(System.Int64)
+  fullName: DotQuic.QuicConnection.GetUniStream(System.Int64)
+  nameWithType: QuicConnection.GetUniStream(Int64)
+- uid: DotQuic.QuicConnection.GetUniStream*
+  name: GetUniStream
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_GetUniStream_
+  commentId: Overload:DotQuic.QuicConnection.GetUniStream
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.GetUniStream
+  nameWithType: QuicConnection.GetUniStream
+- uid: DotQuic.QuicConnection.IsBiStream(System.Int64)
+  name: IsBiStream(Int64)
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_IsBiStream_System_Int64_
+  commentId: M:DotQuic.QuicConnection.IsBiStream(System.Int64)
+  fullName: DotQuic.QuicConnection.IsBiStream(System.Int64)
+  nameWithType: QuicConnection.IsBiStream(Int64)
+- uid: DotQuic.QuicConnection.IsBiStream*
+  name: IsBiStream
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_IsBiStream_
+  commentId: Overload:DotQuic.QuicConnection.IsBiStream
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.IsBiStream
+  nameWithType: QuicConnection.IsBiStream
+- uid: DotQuic.QuicConnection.IsConnected
+  name: IsConnected
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_IsConnected
+  commentId: P:DotQuic.QuicConnection.IsConnected
+  fullName: DotQuic.QuicConnection.IsConnected
+  nameWithType: QuicConnection.IsConnected
+- uid: DotQuic.QuicConnection.IsConnected*
+  name: IsConnected
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_IsConnected_
+  commentId: Overload:DotQuic.QuicConnection.IsConnected
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.IsConnected
+  nameWithType: QuicConnection.IsConnected
+- uid: DotQuic.QuicConnection.IsUniStream(System.Int64)
+  name: IsUniStream(Int64)
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_IsUniStream_System_Int64_
+  commentId: M:DotQuic.QuicConnection.IsUniStream(System.Int64)
+  fullName: DotQuic.QuicConnection.IsUniStream(System.Int64)
+  nameWithType: QuicConnection.IsUniStream(Int64)
+- uid: DotQuic.QuicConnection.IsUniStream*
+  name: IsUniStream
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_IsUniStream_
+  commentId: Overload:DotQuic.QuicConnection.IsUniStream
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.IsUniStream
+  nameWithType: QuicConnection.IsUniStream
+- uid: DotQuic.QuicConnection.OpenBiDirectionalStream
+  name: OpenBiDirectionalStream()
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_OpenBiDirectionalStream
+  commentId: M:DotQuic.QuicConnection.OpenBiDirectionalStream
+  fullName: DotQuic.QuicConnection.OpenBiDirectionalStream()
+  nameWithType: QuicConnection.OpenBiDirectionalStream()
+- uid: DotQuic.QuicConnection.OpenBiDirectionalStream*
+  name: OpenBiDirectionalStream
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_OpenBiDirectionalStream_
+  commentId: Overload:DotQuic.QuicConnection.OpenBiDirectionalStream
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.OpenBiDirectionalStream
+  nameWithType: QuicConnection.OpenBiDirectionalStream
+- uid: DotQuic.QuicConnection.OpenUniDirectionalStream
+  name: OpenUniDirectionalStream()
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_OpenUniDirectionalStream
+  commentId: M:DotQuic.QuicConnection.OpenUniDirectionalStream
+  fullName: DotQuic.QuicConnection.OpenUniDirectionalStream()
+  nameWithType: QuicConnection.OpenUniDirectionalStream()
+- uid: DotQuic.QuicConnection.OpenUniDirectionalStream*
+  name: OpenUniDirectionalStream
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_OpenUniDirectionalStream_
+  commentId: Overload:DotQuic.QuicConnection.OpenUniDirectionalStream
+  isSpec: "True"
+  fullName: DotQuic.QuicConnection.OpenUniDirectionalStream
+  nameWithType: QuicConnection.OpenUniDirectionalStream
+- uid: DotQuic.QuicConnection.StreamClosed
+  name: StreamClosed
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_StreamClosed
+  commentId: E:DotQuic.QuicConnection.StreamClosed
+  fullName: DotQuic.QuicConnection.StreamClosed
+  nameWithType: QuicConnection.StreamClosed
+- uid: DotQuic.QuicConnection.StreamInitiated
+  name: StreamInitiated
+  href: api/DotQuic.QuicConnection.html#DotQuic_QuicConnection_StreamInitiated
+  commentId: E:DotQuic.QuicConnection.StreamInitiated
+  fullName: DotQuic.QuicConnection.StreamInitiated
+  nameWithType: QuicConnection.StreamInitiated
+- uid: DotQuic.QuicListener
+  name: QuicListener
+  href: api/DotQuic.QuicListener.html
+  commentId: T:DotQuic.QuicListener
+  fullName: DotQuic.QuicListener
+  nameWithType: QuicListener
+- uid: DotQuic.QuicListener.#ctor(System.Net.IPEndPoint,System.String,System.String)
+  name: QuicListener(IPEndPoint, String, String)
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener__ctor_System_Net_IPEndPoint_System_String_System_String_
+  commentId: M:DotQuic.QuicListener.#ctor(System.Net.IPEndPoint,System.String,System.String)
+  fullName: DotQuic.QuicListener.QuicListener(System.Net.IPEndPoint, System.String, System.String)
+  nameWithType: QuicListener.QuicListener(IPEndPoint, String, String)
+- uid: DotQuic.QuicListener.#ctor*
+  name: QuicListener
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener__ctor_
+  commentId: Overload:DotQuic.QuicListener.#ctor
+  isSpec: "True"
+  fullName: DotQuic.QuicListener.QuicListener
+  nameWithType: QuicListener.QuicListener
+- uid: DotQuic.QuicListener.Accept
+  name: Accept()
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener_Accept
+  commentId: M:DotQuic.QuicListener.Accept
+  fullName: DotQuic.QuicListener.Accept()
+  nameWithType: QuicListener.Accept()
+- uid: DotQuic.QuicListener.Accept*
+  name: Accept
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener_Accept_
+  commentId: Overload:DotQuic.QuicListener.Accept
+  isSpec: "True"
+  fullName: DotQuic.QuicListener.Accept
+  nameWithType: QuicListener.Accept
+- uid: DotQuic.QuicListener.AcceptAsync(System.Threading.CancellationToken)
+  name: AcceptAsync(CancellationToken)
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener_AcceptAsync_System_Threading_CancellationToken_
+  commentId: M:DotQuic.QuicListener.AcceptAsync(System.Threading.CancellationToken)
+  fullName: DotQuic.QuicListener.AcceptAsync(System.Threading.CancellationToken)
+  nameWithType: QuicListener.AcceptAsync(CancellationToken)
+- uid: DotQuic.QuicListener.AcceptAsync*
+  name: AcceptAsync
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener_AcceptAsync_
+  commentId: Overload:DotQuic.QuicListener.AcceptAsync
+  isSpec: "True"
+  fullName: DotQuic.QuicListener.AcceptAsync
+  nameWithType: QuicListener.AcceptAsync
+- uid: DotQuic.QuicListener.ConnectionClose
+  name: ConnectionClose
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener_ConnectionClose
+  commentId: E:DotQuic.QuicListener.ConnectionClose
+  fullName: DotQuic.QuicListener.ConnectionClose
+  nameWithType: QuicListener.ConnectionClose
+- uid: DotQuic.QuicListener.ConnectionHandle(System.Int32)
+  name: ConnectionHandle(Int32)
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener_ConnectionHandle_System_Int32_
+  commentId: M:DotQuic.QuicListener.ConnectionHandle(System.Int32)
+  fullName: DotQuic.QuicListener.ConnectionHandle(System.Int32)
+  nameWithType: QuicListener.ConnectionHandle(Int32)
+- uid: DotQuic.QuicListener.ConnectionHandle*
+  name: ConnectionHandle
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener_ConnectionHandle_
+  commentId: Overload:DotQuic.QuicListener.ConnectionHandle
+  isSpec: "True"
+  fullName: DotQuic.QuicListener.ConnectionHandle
+  nameWithType: QuicListener.ConnectionHandle
+- uid: DotQuic.QuicListener.Incoming
+  name: Incoming
+  href: api/DotQuic.QuicListener.html#DotQuic_QuicListener_Incoming
+  commentId: E:DotQuic.QuicListener.Incoming
+  fullName: DotQuic.QuicListener.Incoming
+  nameWithType: QuicListener.Incoming
+- uid: DotQuic.QuicStream
+  name: QuicStream
+  href: api/DotQuic.QuicStream.html
+  commentId: T:DotQuic.QuicStream
+  fullName: DotQuic.QuicStream
+  nameWithType: QuicStream
+- uid: DotQuic.QuicStream.CanRead
+  name: CanRead
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_CanRead
+  commentId: P:DotQuic.QuicStream.CanRead
+  fullName: DotQuic.QuicStream.CanRead
+  nameWithType: QuicStream.CanRead
+- uid: DotQuic.QuicStream.CanRead*
+  name: CanRead
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_CanRead_
+  commentId: Overload:DotQuic.QuicStream.CanRead
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.CanRead
+  nameWithType: QuicStream.CanRead
+- uid: DotQuic.QuicStream.CanWrite
+  name: CanWrite
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_CanWrite
+  commentId: P:DotQuic.QuicStream.CanWrite
+  fullName: DotQuic.QuicStream.CanWrite
+  nameWithType: QuicStream.CanWrite
+- uid: DotQuic.QuicStream.CanWrite*
+  name: CanWrite
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_CanWrite_
+  commentId: Overload:DotQuic.QuicStream.CanWrite
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.CanWrite
+  nameWithType: QuicStream.CanWrite
+- uid: DotQuic.QuicStream.IsBiStream
+  name: IsBiStream
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_IsBiStream
+  commentId: P:DotQuic.QuicStream.IsBiStream
+  fullName: DotQuic.QuicStream.IsBiStream
+  nameWithType: QuicStream.IsBiStream
+- uid: DotQuic.QuicStream.IsBiStream*
+  name: IsBiStream
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_IsBiStream_
+  commentId: Overload:DotQuic.QuicStream.IsBiStream
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.IsBiStream
+  nameWithType: QuicStream.IsBiStream
+- uid: DotQuic.QuicStream.IsUniStream
+  name: IsUniStream
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_IsUniStream
+  commentId: P:DotQuic.QuicStream.IsUniStream
+  fullName: DotQuic.QuicStream.IsUniStream
+  nameWithType: QuicStream.IsUniStream
+- uid: DotQuic.QuicStream.IsUniStream*
+  name: IsUniStream
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_IsUniStream_
+  commentId: Overload:DotQuic.QuicStream.IsUniStream
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.IsUniStream
+  nameWithType: QuicStream.IsUniStream
+- uid: DotQuic.QuicStream.Read(System.Byte[],System.Int32,System.Int32)
+  name: Read(Byte[], Int32, Int32)
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_Read_System_Byte___System_Int32_System_Int32_
+  commentId: M:DotQuic.QuicStream.Read(System.Byte[],System.Int32,System.Int32)
+  name.vb: Read(Byte(), Int32, Int32)
+  fullName: DotQuic.QuicStream.Read(System.Byte[], System.Int32, System.Int32)
+  fullName.vb: DotQuic.QuicStream.Read(System.Byte(), System.Int32, System.Int32)
+  nameWithType: QuicStream.Read(Byte[], Int32, Int32)
+  nameWithType.vb: QuicStream.Read(Byte(), Int32, Int32)
+- uid: DotQuic.QuicStream.Read(System.Span{System.Byte})
+  name: Read(Span<Byte>)
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_Read_System_Span_System_Byte__
+  commentId: M:DotQuic.QuicStream.Read(System.Span{System.Byte})
+  name.vb: Read(Span(Of Byte))
+  fullName: DotQuic.QuicStream.Read(System.Span<System.Byte>)
+  fullName.vb: DotQuic.QuicStream.Read(System.Span(Of System.Byte))
+  nameWithType: QuicStream.Read(Span<Byte>)
+  nameWithType.vb: QuicStream.Read(Span(Of Byte))
+- uid: DotQuic.QuicStream.Read*
+  name: Read
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_Read_
+  commentId: Overload:DotQuic.QuicStream.Read
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.Read
+  nameWithType: QuicStream.Read
+- uid: DotQuic.QuicStream.ReadAsync(System.Memory{System.Byte},System.Threading.CancellationToken)
+  name: ReadAsync(Memory<Byte>, CancellationToken)
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_ReadAsync_System_Memory_System_Byte__System_Threading_CancellationToken_
+  commentId: M:DotQuic.QuicStream.ReadAsync(System.Memory{System.Byte},System.Threading.CancellationToken)
+  name.vb: ReadAsync(Memory(Of Byte), CancellationToken)
+  fullName: DotQuic.QuicStream.ReadAsync(System.Memory<System.Byte>, System.Threading.CancellationToken)
+  fullName.vb: DotQuic.QuicStream.ReadAsync(System.Memory(Of System.Byte), System.Threading.CancellationToken)
+  nameWithType: QuicStream.ReadAsync(Memory<Byte>, CancellationToken)
+  nameWithType.vb: QuicStream.ReadAsync(Memory(Of Byte), CancellationToken)
+- uid: DotQuic.QuicStream.ReadAsync*
+  name: ReadAsync
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_ReadAsync_
+  commentId: Overload:DotQuic.QuicStream.ReadAsync
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.ReadAsync
+  nameWithType: QuicStream.ReadAsync
+- uid: DotQuic.QuicStream.StreamType
+  name: StreamType
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_StreamType
+  commentId: P:DotQuic.QuicStream.StreamType
+  fullName: DotQuic.QuicStream.StreamType
+  nameWithType: QuicStream.StreamType
+- uid: DotQuic.QuicStream.StreamType*
+  name: StreamType
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_StreamType_
+  commentId: Overload:DotQuic.QuicStream.StreamType
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.StreamType
+  nameWithType: QuicStream.StreamType
+- uid: DotQuic.QuicStream.Write(System.Byte[],System.Int32,System.Int32)
+  name: Write(Byte[], Int32, Int32)
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_Write_System_Byte___System_Int32_System_Int32_
+  commentId: M:DotQuic.QuicStream.Write(System.Byte[],System.Int32,System.Int32)
+  name.vb: Write(Byte(), Int32, Int32)
+  fullName: DotQuic.QuicStream.Write(System.Byte[], System.Int32, System.Int32)
+  fullName.vb: DotQuic.QuicStream.Write(System.Byte(), System.Int32, System.Int32)
+  nameWithType: QuicStream.Write(Byte[], Int32, Int32)
+  nameWithType.vb: QuicStream.Write(Byte(), Int32, Int32)
+- uid: DotQuic.QuicStream.Write(System.ReadOnlySpan{System.Byte})
+  name: Write(ReadOnlySpan<Byte>)
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_Write_System_ReadOnlySpan_System_Byte__
+  commentId: M:DotQuic.QuicStream.Write(System.ReadOnlySpan{System.Byte})
+  name.vb: Write(ReadOnlySpan(Of Byte))
+  fullName: DotQuic.QuicStream.Write(System.ReadOnlySpan<System.Byte>)
+  fullName.vb: DotQuic.QuicStream.Write(System.ReadOnlySpan(Of System.Byte))
+  nameWithType: QuicStream.Write(ReadOnlySpan<Byte>)
+  nameWithType.vb: QuicStream.Write(ReadOnlySpan(Of Byte))
+- uid: DotQuic.QuicStream.Write*
+  name: Write
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_Write_
+  commentId: Overload:DotQuic.QuicStream.Write
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.Write
+  nameWithType: QuicStream.Write
+- uid: DotQuic.QuicStream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)
+  name: WriteAsync(Byte[], Int32, Int32, CancellationToken)
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_WriteAsync_System_Byte___System_Int32_System_Int32_System_Threading_CancellationToken_
+  commentId: M:DotQuic.QuicStream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)
+  name.vb: WriteAsync(Byte(), Int32, Int32, CancellationToken)
+  fullName: DotQuic.QuicStream.WriteAsync(System.Byte[], System.Int32, System.Int32, System.Threading.CancellationToken)
+  fullName.vb: DotQuic.QuicStream.WriteAsync(System.Byte(), System.Int32, System.Int32, System.Threading.CancellationToken)
+  nameWithType: QuicStream.WriteAsync(Byte[], Int32, Int32, CancellationToken)
+  nameWithType.vb: QuicStream.WriteAsync(Byte(), Int32, Int32, CancellationToken)
+- uid: DotQuic.QuicStream.WriteAsync(System.ReadOnlyMemory{System.Byte},System.Threading.CancellationToken)
+  name: WriteAsync(ReadOnlyMemory<Byte>, CancellationToken)
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_WriteAsync_System_ReadOnlyMemory_System_Byte__System_Threading_CancellationToken_
+  commentId: M:DotQuic.QuicStream.WriteAsync(System.ReadOnlyMemory{System.Byte},System.Threading.CancellationToken)
+  name.vb: WriteAsync(ReadOnlyMemory(Of Byte), CancellationToken)
+  fullName: DotQuic.QuicStream.WriteAsync(System.ReadOnlyMemory<System.Byte>, System.Threading.CancellationToken)
+  fullName.vb: DotQuic.QuicStream.WriteAsync(System.ReadOnlyMemory(Of System.Byte), System.Threading.CancellationToken)
+  nameWithType: QuicStream.WriteAsync(ReadOnlyMemory<Byte>, CancellationToken)
+  nameWithType.vb: QuicStream.WriteAsync(ReadOnlyMemory(Of Byte), CancellationToken)
+- uid: DotQuic.QuicStream.WriteAsync*
+  name: WriteAsync
+  href: api/DotQuic.QuicStream.html#DotQuic_QuicStream_WriteAsync_
+  commentId: Overload:DotQuic.QuicStream.WriteAsync
+  isSpec: "True"
+  fullName: DotQuic.QuicStream.WriteAsync
+  nameWithType: QuicStream.WriteAsync

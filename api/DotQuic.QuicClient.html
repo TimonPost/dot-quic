@@ -1,0 +1,360 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class QuicClient
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class QuicClient
+   ">
+    <meta name="generator" content="docfx 2.59.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="DotQuic.QuicClient">
+  
+  
+  <h1 id="DotQuic_QuicClient" data-uid="DotQuic.QuicClient" class="text-break">Class QuicClient
+  </h1>
+  <div class="markdown level0 summary"><p>A Quic Client.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">DotQuic.Endpoint</span></div>
+    <div class="level2"><span class="xref">QuicClient</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.IDisposable</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="DotQuic.html">DotQuic</a></h6>
+  <h6><strong>Assembly</strong>: DotQuic.dll</h6>
+  <h5 id="DotQuic_QuicClient_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class QuicClient : Endpoint, IDisposable</code></pre>
+  </div>
+  <h5 id="DotQuic_QuicClient_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>A client connects can connect to a <code>QuicListener</code></p>
+</div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TimonPost/dot-quic/new/pages/apiSpec/new?filename=DotQuic_QuicClient__ctor_System_Net_IPEndPoint_System_String_System_String_.md&amp;value=---%0Auid%3A%20DotQuic.QuicClient.%23ctor(System.Net.IPEndPoint%2CSystem.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TimonPost/dot-quic/blob/pages/dotnet/DotQuic/QuicClient.cs/#L32">View Source</a>
+  </span>
+  <a id="DotQuic_QuicClient__ctor_" data-uid="DotQuic.QuicClient.#ctor*"></a>
+  <h4 id="DotQuic_QuicClient__ctor_System_Net_IPEndPoint_System_String_System_String_" data-uid="DotQuic.QuicClient.#ctor(System.Net.IPEndPoint,System.String,System.String)">QuicClient(IPEndPoint, String, String)</h4>
+  <div class="markdown level1 summary"><p>Creates a QUIC client.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public QuicClient(IPEndPoint clientIp, string certificatePath, string privateKeyPath)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td><span class="parametername">clientIp</span></td>
+        <td><p>The ipv4 address of this client.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">certificatePath</span></td>
+        <td><p>The certificate must be DER-encoded X.509.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">privateKeyPath</span></td>
+        <td><p>The private key must be DER-encoded ASN.1 in either PKCS#8 or PKCS#1 format.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="DotQuic_QuicClient__ctor_System_Net_IPEndPoint_System_String_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The default client configuration contains:</p>
+<ul>
+<li>only high-quality cipher suites: TLS13_AES_256_GCM_SHA384, TLS13_AES_128_GCM_SHA256, TLS13_CHACHA20_POLY1305_SHA256.</li>
+<li>only high-quality key exchange groups: curve25519, secp256r1, secp384r1.</li>
+<li>only TLS 1.2 and 1.3 support.</li>
+</ul>
+<p>For more instructions read the README, configuration section.</p>
+</div>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TimonPost/dot-quic/new/pages/apiSpec/new?filename=DotQuic_QuicClient_Connection.md&amp;value=---%0Auid%3A%20DotQuic.QuicClient.Connection%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TimonPost/dot-quic/blob/pages/dotnet/DotQuic/QuicClient.cs/#L52">View Source</a>
+  </span>
+  <a id="DotQuic_QuicClient_Connection_" data-uid="DotQuic.QuicClient.Connection*"></a>
+  <h4 id="DotQuic_QuicClient_Connection" data-uid="DotQuic.QuicClient.Connection">Connection</h4>
+  <div class="markdown level1 summary"><p>The underlying QUIC Connection of this client.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public QuicConnection Connection { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="DotQuic.QuicConnection.html">QuicConnection</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="DotQuic_QuicClient_Connection_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Use the QUIC Connection for interacting with streams.</p>
+</div>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TimonPost/dot-quic/new/pages/apiSpec/new?filename=DotQuic_QuicClient_Connect_System_Net_IPEndPoint_System_String_.md&amp;value=---%0Auid%3A%20DotQuic.QuicClient.Connect(System.Net.IPEndPoint%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TimonPost/dot-quic/blob/pages/dotnet/DotQuic/QuicClient.cs/#L62">View Source</a>
+  </span>
+  <a id="DotQuic_QuicClient_Connect_" data-uid="DotQuic.QuicClient.Connect*"></a>
+  <h4 id="DotQuic_QuicClient_Connect_System_Net_IPEndPoint_System_String_" data-uid="DotQuic.QuicClient.Connect(System.Net.IPEndPoint,System.String)">Connect(IPEndPoint, String)</h4>
+  <div class="markdown level1 summary"><p>Connect to the given server ipv4 address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public QuicConnection Connect(IPEndPoint serverIp, string serverName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td><span class="parametername">serverIp</span></td>
+        <td><p>The IPV4 address of the server.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serverName</span></td>
+        <td><p>The server alternative subject name from the certificate.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="DotQuic.QuicConnection.html">QuicConnection</a></td>
+        <td><p>QuicConnection</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="DotQuic_QuicClient_Connect_System_Net_IPEndPoint_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method will block the current thread until connected.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TimonPost/dot-quic/new/pages/apiSpec/new?filename=DotQuic_QuicClient_ConnectAsync_System_Net_IPEndPoint_System_String_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20DotQuic.QuicClient.ConnectAsync(System.Net.IPEndPoint%2CSystem.String%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TimonPost/dot-quic/blob/pages/dotnet/DotQuic/QuicClient.cs/#L74">View Source</a>
+  </span>
+  <a id="DotQuic_QuicClient_ConnectAsync_" data-uid="DotQuic.QuicClient.ConnectAsync*"></a>
+  <h4 id="DotQuic_QuicClient_ConnectAsync_System_Net_IPEndPoint_System_String_System_Threading_CancellationToken_" data-uid="DotQuic.QuicClient.ConnectAsync(System.Net.IPEndPoint,System.String,System.Threading.CancellationToken)">ConnectAsync(IPEndPoint, String, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Connect asynchronously to the given server ipv4 address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public async Task&lt;QuicConnection&gt; ConnectAsync(IPEndPoint serverIp, string serverName, CancellationToken token = default(CancellationToken))</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td><span class="parametername">serverIp</span></td>
+        <td><p>The IPV4 address of the server.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serverName</span></td>
+        <td><p>The server alternative subject name from the certificate.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>The cancellation token, default infinite time</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="DotQuic.QuicConnection.html">QuicConnection</a>&gt;</td>
+        <td><p>QuicConnection</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.IDisposable</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/TimonPost/dot-quic/new/pages/apiSpec/new?filename=DotQuic_QuicClient.md&amp;value=---%0Auid%3A%20DotQuic.QuicClient%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/TimonPost/dot-quic/blob/pages/dotnet/DotQuic/QuicClient.cs/#L14" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

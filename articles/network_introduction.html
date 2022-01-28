@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Networking Introduction </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Networking Introduction ">
+    <meta name="generator" content="docfx 2.59.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="networking-introduction">Networking Introduction</h1>
+
+<p>In this chapter, you will find a very short introduction to various networking concepts.
+These concepts are important to understanding when to use QUIC.</p>
+<h2 id="1-tcpip-and-udp-comparison">1. TCPIP and UDP Comparison</h2>
+<p>Let's compare TCP, UDP, and QUIC.</p>
+<ul>
+<li>unreliable Transport packets are not assured of arrival and ordering.</li>
+<li>reliable Transport packets are assured of arrival and ordering.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Feature</th>
+<th style="text-align: center;">TCP</th>
+<th style="text-align: center;">UDP</th>
+<th style="text-align: center;">QUIC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><a href="https://en.wikipedia.orgwikiConnection-oriented_communication">Connection-Oriented</a></td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: center;">Transport Guarantees</td>
+<td style="text-align: center;">Reliable</td>
+<td style="text-align: center;">Unreliable</td>
+<td style="text-align: center;">Reliable ('a)</td>
+</tr>
+<tr>
+<td style="text-align: center;">Packet Transfer</td>
+<td style="text-align: center;"><a href="https://en.wikipedia.orgwikiStream_(computing)">Stream-based</a></td>
+<td style="text-align: center;">Message based</td>
+<td style="text-align: center;">Stream based</td>
+</tr>
+<tr>
+<td style="text-align: center;">Header Size</td>
+<td style="text-align: center;">~20 bytes</td>
+<td style="text-align: center;">8 bytes</td>
+<td style="text-align: center;">~16 bytes (depending on connection id)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="https://en.wikipedia.orgwikiTCP_congestion_control">Control Flow, Congestion Avoidance/Control</a></td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">Yes ('b)</td>
+</tr>
+<tr>
+<td style="text-align: center;">Based On</td>
+<td style="text-align: center;"><a href="https://nl.wikipedia.orgwikiInternetprotocol">IP</a></td>
+<td style="text-align: center;"><a href="https://nl.wikipedia.orgwikiInternetprotocol">IP</a></td>
+<td style="text-align: center;">UDP</td>
+</tr>
+</tbody>
+</table>
+<p>'a. Unreliable is supported as an extension.<br>
+'b. QUIC control flowcongestion implementations will run in userspace whereas in TCP it's running in kernel space,
+however, there might be a kernel implementation for QUIC in the future.</p>
+<h2 id="2-issues-with-tcp">2. Issues with TCP</h2>
+<p>TCP has been around for a long time and was not designed with the modern internet in mind.
+It has several difficulties that QUIC tries to resolve.</p>
+<h3 id="head-of-line-blocking">Head-of-line Blocking</h3>
+<p>One of the biggest issues with TCP is that of Head-of-line blocking.
+It is a convenient feature because it ensures that all packages are sent and arrive in order.
+However, in cases of high throughput (multiplayer game networking) and big load in a short time (web page load), this can severely impact latency.</p>
+<p>The issue is demonstrated in the following animation</p>
+<p><img src="https://github.com/quinn-rs/quinn/blob/main/docs/book/src/images/hol.gif?raw=true" alt="Head of line blocking"></p>
+<p>This animation shows that if a certain packet drops in transmission, all packets have to wait at the transport layer until it is resent by the other end. Once the delayed packet arrives at its destination, all later packets are passed on to the destination application together.</p>
+<p>Let's look at an area where head-of-line blocking causes problems.</p>
+<p><strong>Web Networking</strong></p>
+<p>As websites increasingly need a larger number of HTTP requests (HTML, CSS, JavaScript, images) to display all content, the impact of head-of-line blocking increases.
+To improve on this, HTTP 2 introduced request multiplexing within a TCP data stream, which allows servers to stream multiple responses at the same time.
+However, data loss of a single packet will still block all response streams because they exist within the context of a single TCP stream.</p>
+<h3 id="connection-setup-duration">Connection Setup Duration</h3>
+<p>In the usual TCP + TLS + HTTP stack, TCP needs 6 handshake messages to set up a session between server and client. TLS performs its own, sending 4 messages for setting up an initial connection over TLS 1.3. By integrating the transport protocol and TLS handshakes, QUIC makes connection setup more efficient and suports 0 or 1 round trip to initiate a fully encrypted stream.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/TimonPost/dot-quic/blob/pages/docs/articles/network_introduction.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
