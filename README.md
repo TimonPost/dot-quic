@@ -24,10 +24,10 @@ C# does not yet have a native, up-to-date, QUIC implementation. MsQuic its API w
 
 ## Documentation
 
-- [Minimal Server Example](articles/server_template.html)
-- [Minimal Client Example](8080/articles/client_template.html)
-- [API Reference](api/index.html)
-- [Articles/Tutorials](articles/quic_introduction.html)
+- [Minimal Server Example](https://timonpost.github.io/dot-quic/articles/server_template.html)
+- [Minimal Client Example](https://timonpost.github.io/dot-quic/articles/client_template.html)
+- [API Reference](https://timonpost.github.io/dot-quic/index.html)
+- [Articles/Tutorials](https://timonpost.github.io/dot-quic/articles/quic_introduction.html)
 
 [Quinn]: https://github.com/quinn-rs/quinn
 [QUIC]: https://en.wikipedia.org/wiki/QUIC
