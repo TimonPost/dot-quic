@@ -26,6 +26,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Choco help
         uses: crazy-max/ghaction-chocolatey@v1
+        with:
+          args: -h
       - name: Install Docfx
         run: choco install docfx
       - name: Build Docs
